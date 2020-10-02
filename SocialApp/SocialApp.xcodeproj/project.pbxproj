@@ -13,6 +13,7 @@
 		3A0EB3002523382C00BC6F04 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A0EB2FF2523382C00BC6F04 /* Assets.xcassets */; };
 		3A0EB3032523382C00BC6F04 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A0EB3012523382C00BC6F04 /* LaunchScreen.storyboard */; };
 		3A0EB30C252343B600BC6F04 /* LoginFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EB30B252343B600BC6F04 /* LoginFormViewController.swift */; };
+		3A0EB3132526717E00BC6F04 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EB3122526717E00BC6F04 /* TabBarController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		3A0EB3022523382C00BC6F04 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3A0EB3042523382C00BC6F04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3A0EB30B252343B600BC6F04 /* LoginFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFormViewController.swift; sourceTree = "<group>"; };
+		3A0EB3122526717E00BC6F04 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,8 +61,9 @@
 				3A0EB2F62523382900BC6F04 /* AppDelegate.swift */,
 				3A0EB2F82523382900BC6F04 /* SceneDelegate.swift */,
 				3A0EB30B252343B600BC6F04 /* LoginFormViewController.swift */,
-				3A0EB2FC2523382900BC6F04 /* Main.storyboard */,
+				3A0EB3122526717E00BC6F04 /* TabBarController.swift */,
 				3A0EB2FF2523382C00BC6F04 /* Assets.xcassets */,
+				3A0EB2FC2523382900BC6F04 /* Main.storyboard */,
 				3A0EB3012523382C00BC6F04 /* LaunchScreen.storyboard */,
 				3A0EB3042523382C00BC6F04 /* Info.plist */,
 			);
@@ -138,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A0EB30C252343B600BC6F04 /* LoginFormViewController.swift in Sources */,
+				3A0EB3132526717E00BC6F04 /* TabBarController.swift in Sources */,
 				3A0EB2F72523382900BC6F04 /* AppDelegate.swift in Sources */,
 				3A0EB2F92523382900BC6F04 /* SceneDelegate.swift in Sources */,
 			);
