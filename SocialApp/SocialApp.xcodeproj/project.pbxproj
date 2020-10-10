@@ -24,6 +24,7 @@
 		3A63AEAA252B9C02000C2046 /* GroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEA9252B9C02000C2046 /* GroupsTableViewController.swift */; };
 		3A63AEB7252BA89B000C2046 /* FriendsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEB6252BA89B000C2046 /* FriendsTableViewCell.swift */; };
 		3A63AEBC252BBB8B000C2046 /* GroupsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */; };
+		3AB5F58D2530A28C0081DB51 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB5F58C2530A28C0081DB51 /* AvatarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		3A63AEA9252B9C02000C2046 /* GroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsTableViewController.swift; sourceTree = "<group>"; };
 		3A63AEB6252BA89B000C2046 /* FriendsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsTableViewCell.swift; sourceTree = "<group>"; };
 		3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsTableViewCell.swift; sourceTree = "<group>"; };
+		3AB5F58C2530A28C0081DB51 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 			children = (
 				3A2D55BF252CBCD10085C278 /* PhotosCollectionViewController.swift */,
 				3A2D55C3252CC4550085C278 /* PhotosCollectionViewCell.swift */,
+				3AB5F58C2530A28C0081DB51 /* AvatarView.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -207,6 +210,7 @@
 				3A63AEA6252B74B1000C2046 /* FriendsTableViewController.swift in Sources */,
 				3A2D55C0252CBCD10085C278 /* PhotosCollectionViewController.swift in Sources */,
 				3A63AEAA252B9C02000C2046 /* GroupsTableViewController.swift in Sources */,
+				3AB5F58D2530A28C0081DB51 /* AvatarView.swift in Sources */,
 				3A63AEBC252BBB8B000C2046 /* GroupsTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
