@@ -11,4 +11,8 @@ class PhotosCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var photoImage: UIImageView!
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+    }
+    
 }

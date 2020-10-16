@@ -12,10 +12,10 @@ class PhotosCollectionViewController: UICollectionViewController, UICollectionVi
     @IBOutlet weak var photosCollectionView: UICollectionView!
     
     private let reuseIdentifier = "PhotosCollectionViewCell"
-//    let countCells: Int = 2
-//    let offset: CGFloat = 2.0
+    let countCells: Int = 2
+    let offset: CGFloat = 2.0
     
-    let imageArray: [UIImage?] = [UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown"), UIImage(named: "unknown")]
+    var imageArray: [UIImage?] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,8 +24,11 @@ class PhotosCollectionViewController: UICollectionViewController, UICollectionVi
         // self.clearsSelectionOnViewWillAppear = false
         photosCollectionView.delegate = self
         photosCollectionView.dataSource = self
-        // Register cell classes
-        //self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.hidesBackButton = false
+        
+        //self.collectionView!.register(PhotosCollectionViewCell.self, forCellWithReuseIdentifier: "PhotosCollectionViewCell")
     }
 
     /*
@@ -53,18 +56,26 @@ class PhotosCollectionViewController: UICollectionViewController, UICollectionVi
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! PhotosCollectionViewCell
         
+//        if let image = imageArray[indexPath.item] {
+//            cell.photoImage.image = image
+//            cell.photoView.contentMode = .scaleAspectFill
+//        }
+        
         if let image = imageArray[indexPath.item] {
-            cell.photoImage.image = image
+            let imageView = UIImageView(image: image)
+            imageView.frame = cell.bounds
+            cell.addSubview(imageView)
         }
-    
+        
         return cell
     }
  
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let cellWidth = collectionView.frame.width / CGFloat(countCells)
-//        let cellHeight = cellWidth
-//        let spacing = CGFloat(countCells + 1) * offset / CGFloat(countCells)
-//        return CGSize(width: cellWidth - spacing, height: cellHeight - (offset*2))
-//    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let cellWidth = collectionView.frame.width / CGFloat(countCells)
+        let cellHeight = cellWidth
+        let spacing = CGFloat(countCells + 1) * offset / CGFloat(countCells)
+        return CGSize(width: cellWidth - spacing, height: cellHeight - (offset*2))
+        //return CGSize(width: cellWidth - spacing, height: cellHeight)
+    }
 } 
 

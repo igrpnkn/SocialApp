@@ -24,7 +24,13 @@
 		3A63AEAA252B9C02000C2046 /* GroupsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEA9252B9C02000C2046 /* GroupsTableViewController.swift */; };
 		3A63AEB7252BA89B000C2046 /* FriendsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEB6252BA89B000C2046 /* FriendsTableViewCell.swift */; };
 		3A63AEBC252BBB8B000C2046 /* GroupsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */; };
+		3A6C24D02537497800B97B0E /* AccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6C24CF2537497800B97B0E /* AccountTableViewController.swift */; };
+		3A9775482539ED26000DA9BF /* FriendProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9775472539ED26000DA9BF /* FriendProfileViewController.swift */; };
 		3AB5F58D2530A28C0081DB51 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB5F58C2530A28C0081DB51 /* AvatarView.swift */; };
+		3AFB250E2535E37E00908839 /* MessengerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */; };
+		3AFB25162535E44A00908839 /* MessengerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */; };
+		3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */; };
+		3AFB251A25363C2500908839 /* MessageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB251925363C2500908839 /* MessageStatusView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,7 +53,13 @@
 		3A63AEA9252B9C02000C2046 /* GroupsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsTableViewController.swift; sourceTree = "<group>"; };
 		3A63AEB6252BA89B000C2046 /* FriendsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsTableViewCell.swift; sourceTree = "<group>"; };
 		3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsTableViewCell.swift; sourceTree = "<group>"; };
+		3A6C24CF2537497800B97B0E /* AccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTableViewController.swift; sourceTree = "<group>"; };
+		3A9775472539ED26000DA9BF /* FriendProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendProfileViewController.swift; sourceTree = "<group>"; };
 		3AB5F58C2530A28C0081DB51 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewController.swift; sourceTree = "<group>"; };
+		3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewCell.swift; sourceTree = "<group>"; };
+		3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessengerTableViewCell.xib; sourceTree = "<group>"; };
+		3AFB251925363C2500908839 /* MessageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStatusView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +93,8 @@
 			isa = PBXGroup;
 			children = (
 				3A2D55D1252CFE260085C278 /* Model */,
+				3A6C24CE2537494C00B97B0E /* Account */,
+				3AFB250C2535E31900908839 /* Messenger */,
 				3A2D55CF252CFCB00085C278 /* Friends */,
 				3A2D55C7252CF3460085C278 /* Groups */,
 				3A0EB2F62523382900BC6F04 /* AppDelegate.swift */,
@@ -114,6 +128,7 @@
 				3A2D55BF252CBCD10085C278 /* PhotosCollectionViewController.swift */,
 				3A2D55C3252CC4550085C278 /* PhotosCollectionViewCell.swift */,
 				3AB5F58C2530A28C0081DB51 /* AvatarView.swift */,
+				3A9775472539ED26000DA9BF /* FriendProfileViewController.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -125,6 +140,25 @@
 				3A38B909252DD2810057542D /* Group.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		3A6C24CE2537494C00B97B0E /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				3A6C24CF2537497800B97B0E /* AccountTableViewController.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		3AFB250C2535E31900908839 /* Messenger */ = {
+			isa = PBXGroup;
+			children = (
+				3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */,
+				3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */,
+				3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */,
+				3AFB251925363C2500908839 /* MessageStatusView.swift */,
+			);
+			path = Messenger;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,6 +221,7 @@
 				3A0EB3032523382C00BC6F04 /* LaunchScreen.storyboard in Resources */,
 				3A0EB3002523382C00BC6F04 /* Assets.xcassets in Resources */,
 				3A0EB2FE2523382900BC6F04 /* Main.storyboard in Resources */,
+				3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +232,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A9775482539ED26000DA9BF /* FriendProfileViewController.swift in Sources */,
 				3A38B907252DD1460057542D /* User.swift in Sources */,
+				3AFB250E2535E37E00908839 /* MessengerTableViewController.swift in Sources */,
+				3AFB251A25363C2500908839 /* MessageStatusView.swift in Sources */,
 				3A2D55C9252CF37B0085C278 /* GroupsSearchTableViewController.swift in Sources */,
 				3A0EB30C252343B600BC6F04 /* LoginFormViewController.swift in Sources */,
 				3A2D55C4252CC4550085C278 /* PhotosCollectionViewCell.swift in Sources */,
@@ -205,8 +243,10 @@
 				3A0EB2F72523382900BC6F04 /* AppDelegate.swift in Sources */,
 				3A63AEB7252BA89B000C2046 /* FriendsTableViewCell.swift in Sources */,
 				3A38B90A252DD2810057542D /* Group.swift in Sources */,
+				3A6C24D02537497800B97B0E /* AccountTableViewController.swift in Sources */,
 				3A0EB2F92523382900BC6F04 /* SceneDelegate.swift in Sources */,
 				3A2D55CD252CF9720085C278 /* GroupsSearchTableViewCell.swift in Sources */,
+				3AFB25162535E44A00908839 /* MessengerTableViewCell.swift in Sources */,
 				3A63AEA6252B74B1000C2046 /* FriendsTableViewController.swift in Sources */,
 				3A2D55C0252CBCD10085C278 /* PhotosCollectionViewController.swift in Sources */,
 				3A63AEAA252B9C02000C2046 /* GroupsTableViewController.swift in Sources */,

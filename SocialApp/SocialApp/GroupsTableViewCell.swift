@@ -11,6 +11,10 @@ class GroupsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var groupImage: UIImageView!
     @IBOutlet weak var groupName: UILabel!
+    @IBOutlet weak var groupFollowers: UILabel!
+    @IBOutlet weak var groupSubscription: UIImageView!
+    @IBOutlet weak var groupDescription: UILabel!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -1,17 +1,19 @@
 //
-//  TabBarController.swift
+//  FriendProfileViewController.swift
 //  SocialApp
 //
-//  Created by Игорь Пенкин on 01.10.2020.
+//  Created by Игорь Пенкин on 16.10.2020.
 //
 
 import UIKit
 
-class TabBarController: UITabBarController {
+class FriendProfileViewController: UIViewController {
 
+    var imageArray: [UIImage?] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.selectedIndex = 2
+
         // Do any additional setup after loading the view.
     }
     
