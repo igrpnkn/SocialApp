@@ -17,27 +17,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="vk" translatesAutoresizingMaskIntoConstraints="NO" id="8Tp-K6-2Am">
-                                <rect key="frame" x="96" y="220" width="128" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="DHT-Sn-da4"/>
-                                    <constraint firstAttribute="width" constant="128" id="WCb-gN-gbi"/>
-                                </constraints>
-                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="github.com/Igor-A-Penkin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Z7-dX-Glg">
                                 <rect key="frame" x="61.5" y="527" width="197" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.34509803919999998" green="0.47058823529999999" blue="0.64705882349999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iconfinder_-65_3057656-1" translatesAutoresizingMaskIntoConstraints="NO" id="RKS-ke-6Mh">
+                                <rect key="frame" x="96" y="220" width="128" height="128"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="128" id="Iz7-vh-w0G"/>
+                                    <constraint firstAttribute="height" constant="128" id="ysi-5w-d64"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemGray6Color"/>
                         <constraints>
-                            <constraint firstItem="8Tp-K6-2Am" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="DcW-vG-drv"/>
+                            <constraint firstItem="RKS-ke-6Mh" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="DDd-c2-DdE"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="4Z7-dX-Glg" secondAttribute="bottom" constant="20" id="ORK-tf-2uZ"/>
                             <constraint firstItem="4Z7-dX-Glg" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="XUe-jQ-1sW"/>
-                            <constraint firstItem="8Tp-K6-2Am" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="g4n-Wh-gqq"/>
+                            <constraint firstItem="RKS-ke-6Mh" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Yg0-3i-IlT"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -47,7 +46,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="vk" width="512" height="512"/>
+        <image name="iconfinder_-65_3057656-1" width="256" height="256"/>
         <systemColor name="systemGray6Color">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

@@ -55,18 +55,15 @@ class PhotosCollectionViewController: UICollectionViewController, UICollectionVi
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! PhotosCollectionViewCell
-        
 //        if let image = imageArray[indexPath.item] {
 //            cell.photoImage.image = image
 //            cell.photoView.contentMode = .scaleAspectFill
 //        }
-        
         if let image = imageArray[indexPath.item] {
             let imageView = UIImageView(image: image)
             imageView.frame = cell.bounds
             cell.addSubview(imageView)
         }
-        
         return cell
     }
  
@@ -75,7 +72,6 @@ class PhotosCollectionViewController: UICollectionViewController, UICollectionVi
         let cellHeight = cellWidth
         let spacing = CGFloat(countCells + 1) * offset / CGFloat(countCells)
         return CGSize(width: cellWidth - spacing, height: cellHeight - (offset*2))
-        //return CGSize(width: cellWidth - spacing, height: cellHeight)
     }
 } 
 

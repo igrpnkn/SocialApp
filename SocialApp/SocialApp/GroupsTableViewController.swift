@@ -11,23 +11,8 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     
     @IBOutlet weak var groupsTableView: UITableView!
     
-//    let groupsArray: [Group] = [
-//        Group(name: "First group", image: UIImage(named: "musicGroup")!, followersCount: 111, publicationsCount: 128),
-//        Group(name: "Second group", image: UIImage(named: "musicGroup")!, followersCount: 112, publicationsCount: 128),
-//        Group(name: "Third group", image: UIImage(named: "musicGroup")!, followersCount: 113, publicationsCount: 128),
-//        Group(name: "Fourth group", image: UIImage(named: "musicGroup")!, followersCount: 114, publicationsCount: 128),
-//        Group(name: "Fifth group", image: UIImage(named: "musicGroup")!, followersCount: 115, publicationsCount: 128),
-//        Group(name: "Sixth group", image: UIImage(named: "musicGroup")!, followersCount: 116, publicationsCount: 128),
-//        Group(name: "Seventh group", image: UIImage(named: "musicGroup")!, followersCount: 117, publicationsCount: 128),
-//        Group(name: "Eighth group", image: UIImage(named: "musicGroup")!, followersCount: 118, publicationsCount: 128),
-//        Group(name: "Nineth group", image: UIImage(named: "musicGroup")!, followersCount: 119, publicationsCount: 128),
-//        Group(name: "Tenth group", image: UIImage(named: "musicGroup")!, followersCount: 120, publicationsCount: 128),
-//        Group(name: "Eleventh group", image: UIImage(named: "musicGroup")!, followersCount: 121, publicationsCount: 128),
-//        Group(name: "Twelveth group", image: UIImage(named: "musicGroup")!, followersCount: 122, publicationsCount: 128),
-//        Group(name: "Private group", image: UIImage(named: "musicGroup")!, followersCount: 123, publicationsCount: 128)
-//    ]
+    // Search...
     var searchedGroup: [Group] = []
-    
     let searchField = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
         guard let text = searchField.searchBar.text else {
@@ -38,6 +23,7 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     private var isFiltering: Bool {
         return searchField.isActive && !searchBarIsEmpty
     }
+    //
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +36,7 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         
         searchField.searchResultsUpdater = self
         searchField.obscuresBackgroundDuringPresentation = false
-        searchField.searchBar.placeholder = "Type to search..."
+        searchField.searchBar.placeholder = "Search..."
         navigationItem.searchController = searchField
         definesPresentationContext = true
     }

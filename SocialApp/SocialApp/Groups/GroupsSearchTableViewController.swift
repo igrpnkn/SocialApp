@@ -52,7 +52,7 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
         
         searchField.searchResultsUpdater = self
         searchField.obscuresBackgroundDuringPresentation = false
-        searchField.searchBar.placeholder = "Searching for groups..."
+        searchField.searchBar.placeholder = "Search..."
         navigationItem.searchController = searchField
         definesPresentationContext = true
     }

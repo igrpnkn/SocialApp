@@ -55,6 +55,4 @@ class GroupDataBase {
         Group(name: "Public group", image: UIImage(named: "musicGroup")!, followersCount: 124, publicationsCount: 128, subscription: true, description: "News"),
         Group(name: "Commercial group", image: UIImage(named: "musicGroup")!, followersCount: 125, publicationsCount: 128, subscription: true, description: "Business")
     ]
-    
-    
 }

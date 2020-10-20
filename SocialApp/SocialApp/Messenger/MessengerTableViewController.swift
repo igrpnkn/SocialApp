@@ -13,17 +13,17 @@ class MessengerTableViewController: UITableViewController, UISearchResultsUpdati
     
     let reusableCell = "MessengerTableViewCell"
     var friendsArray: [User] = [
-        User(name: "Johnny", lastName: "Appleseed", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Bobby", lastName: "Axelroude", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Michael", lastName: "Composer", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Bob", lastName: "Dommergoo", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Micky", lastName: "Fiedgerald", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Tom", lastName: "Hawkins", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Alex", lastName: "Burntman", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Mike", lastName: "Rouhgeman", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Rashid", lastName: "Daddario", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Jude", lastName: "Chappman", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Alexander", lastName: "Cross", image: UIImage(named: "guy")!, age: 18)
+        User(name: "Johnny", lastName: "Appleseed", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Bobby", lastName: "Axelroude", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Michael", lastName: "Composer", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Bob", lastName: "Dommergoo", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Micky", lastName: "Fiedgerald", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Tom", lastName: "Hawkins", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Alex", lastName: "Burntman", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Mike", lastName: "Rouhgeman", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Rashid", lastName: "Daddario", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Jude", lastName: "Chappman", image: UIImage(named: "guy")!, age: 18, friendship: true),
+        User(name: "Alexander", lastName: "Cross", image: UIImage(named: "guy")!, age: 18, friendship: true)
     ]
     
     override func viewDidLoad() {

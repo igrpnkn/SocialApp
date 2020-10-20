@@ -11,22 +11,13 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     @IBOutlet weak var friendsTableView: UITableView!
     
-    let friendsArray: [User] = [
-        User(name: "Johnny", lastName: "Appleseed", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Bobby", lastName: "Axelroude", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Michael", lastName: "Composer", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Bob", lastName: "Dommergoo", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Micky", lastName: "Fiedgerald", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Tom", lastName: "Hawkins", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Alex", lastName: "Burntman", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Mike", lastName: "Rouhgeman", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Rashid", lastName: "Daddario", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Jude", lastName: "Chappman", image: UIImage(named: "guy")!, age: 18),
-        User(name: "Alexander", lastName: "Cross", image: UIImage(named: "guy")!, age: 18)
-    ]
+    // Getting friends from all users...
+    let friendsArray: [User] = UserDataBase.instance.item.filter({ (item) -> Bool in
+        return item.friendship == true
+    })
     
+    // Indexation...
     var friendIndex: [String] = []
-    
     func createIndex() {
         // Logic of indexation - getting unique first letter of .lastName into friendIndex[]
         var temporaryIndex: [String] = []
@@ -35,6 +26,23 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         }
         friendIndex = Array(Set(temporaryIndex)).sorted()
     }
+    //
+    
+    // Search...
+    var searchedFriend: [User] = []
+    let searchField = UISearchController(searchResultsController: nil)
+    private var searchBarIsEmpty: Bool {
+        guard let text = searchField.searchBar.text else {
+            return false
+        }
+        return text.isEmpty
+    }
+    private var isFiltering: Bool {
+        return searchField.isActive && !searchBarIsEmpty
+    }
+    //
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,9 +52,11 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         
-        let searchBar = UISearchController(searchResultsController: nil)
-        searchBar.searchResultsUpdater = self
-        self.navigationItem.searchController = searchBar
+        searchField.searchResultsUpdater = self
+        searchField.obscuresBackgroundDuringPresentation = false
+        searchField.searchBar.placeholder = "Search..."
+        navigationItem.searchController = searchField
+        definesPresentationContext = true
         
         createIndex()
     }
@@ -55,26 +65,43 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return friendIndex.count
+        switch isFiltering {
+        case true:
+            return 1
+        case false:
+            return friendIndex.count
+        }
+        //return friendIndex.count
     }
     
+    // Does not work with method: tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return String(friendIndex[section])
+        switch isFiltering {
+        case true:
+            return "Found:"
+        case false:
+            return String(friendIndex[section])
+        }
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 28))
-        sectionHeaderView.backgroundColor = UIColor.systemGray5
+        sectionHeaderView.backgroundColor = UIColor.systemGray6
         
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: sectionHeaderView.frame.width, height: 28))
-        label.text = String(friendIndex[section])
         label.tintColor = .label
+        
+        switch isFiltering {
+        case true:
+            label.text = "Found:"
+        case false:
+            label.text = String(friendIndex[section])
+        }
         
         sectionHeaderView.addSubview(label)
         
         return sectionHeaderView
     }
-    
     
     override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return friendIndex
@@ -82,31 +109,57 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        let buffer = friendsArray.filter{ (friend) -> Bool in
-            friendIndex[section] == String(friend.lastName.first!)
+        switch isFiltering {
+        case true:
+            return searchedFriend.count
+        case false:
+            let buffer = friendsArray.filter{ (friend) -> Bool in
+                friendIndex[section] == String(friend.lastName.first!)
+            }
+            return buffer.count
         }
         
-        return buffer.count
+//        let buffer = friendsArray.filter{ (friend) -> Bool in
+//            friendIndex[section] == String(friend.lastName.first!)
+//        }
+//
+//        return buffer.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsTableViewCell", for: indexPath) as! FriendsTableViewCell
         
-        let buffer = friendsArray.filter{ (friend) -> Bool in
-            friendIndex[indexPath.section] == String(friend.lastName.first!)
+        var dataFromArray: User
+        if isFiltering {
+            dataFromArray = searchedFriend[indexPath.row]
+        } else {
+//            let rowsOfGroupWeSubscripted = friendsArray.filter { (i) -> Bool in
+//                return i.friendship == true
+//            }
+            let buffer = friendsArray.filter{ (friend) -> Bool in
+                friendIndex[indexPath.section] == String(friend.lastName.first!)
+            }
+            dataFromArray = buffer[indexPath.row]
         }
         
-        cell.friendName.text = "\(buffer[indexPath.row].lastName) \(buffer[indexPath.row].name)"
-        cell.friendImage.image = buffer[indexPath.row].image
-        cell.friendLastSeen.text = "Last seen recently"
         
+        cell.friendName.text = "\(dataFromArray.lastName) \(dataFromArray.name)"
+        cell.friendImage.image = dataFromArray.image
+        cell.friendLastSeen.text = "Last seen recently"
         
         return cell
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        print(searchController.searchBar.text!)
+        filterContentForSearchText(searchController.searchBar.text!)
     }
+    
+    func filterContentForSearchText(_ searchText: String) {
+        searchedFriend = friendsArray.filter({ (i) -> Bool in return i.friendship == true }).filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.name.lowercased().contains(searchText.lowercased())) })
+        
+        friendsTableView.reloadData()
+    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -157,16 +210,21 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             return
         case "segueToFriendProfile":
             if let indexPath = friendsTableView.indexPathForSelectedRow {
-//                 if isFiltering {
-//                    friend = searchedFriend[indexPath.row]
-//                 } else {
-//                    friend = friendsArray[indexPath.row]
-//                 }
-                let buffer = friendsArray.filter{ (friend) -> Bool in
-                    friendIndex[indexPath.section] == String(friend.lastName.first!)
-                }
                 let friend: User
-                friend = buffer[indexPath.row]
+                if isFiltering {
+                    friend = searchedFriend[indexPath.row]
+                 } else {
+                    let buffer = friendsArray.filter{ (friend) -> Bool in
+                        friendIndex[indexPath.section] == String(friend.lastName.first!)
+                    }
+                    friend = buffer[indexPath.row]
+                 }
+                
+//                let buffer = friendsArray.filter{ (friend) -> Bool in
+//                    friendIndex[indexPath.section] == String(friend.lastName.first!)
+//                }
+//                friend = buffer[indexPath.row]
+                
                 let friendProfileVC = segue.destination as! FriendProfileViewController
                 friendProfileVC.title = "\(friend.lastName) \(friend.name)"
             }
