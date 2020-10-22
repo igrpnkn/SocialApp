@@ -22,10 +22,8 @@ class NewsTableViewController: UITableViewController {
         super.viewDidLoad()
         newsTableView.delegate = self
         newsTableView.dataSource = self
-        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
@@ -75,9 +73,18 @@ class NewsTableViewController: UITableViewController {
             return cell
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseFooterIdentifier, for: indexPath) as! NewsFooterTableViewCell
-            cell.likeCount.text = String(newsArray[indexPath.section].likeCount ?? 0)
-            cell.commentCount.text = String(newsArray[indexPath.section].commentCount ?? 0)
-            cell.reviewCount.text = String(newsArray[indexPath.section].reviewCount ?? 0)
+            cell.likeCount.text = String(newsArray[indexPath.section].likeCount!)
+            cell.commentCount.text = String(newsArray[indexPath.section].commentCount!)
+            cell.reviewCount.text = String(newsArray[indexPath.section].reviewCount!)
+            cell.likeButton.tag = indexPath.section
+            if newsArray[indexPath.section].liked == true {
+                cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                cell.likeButton.tintColor = UIColor.systemRed
+                cell.likeButton.animationOfPulsation()
+            } else if newsArray[indexPath.section].liked == false {
+                cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+                cell.likeButton.tintColor = UIColor.label
+            }
             return cell
         default:
             print("What the hell was here!? o_O")
@@ -99,20 +106,46 @@ class NewsTableViewController: UITableViewController {
         default:
             return tableView.estimatedRowHeight
         }
-        
-        
-//        if indexPath.row == 2 {
-//            if 0 == newsArray[indexPath.section].images?.count ?? 0 {
-//                return 0
-//            } else if 1 == newsArray[indexPath.section].images?.count ?? 0 {
-//                return tableView.frame.width
-//            } else {
-//                return tableView.frame.width/2
-//            }
-//        } else {
-//            return tableView.estimatedRowHeight
-//        }
     }
+    
+    @IBAction private func likeButtonPressed(_ sender: UIButton) {
+        print("Button LIKE in \(sender.tag) section of NEWSFEED has been pressed!")
+        switch newsArray[sender.tag].liked {
+        case true:
+            print("Post is being disliked!")
+            newsArray[sender.tag].likeCount! -= 1
+            NewsDataBase.instance.item[sender.tag].likeCount! -= 1
+            if newsArray[sender.tag].likeCount! == NewsDataBase.instance.item[sender.tag].likeCount! {
+                newsArray[sender.tag].liked = false
+                NewsDataBase.instance.item[sender.tag].liked = false
+            } else {
+                print("Disliking failed!")
+            }
+            if newsArray[sender.tag].liked == NewsDataBase.instance.item[sender.tag].liked {
+                print("Disliking succeeded!")
+                self.newsTableView.reloadData()
+            } else {
+                print("Disliking failed!")
+            }
+        case false:
+            print("Post is being liked!")
+            newsArray[sender.tag].likeCount! += 1
+            NewsDataBase.instance.item[sender.tag].likeCount! += 1
+            if newsArray[sender.tag].likeCount! == NewsDataBase.instance.item[sender.tag].likeCount! {
+                newsArray[sender.tag].liked = true
+                NewsDataBase.instance.item[sender.tag].liked = true
+            } else {
+                print("Liking failed!")
+            }
+            if newsArray[sender.tag].liked == NewsDataBase.instance.item[sender.tag].liked {
+                print("Liking succeeded!")
+                self.newsTableView.reloadData()
+            } else {
+                print("Liking failed!")
+            }
+        }
+    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -159,3 +192,4 @@ class NewsTableViewController: UITableViewController {
     */
 
 }
+

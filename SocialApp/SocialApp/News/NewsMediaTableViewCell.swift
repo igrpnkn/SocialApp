@@ -12,7 +12,7 @@ class NewsMediaTableViewCell: UITableViewCell {
     @IBOutlet weak var mediaCollectionView: UICollectionView!
     
     let reuseMediaIdentifier = "NewsMediaCollectionViewCell"
-    //var imagesArray: [UIImage?] = NewsDataBase.instance.item[3].images
+ 
     var imagesArray: [UIImage]? = nil
     
     var offset: CGFloat = 1.0
@@ -70,7 +70,6 @@ extension NewsMediaTableViewCell: UICollectionViewDelegate, UICollectionViewData
             imageView.contentMode = .scaleAspectFill
             cell.addSubview(imageView)
         }
-        cell.reloadInputViews()
         return cell
     }
     

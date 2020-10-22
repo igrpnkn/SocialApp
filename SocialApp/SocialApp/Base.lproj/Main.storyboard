@@ -598,7 +598,7 @@
                                                 <color key="titleColor" systemColor="labelColor"/>
                                             </state>
                                             <connections>
-                                                <action selector="pressedLike:" destination="82f-YW-ooe" eventType="touchUpInside" id="pHK-Ie-OQQ"/>
+                                                <action selector="likeButtonPressed:" destination="etg-75-YHC" eventType="touchUpInside" id="obw-df-d3I"/>
                                             </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234K" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mf4-Ab-WEV">
@@ -618,9 +618,6 @@
                                             </constraints>
                                             <color key="tintColor" systemColor="labelColor"/>
                                             <state key="normal" image="bubble.left" catalog="system"/>
-                                            <connections>
-                                                <action selector="pressedComment:" destination="82f-YW-ooe" eventType="touchUpInside" id="fCb-LF-OtU"/>
-                                            </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234K" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="803-cd-BI5">
                                             <rect key="frame" x="108" y="6" width="40" height="22"/>
@@ -648,9 +645,6 @@
                                             </constraints>
                                             <color key="tintColor" systemColor="labelColor"/>
                                             <state key="normal" image="arrowshape.turn.up.right" catalog="system"/>
-                                            <connections>
-                                                <action selector="pressedForward:" destination="82f-YW-ooe" eventType="touchUpInside" id="c7W-0n-QTB"/>
-                                            </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234K" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mew-bP-V1a">
                                             <rect key="frame" x="274" y="6" width="40" height="22"/>
@@ -689,6 +683,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="commentCount" destination="803-cd-BI5" id="HK3-ir-n3Q"/>
+                                    <outlet property="likeButton" destination="HQX-0M-LP4" id="Wfg-lb-DpV"/>
                                     <outlet property="likeCount" destination="Mf4-Ab-WEV" id="jSH-SG-YfM"/>
                                     <outlet property="reviewCount" destination="Mew-bP-V1a" id="fas-RR-Yli"/>
                                 </connections>
@@ -724,7 +719,7 @@
                         <color key="separatorColor" systemColor="separatorColor"/>
                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="MessengerTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="blue" indentationWidth="10" reuseIdentifier="MessengerTableViewCell" id="8cw-Td-NIX" customClass="MessengerTableViewCell" customModule="SocialApp" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleAspectFill" restorationIdentifier="MessengerTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="MessengerTableViewCell" id="8cw-Td-NIX" customClass="MessengerTableViewCell" customModule="SocialApp" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="320" height="82.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="8cw-Td-NIX" id="TVh-Pc-cFK">
@@ -1202,26 +1197,10 @@
                         <color key="separatorColor" systemColor="separatorColor"/>
                         <inset key="separatorInset" minX="6" minY="0.0" maxX="6" maxY="0.0"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="jDn-Jz-lTP">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AccountTableViewCell" id="jDn-Jz-lTP" customClass="AccountTableViewCell" customModule="SocialApp" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="320" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jDn-Jz-lTP" id="Mdz-vH-bEr">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="FsU-iD-2Ew">
-                                <rect key="frame" x="0.0" y="71.5" width="320" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FsU-iD-2Ew" id="rpM-Ts-DPC">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="0xu-VT-WJr">
-                                <rect key="frame" x="0.0" y="115" width="320" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0xu-VT-WJr" id="gsf-VU-beH">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
@@ -1246,10 +1225,13 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="accountTableView" destination="Mnn-8i-cwY" id="gEc-5z-V0Z"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="APW-EQ-Aev" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2271" y="357"/>
+            <point key="canvasLocation" x="2270.625" y="355.98591549295776"/>
         </scene>
         <!--Settings-->
         <scene sceneID="Aoe-S1-IzX">
