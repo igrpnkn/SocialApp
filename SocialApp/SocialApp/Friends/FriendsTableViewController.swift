@@ -86,7 +86,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 28))
-        sectionHeaderView.backgroundColor = UIColor.systemGray6
+        sectionHeaderView.backgroundColor = UIColor.lightText
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: sectionHeaderView.frame.width, height: 28))
         label.tintColor = .label
         switch isFiltering {
@@ -195,10 +195,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
-        case "segueToPhotos":
-            let photosCVC = segue.destination as! PhotosCollectionViewController
-            photosCVC.title = "Photoflow"
-            photosCVC.imageArray = [UIImage(named: "unknown"), UIImage(named: "musicGroup"), UIImage(named: "guy")]
         case "segueToPeople":
             print("Segue to People has been choosen.")
             return
