@@ -1,32 +1,17 @@
 //
-//  GroupsSearchTableViewController.swift
+//  GroupsTableViewController.swift
 //  SocialApp
 //
-//  Created by Игорь Пенкин on 06.10.2020.
+//  Created by Игорь Пенкин on 05.10.2020.
 //
 
 import UIKit
 
-class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpdating {
+class GroupsTableViewController: UITableViewController, UISearchResultsUpdating {
     
-    @IBOutlet weak var groupsSearchTableView: UITableView!
+    @IBOutlet weak var groupsTableView: UITableView!
     
-//    let groupsArray: [Group] = [
-//        Group(name: "First group", image: UIImage(named: "musicGroup")!, followersCount: 111, publicationsCount: 128),
-//        Group(name: "Second group", image: UIImage(named: "musicGroup")!, followersCount: 112, publicationsCount: 128),
-//        Group(name: "Third group", image: UIImage(named: "musicGroup")!, followersCount: 113, publicationsCount: 128),
-//        Group(name: "Fourth group", image: UIImage(named: "musicGroup")!, followersCount: 114, publicationsCount: 128),
-//        Group(name: "Fifth group", image: UIImage(named: "musicGroup")!, followersCount: 115, publicationsCount: 128),
-//        Group(name: "Sixth group", image: UIImage(named: "musicGroup")!, followersCount: 116, publicationsCount: 128),
-//        Group(name: "Seventh group", image: UIImage(named: "musicGroup")!, followersCount: 117, publicationsCount: 128),
-//        Group(name: "Eighth group", image: UIImage(named: "musicGroup")!, followersCount: 118, publicationsCount: 128),
-//        Group(name: "Nineth group", image: UIImage(named: "musicGroup")!, followersCount: 119, publicationsCount: 128),
-//        Group(name: "Tenth group", image: UIImage(named: "musicGroup")!, followersCount: 120, publicationsCount: 128),
-//        Group(name: "Eleventh group", image: UIImage(named: "musicGroup")!, followersCount: 121, publicationsCount: 128),
-//        Group(name: "Twelveth group", image: UIImage(named: "musicGroup")!, followersCount: 122, publicationsCount: 128),
-//        Group(name: "Private group", image: UIImage(named: "musicGroup")!, followersCount: 123, publicationsCount: 128)
-//    ]
-    
+    // Search...
     var searchedGroup: [Group] = []
     let searchField = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
@@ -38,15 +23,14 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
     private var isFiltering: Bool {
         return searchField.isActive && !searchBarIsEmpty
     }
-    
+    //
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        groupsSearchTableView.delegate = self
-        groupsSearchTableView.dataSource = self
+        groupsTableView.delegate = self
+        groupsTableView.dataSource = self
         
-        //navigationItem.largeTitleDisplayMode = .never
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         
@@ -66,23 +50,36 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        /*
+        if isFiltering {
+            return searchedGroup.count
+        } else {
+            return groupsArray.count
+        }
+        */
         switch isFiltering {
         case true:
             return searchedGroup.count
         case false:
-            return GroupDataBase.instance.item.count
+            let rowsOfGroupWeSubscripted = GroupDataBase.instance.item.filter { (i) -> Bool in
+                return i.subscription == true
+            }
+            return rowsOfGroupWeSubscripted.count
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsSearchTableViewCell", for: indexPath) as! GroupsSearchTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsTableViewCell", for: indexPath) as! GroupsTableViewCell
         
         var dataFromArray: Group
         
         if isFiltering {
             dataFromArray = searchedGroup[indexPath.row]
         } else {
-            dataFromArray = GroupDataBase.instance.item[indexPath.row]
+            let rowsOfGroupWeSubscripted = GroupDataBase.instance.item.filter { (i) -> Bool in
+                return i.subscription == true
+            }
+            dataFromArray = rowsOfGroupWeSubscripted[indexPath.row]
         }
         
         cell.groupName.text = dataFromArray.name
@@ -93,25 +90,15 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
 
         return cell
     }
-    /*
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        item[indexPath.row].added = true
-        for i in 0..<GroupDataBase.instance.item.count {
-            if GroupDataBase.instance.item[i].name == item[indexPath.row].title {
-                GroupDataBase.instance.item[i] = item[indexPath.row]
-            }
-        }
-    }
-    */
     
     override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) as? GroupsSearchTableViewCell {
+        if let cell = tableView.cellForRow(at: indexPath) as? GroupsTableViewCell {
             cell.contentView.animationOfTouchDown()
         }
     }
     
     override func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) as? GroupsSearchTableViewCell {
+        if let cell = tableView.cellForRow(at: indexPath) as? GroupsTableViewCell {
             cell.contentView.animationOfTouchUp()
         }
     }
@@ -121,13 +108,13 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedGroup = GroupDataBase.instance.item.filter({ (group: Group) -> Bool in
-            return group.name.lowercased().contains(searchText.lowercased())
-        })
-        groupsSearchTableView.reloadData()
+        searchedGroup = GroupDataBase.instance.item.filter{(i) -> Bool in return i.subscription == true}.filter{(i: Group) -> Bool in return i.name.lowercased().contains(searchText.lowercased())}
+        
+//        searchedGroup = GroupDataBase.instance.item.filter({ (group: Group) -> Bool in
+//            return group.name.lowercased().contains(searchText.lowercased())
+//        })
+        groupsTableView.reloadData()
     }
-    
-    
     
     /*
     // Override to support conditional editing of the table view.
@@ -145,7 +132,7 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
+        }    
     }
     */
 
@@ -164,13 +151,23 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
     }
     */
 
-    /*
+    
     // MARK: - Navigation
-
+    /*
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "showProfile" {
+            if let indexPath = groupsTableView.indexPathForSelectedRow {
+                let group: Group
+                if isFiltering {
+                    group = searchedGroup[indexPath.row]
+                } else {
+                    group = groupsArray[indexPath.row]
+                }
+                let profileVC = segue.destination as! ProfileViewController
+                profileVC.group = group
+            }
+        }
     }
     */
 

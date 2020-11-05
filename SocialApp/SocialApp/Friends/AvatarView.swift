@@ -31,7 +31,7 @@ class AvatarView: UIView {
         view.layer.borderWidth = 5
         view.layer.borderColor = UIColor.white.cgColor
         view.layer.backgroundColor = UIColor.white.cgColor
-        view.layer.cornerRadius = view.bounds.width / 2
+        view.layer.cornerRadius = view.bounds.width * 0.39
         view.layer.shadowOffset = CGSize(width: 0, height: 0)
         view.layer.shadowColor = shadowColor.cgColor
         view.layer.shadowOpacity = shadowOpacity
@@ -40,9 +40,9 @@ class AvatarView: UIView {
         let imageView = UIImageView(image: UIImage(named: avatar))
         imageView.frame = view.bounds
         imageView.layer.masksToBounds = true
-        imageView.layer.cornerRadius = view.bounds.width / 2
-        view.addSubview(imageView)
+        imageView.layer.cornerRadius = view.bounds.width * 0.39
         
+        view.addSubview(imageView)
         self.addSubview(view)
     }
 }
