@@ -9,4 +9,10 @@ import UIKit
 
 class NewsMediaCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var newsMediaPhoto: UIImageView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
 }

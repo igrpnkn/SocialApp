@@ -1,18 +1,16 @@
 //
-//  NewsFooterTableViewCell.swift
+//  FriendProfileAvatarTableViewCell.swift
 //  SocialApp
 //
-//  Created by Игорь Пенкин on 18.10.2020.
+//  Created by Игорь Пенкин on 24.10.2020.
 //
 
 import UIKit
 
-class NewsFooterTableViewCell: UITableViewCell {
+class FriendProfileAvatarTableViewCell: UITableViewCell {
+
+    @IBOutlet weak var photoImage: UIImageView!
     
-    @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var likeCount: UILabel!
-    @IBOutlet weak var commentCount: UILabel!
-    @IBOutlet weak var reviewCount: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -24,4 +22,5 @@ class NewsFooterTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+
 }

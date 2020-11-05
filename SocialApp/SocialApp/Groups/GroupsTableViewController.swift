@@ -91,6 +91,18 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? GroupsTableViewCell {
+            cell.contentView.animationOfTouchDown()
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? GroupsTableViewCell {
+            cell.contentView.animationOfTouchUp()
+        }
+    }
+    
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchController.searchBar.text!)
     }

@@ -77,6 +77,18 @@ class MessengerTableViewController: UITableViewController, UISearchResultsUpdati
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? MessengerTableViewCell {
+            cell.contentView.animationOfTouchDown()
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? MessengerTableViewCell {
+            cell.contentView.animationOfTouchUp()
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             friendsArray.remove(at: indexPath.row)

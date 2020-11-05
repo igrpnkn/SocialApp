@@ -42,8 +42,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     //
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         friendsTableView.delegate = self
@@ -75,6 +73,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     
     // Does not work with method: tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    /*
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch isFiltering {
         case true:
@@ -83,23 +82,20 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             return String(friendIndex[section])
         }
     }
+    */
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 28))
-        sectionHeaderView.backgroundColor = UIColor.systemGray6
-        
+        sectionHeaderView.backgroundColor = UIColor.lightText
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: sectionHeaderView.frame.width, height: 28))
         label.tintColor = .label
-        
         switch isFiltering {
         case true:
             label.text = "Found:"
         case false:
             label.text = String(friendIndex[section])
         }
-        
         sectionHeaderView.addSubview(label)
-        
         return sectionHeaderView
     }
     
@@ -108,7 +104,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         switch isFiltering {
         case true:
             return searchedFriend.count
@@ -118,36 +113,35 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             }
             return buffer.count
         }
-        
-//        let buffer = friendsArray.filter{ (friend) -> Bool in
-//            friendIndex[section] == String(friend.lastName.first!)
-//        }
-//
-//        return buffer.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsTableViewCell", for: indexPath) as! FriendsTableViewCell
-        
         var dataFromArray: User
         if isFiltering {
             dataFromArray = searchedFriend[indexPath.row]
         } else {
-//            let rowsOfGroupWeSubscripted = friendsArray.filter { (i) -> Bool in
-//                return i.friendship == true
-//            }
             let buffer = friendsArray.filter{ (friend) -> Bool in
                 friendIndex[indexPath.section] == String(friend.lastName.first!)
             }
             dataFromArray = buffer[indexPath.row]
         }
-        
-        
         cell.friendName.text = "\(dataFromArray.lastName) \(dataFromArray.name)"
         cell.friendImage.image = dataFromArray.image
         cell.friendLastSeen.text = "Last seen recently"
-        
         return cell
+    }
+        
+    override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? FriendsTableViewCell {
+            cell.contentView.animationOfTouchDown()
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? FriendsTableViewCell {
+            cell.contentView.animationOfTouchUp()
+        }
     }
     
     func updateSearchResults(for searchController: UISearchController) {
@@ -201,10 +195,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
-        case "segueToPhotos":
-            let photosCVC = segue.destination as! PhotosCollectionViewController
-            photosCVC.title = "Photoflow"
-            photosCVC.imageArray = [UIImage(named: "unknown"), UIImage(named: "musicGroup"), UIImage(named: "guy")]
         case "segueToPeople":
             print("Segue to People has been choosen.")
             return
