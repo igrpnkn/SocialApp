@@ -15,20 +15,46 @@ class LoginFormViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let hideKeyboardGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         scrollView?.addGestureRecognizer(hideKeyboardGesture)
+        
+        loginField.delegate = self
+        passwordField.delegate = self
+        loginField.attributedPlaceholder = NSAttributedString(string: "Login", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+        passwordField.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+        loginField.layer.cornerRadius = 18
+        passwordField.layer.cornerRadius = 18
+        //Hide Bar on Login Form, to make it visible on next VC add string below with "false"
+        //self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    func authorization(login: String, password: String) {
+        if login == "admin" && password == "1234" {
+            UserDefaults.standard.set(login, forKey: "userLogin")
+            UserDefaults.standard.synchronize()
+            UserDefaults.standard.set(password, forKey: "userPassword")
+            UserDefaults.standard.synchronize()
+            applicationRunning()
+        } else {
+            print("Access denied!")
+            //performSegue(withIdentifier: "showError", sender: self)
+            let alert = UIAlertController(title: "Error", message: "Authorization failed: invalid login or password.", preferredStyle: .actionSheet)
+            let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+            alert.addAction(action)
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func applicationRunning() {
+        let tbc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "TabBarController") as! TabBarController
+        tbc.modalPresentationStyle = .fullScreen
+        present(tbc, animated: true, completion: nil)
+        //self.navigationController?.pushViewController(tbc, animated: true)
     }
     
     @IBAction func signinButtonPressed(_ sender: Any) {
-        let login = loginField.text!
-        let password = passwordField.text!
-        
-        if login == "admin" && password == "1234" {
-            print("Success!")
-        } else {
-            print("Access denied!")
-        }
+        authorization(login: loginField.text!, password: passwordField.text!)
     }
     
     @objc func keyboardWasShown(notification: Notification) {
@@ -52,6 +78,19 @@ class LoginFormViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWasShown), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillBeHidden(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        //Hide Bar on Login Form, to make it visible on next VC add string below with "false"
+        //self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if UserDefaults.standard.object(forKey: "userLogin") != nil && UserDefaults.standard.object(forKey: "userPassword") != nil {
+            print("Authorization success.")
+            print("\(UserDefaults.standard.object(forKey: "userLogin") ?? "Some login")")
+            print("\(UserDefaults.standard.object(forKey: "userPassword") ?? "Some password")")
+            applicationRunning()
+            //self.dismiss(animated: true, completion: nil)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -64,19 +103,16 @@ class LoginFormViewController: UIViewController {
     @objc func hideKeyboard() {
         self.scrollView?.endEditing(true)
     }
-    
-    
-    
-    
-    
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+}
+
+extension LoginFormViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == loginField {
+            passwordField.becomeFirstResponder()
+        } else {
+            authorization(login: loginField.text!, password: passwordField.text!)
+        }
+        return true
     }
-    */
-
 }
