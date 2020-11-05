@@ -1,25 +1,22 @@
 {
   "images" : [
     {
-      "filename" : "vk_40.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "vk_60.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
-      "filename" : "vk_58.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "vk_87.png",
+      "filename" : "AppIcon87.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
@@ -35,13 +32,13 @@
       "size" : "40x40"
     },
     {
-      "filename" : "vk_120.png",
+      "filename" : "AppIcon120.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
-      "filename" : "vk_180.png",
+      "filename" : "AppIcon180.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
