@@ -57,6 +57,8 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         definesPresentationContext = true
         
         createIndex()
+        NetworkManager.friendsGet()
+        NetworkManager.photosGet()
     }
 
     // MARK: - Table view data source

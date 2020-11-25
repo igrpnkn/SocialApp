@@ -11,22 +11,6 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
     
     @IBOutlet weak var groupsSearchTableView: UITableView!
     
-//    let groupsArray: [Group] = [
-//        Group(name: "First group", image: UIImage(named: "musicGroup")!, followersCount: 111, publicationsCount: 128),
-//        Group(name: "Second group", image: UIImage(named: "musicGroup")!, followersCount: 112, publicationsCount: 128),
-//        Group(name: "Third group", image: UIImage(named: "musicGroup")!, followersCount: 113, publicationsCount: 128),
-//        Group(name: "Fourth group", image: UIImage(named: "musicGroup")!, followersCount: 114, publicationsCount: 128),
-//        Group(name: "Fifth group", image: UIImage(named: "musicGroup")!, followersCount: 115, publicationsCount: 128),
-//        Group(name: "Sixth group", image: UIImage(named: "musicGroup")!, followersCount: 116, publicationsCount: 128),
-//        Group(name: "Seventh group", image: UIImage(named: "musicGroup")!, followersCount: 117, publicationsCount: 128),
-//        Group(name: "Eighth group", image: UIImage(named: "musicGroup")!, followersCount: 118, publicationsCount: 128),
-//        Group(name: "Nineth group", image: UIImage(named: "musicGroup")!, followersCount: 119, publicationsCount: 128),
-//        Group(name: "Tenth group", image: UIImage(named: "musicGroup")!, followersCount: 120, publicationsCount: 128),
-//        Group(name: "Eleventh group", image: UIImage(named: "musicGroup")!, followersCount: 121, publicationsCount: 128),
-//        Group(name: "Twelveth group", image: UIImage(named: "musicGroup")!, followersCount: 122, publicationsCount: 128),
-//        Group(name: "Private group", image: UIImage(named: "musicGroup")!, followersCount: 123, publicationsCount: 128)
-//    ]
-    
     var searchedGroup: [Group] = []
     let searchField = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
@@ -124,6 +108,7 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
         searchedGroup = GroupDataBase.instance.item.filter({ (group: Group) -> Bool in
             return group.name.lowercased().contains(searchText.lowercased())
         })
+        NetworkManager.groupsSearch(search: searchText)
         groupsSearchTableView.reloadData()
     }
     

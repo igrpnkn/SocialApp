@@ -39,6 +39,8 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         searchField.searchBar.placeholder = "Search..."
         navigationItem.searchController = searchField
         definesPresentationContext = true
+        
+        NetworkManager.groupsGet()
     }
 
     // MARK: - Table view data source
