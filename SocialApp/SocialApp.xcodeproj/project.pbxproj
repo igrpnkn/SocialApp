@@ -50,6 +50,7 @@
 		3AFB25162535E44A00908839 /* MessengerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */; };
 		3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */; };
 		3AFB251A25363C2500908839 /* MessageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB251925363C2500908839 /* MessageStatusView.swift */; };
+		3AFBC8D12565C77A0079E2E2 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFBC8D02565C77A0079E2E2 /* Session.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +99,7 @@
 		3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewCell.swift; sourceTree = "<group>"; };
 		3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessengerTableViewCell.xib; sourceTree = "<group>"; };
 		3AFB251925363C2500908839 /* MessageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStatusView.swift; sourceTree = "<group>"; };
+		3AFBC8D02565C77A0079E2E2 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +188,7 @@
 				3A38B906252DD1460057542D /* User.swift */,
 				3A38B909252DD2810057542D /* Group.swift */,
 				3A9CADBF253CB74F00B187FB /* NewsFeed.swift */,
+				3AFBC8D02565C77A0079E2E2 /* Session.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				3A38B90A252DD2810057542D /* Group.swift in Sources */,
 				3A9CADBD253C996000B187FB /* NewsTableViewCell.swift in Sources */,
 				3A6C24D02537497800B97B0E /* AccountTableViewController.swift in Sources */,
+				3AFBC8D12565C77A0079E2E2 /* Session.swift in Sources */,
 				3A0EB2F92523382900BC6F04 /* SceneDelegate.swift in Sources */,
 				3A3553A12544993E00E88C58 /* FriendProfileTableViewCell.swift in Sources */,
 				3A44566C2543138400198FC2 /* RawFeatures.swift in Sources */,
