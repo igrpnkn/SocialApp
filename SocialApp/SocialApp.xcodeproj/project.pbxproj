@@ -21,6 +21,7 @@
 		3A0EB3132526717E00BC6F04 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EB3122526717E00BC6F04 /* TabBarController.swift */; };
 		3A2D55C9252CF37B0085C278 /* GroupsSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D55C8252CF37B0085C278 /* GroupsSearchTableViewController.swift */; };
 		3A2D55CD252CF9720085C278 /* GroupsSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D55CC252CF9720085C278 /* GroupsSearchTableViewCell.swift */; };
+		3A2D5B3B2574223700D029D0 /* Friend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D5B3A2574223700D029D0 /* Friend.swift */; };
 		3A35539B254494C700E88C58 /* FriendProfileAvatarTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A35539A254494C700E88C58 /* FriendProfileAvatarTableViewCell.swift */; };
 		3A35539E2544954C00E88C58 /* FriendProfileDetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A35539D2544954C00E88C58 /* FriendProfileDetailsTableViewCell.swift */; };
 		3A3553A12544993E00E88C58 /* FriendProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3553A02544993E00E88C58 /* FriendProfileTableViewCell.swift */; };
@@ -75,6 +76,7 @@
 		3A0EB3122526717E00BC6F04 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		3A2D55C8252CF37B0085C278 /* GroupsSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsSearchTableViewController.swift; sourceTree = "<group>"; };
 		3A2D55CC252CF9720085C278 /* GroupsSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsSearchTableViewCell.swift; sourceTree = "<group>"; };
+		3A2D5B3A2574223700D029D0 /* Friend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Friend.swift; sourceTree = "<group>"; };
 		3A35539A254494C700E88C58 /* FriendProfileAvatarTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendProfileAvatarTableViewCell.swift; sourceTree = "<group>"; };
 		3A35539D2544954C00E88C58 /* FriendProfileDetailsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendProfileDetailsTableViewCell.swift; sourceTree = "<group>"; };
 		3A3553A02544993E00E88C58 /* FriendProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendProfileTableViewCell.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 		3A0EB2F52523382900BC6F04 /* SocialApp */ = {
 			isa = PBXGroup;
 			children = (
+				3A2D5B3825741E4400D029D0 /* Photoflow */,
 				3A07C8C2256DD1DE004D8B22 /* Network */,
 				3A07C8A1256DAF08004D8B22 /* LoginForm */,
 				3A07C89E256DAE46004D8B22 /* Application */,
@@ -215,11 +218,6 @@
 				3A2D55CF252CFCB00085C278 /* Friends */,
 				3A2D55C7252CF3460085C278 /* Groups */,
 				3A9CADB7253C7A6100B187FB /* News */,
-				3A3553A62544D0A100E88C58 /* PhotoflowViewController.swift */,
-				3A3553AA2544D4BD00E88C58 /* PhotoflowCollectionViewCell.swift */,
-				3A3553AB2544D4BD00E88C58 /* PhotoflowCollectionViewCell.xib */,
-				3AD2379325471D83007E30DA /* FullScreenViewController.swift */,
-				3AD23797254721B9007E30DA /* FullScreenCollectionViewCell.swift */,
 				3A0EB3122526717E00BC6F04 /* TabBarController.swift */,
 				3A0EB2FF2523382C00BC6F04 /* Assets.xcassets */,
 				3A0EB2FC2523382900BC6F04 /* Main.storyboard */,
@@ -257,8 +255,21 @@
 				3A9CADBF253CB74F00B187FB /* NewsFeed.swift */,
 				3A07C8AB256DB441004D8B22 /* UserSession.swift */,
 				3A07C8AE256DB559004D8B22 /* VKScopeBitmask.swift */,
+				3A2D5B3A2574223700D029D0 /* Friend.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		3A2D5B3825741E4400D029D0 /* Photoflow */ = {
+			isa = PBXGroup;
+			children = (
+				3A3553A62544D0A100E88C58 /* PhotoflowViewController.swift */,
+				3A3553AA2544D4BD00E88C58 /* PhotoflowCollectionViewCell.swift */,
+				3A3553AB2544D4BD00E88C58 /* PhotoflowCollectionViewCell.xib */,
+				3AD2379325471D83007E30DA /* FullScreenViewController.swift */,
+				3AD23797254721B9007E30DA /* FullScreenCollectionViewCell.swift */,
+			);
+			path = Photoflow;
 			sourceTree = "<group>";
 		};
 		3A3EA889254072CC002EB846 /* Extensions */ = {
@@ -477,6 +488,7 @@
 				3A9CADC7253CCD2C00B187FB /* NewsTextTableViewCell.swift in Sources */,
 				3ABC48B82548282D00905805 /* FullScreenScrollView.swift in Sources */,
 				3A3553AC2544D4BD00E88C58 /* PhotoflowCollectionViewCell.swift in Sources */,
+				3A2D5B3B2574223700D029D0 /* Friend.swift in Sources */,
 				3A07C8AF256DB559004D8B22 /* VKScopeBitmask.swift in Sources */,
 				3AB5F58D2530A28C0081DB51 /* AvatarView.swift in Sources */,
 				3A63AEBC252BBB8B000C2046 /* GroupsTableViewCell.swift in Sources */,

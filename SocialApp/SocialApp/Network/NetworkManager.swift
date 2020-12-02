@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 
+// Alamofire's class
 extension Session {
     static let custom: Session = {
         let configuration = URLSessionConfiguration.default
@@ -19,19 +20,26 @@ extension Session {
 class NetworkManager {
     
     static func friendsGet() {
-        let userId = UserSession.instance.userId
-        let token = UserSession.instance.token
         let parameters: Parameters = [
-            "user_id": userId,
+            "user_id": UserSession.instance.userId!,
             "lang": "ru",
             "order": "hints",
-            "count": 7,
-            "fields": "first_name,last_name,city,domain",
-            "access_token": token!,
+            "count": 10,
+            "name_case": "nom",
+            "fields": "domain,online,first_name,last_name,nickname,status,bdate,sex,relation,photo_50,photo_400_orig,city,country,occupation,last_seen",
+            "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
-        Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseJSON { respone in
-            print(respone.value)
+        Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseData { response in
+            guard
+                let data = response.value,
+                let friend = try? JSONDecoder().decode(FriendData.self, from: data)
+            else {
+                print("INFO: Data getting failed...")
+                return
+            }
+            print(friend) // print(friend.items.map { $0.firstName } )
+            //print(friend)
         }
     }
     

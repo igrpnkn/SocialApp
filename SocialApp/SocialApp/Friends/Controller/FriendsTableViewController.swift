@@ -40,7 +40,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     private var isFiltering: Bool {
         return searchField.isActive && !searchBarIsEmpty
     }
-    //
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +57,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         
         createIndex()
         NetworkManager.friendsGet()
-        NetworkManager.photosGet()
+        //NetworkManager.photosGet()
     }
 
     // MARK: - Table view data source
