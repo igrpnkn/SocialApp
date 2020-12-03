@@ -11,10 +11,14 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     @IBOutlet weak var friendsTableView: UITableView!
     
-    // Getting friends from all users...
+    // Getting friends from all users Signleton...
+    /*
     let friendsArray: [User] = UserDataBase.instance.item.filter({ (item) -> Bool in
         return item.friendship == true
     })
+    */
+    
+    var friendsArray: [Friend] = []
     
     // Indexation...
     var friendIndex: [String] = []
@@ -29,7 +33,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     //
     
     // Search...
-    var searchedFriend: [User] = []
+    var searchedFriend: [Friend] = []
     let searchField = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
         guard let text = searchField.searchBar.text else {
@@ -40,6 +44,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     private var isFiltering: Bool {
         return searchField.isActive && !searchBarIsEmpty
     }
+    //
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,9 +60,18 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         navigationItem.searchController = searchField
         definesPresentationContext = true
         
-        createIndex()
-        NetworkManager.friendsGet()
-        //NetworkManager.photosGet()
+        NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friendsArray in
+            DispatchQueue.main.async {
+                guard let self = self, let friendsArray = friendsArray else { return }
+                self.friendsArray = friendsArray
+                self.createIndex()
+                self.friendsTableView.reloadData()
+                print("\nFriends from TBC: L = \(friendsArray.count), V = \(friendsArray.count), but self = \(self.friendsArray.count)")
+                print(self.friendsArray.map { $0.firstName } )
+                print("\nCreated index: ")
+                print(self.friendIndex)
+            }
+        }
     }
 
     // MARK: - Table view data source
@@ -73,6 +87,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         //return friendIndex.count
     }
     
+    
     // Does not work with method: tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     /*
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -87,7 +102,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 28))
-        sectionHeaderView.backgroundColor = UIColor.lightText
+        sectionHeaderView.backgroundColor = UIColor.systemGray6
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: sectionHeaderView.frame.width, height: 28))
         label.tintColor = .label
         switch isFiltering {
@@ -118,7 +133,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsTableViewCell", for: indexPath) as! FriendsTableViewCell
-        var dataFromArray: User
+        var dataFromArray: Friend
         if isFiltering {
             dataFromArray = searchedFriend[indexPath.row]
         } else {
@@ -127,9 +142,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             }
             dataFromArray = buffer[indexPath.row]
         }
-        cell.friendName.text = "\(dataFromArray.lastName) \(dataFromArray.name)"
-        cell.friendImage.image = dataFromArray.image
-        cell.friendLastSeen.text = "Last seen recently"
+        cell.configureCell(fullName: "\(dataFromArray.lastName) \(dataFromArray.firstName)", lastSeen: dataFromArray.lastSeen, occupation: dataFromArray.occupationName)
         return cell
     }
         
@@ -150,7 +163,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedFriend = friendsArray.filter({ (i) -> Bool in return i.friendship == true }).filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.name.lowercased().contains(searchText.lowercased())) })
+        searchedFriend = friendsArray.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
         
         friendsTableView.reloadData()
     }
@@ -201,7 +214,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             return
         case "segueToFriendProfile":
             if let indexPath = friendsTableView.indexPathForSelectedRow {
-                let friend: User
+                let friend: Friend
                 if isFiltering {
                     friend = searchedFriend[indexPath.row]
                  } else {
@@ -217,7 +230,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
 //                friend = buffer[indexPath.row]
                 
                 let friendProfileVC = segue.destination as! FriendProfileViewController
-                friendProfileVC.title = "\(friend.lastName) \(friend.name)"
+                friendProfileVC.title = "\(friend.lastName) \(friend.firstName)"
             }
         default:
             print("ERROR - NAVIGATION: Unknown segue from FriendsTableViewController.")

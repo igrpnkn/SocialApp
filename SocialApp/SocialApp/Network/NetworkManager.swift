@@ -19,26 +19,38 @@ extension Session {
 
 class NetworkManager {
     
-    static func friendsGet() {
+    
+    static func friendsGet(for userId: Int, completion: @escaping ([Friend]?) -> Void) -> Request {
         let parameters: Parameters = [
-            "user_id": UserSession.instance.userId!,
+            "user_id": userId,
             "lang": "ru",
             "order": "hints",
-            "count": 10,
+            "count": 100,
             "name_case": "nom",
             "fields": "domain,online,first_name,last_name,nickname,status,bdate,sex,relation,photo_50,photo_400_orig,city,country,occupation,last_seen",
             "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
-        Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseData { response in
+        
+        return Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseData { response in
             guard
-                let data = response.value,
-                let friend = try? JSONDecoder().decode(FriendData.self, from: data)
+                let data = response.value
             else {
                 print("INFO: Data getting failed...")
+                completion(nil)
                 return
             }
-            print(friend) // print(friend.items.map { $0.firstName } )
+            guard
+                let friends = try? JSONDecoder().decode(FriendData.self, from: data)
+            else {
+                print("INFO: JSON parsing failed...")
+                completion(nil)
+                return
+            }
+            
+            completion(friends.response.items)
+            print("\nFriends from NetworkManager: \(friends.response.items.count)")
+            print(friends.response.items.map { $0.firstName } )
             //print(friend)
         }
     }
@@ -47,7 +59,7 @@ class NetworkManager {
         let userId = UserSession.instance.userId
         let token = UserSession.instance.token
         let parameters: Parameters = [
-            "user_id": userId,
+            "user_id": userId!,
             "lang": "ru",
             "extended": 1,
             "fields": "members_count",

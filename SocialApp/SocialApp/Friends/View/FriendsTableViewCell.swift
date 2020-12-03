@@ -12,6 +12,7 @@ class FriendsTableViewCell: UITableViewCell {
     @IBOutlet weak var friendName: UILabel!
     @IBOutlet weak var friendImage: UIImageView!
     @IBOutlet weak var friendLastSeen: UILabel!
+    @IBOutlet weak var friendOccupation: UILabel!
     
     
     override func awakeFromNib() {
@@ -24,5 +25,16 @@ class FriendsTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
+    func configureCell(fullName: String, lastSeen: Int?, occupation: String?) {
+        self.friendName.text = fullName
+        //self.friendImage.image = image
+        if let lastSeenTime = lastSeen {
+            self.friendLastSeen.text = String(lastSeenTime)
+        } else {
+            self.friendLastSeen.text = "Deleted or banned"
+        }
+        self.friendOccupation.text = occupation ?? ""
+    }
+    
 }
