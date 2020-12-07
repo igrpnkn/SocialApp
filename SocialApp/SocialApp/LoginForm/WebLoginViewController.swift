@@ -63,11 +63,11 @@ extension WebLoginViewController: WKNavigationDelegate {
         
         if let token = params["access_token"] {
             UserSession.instance.token = token
-            print("Acctual user token is: \(UserSession.instance.token!)")
+            print("\nINFO: Acctual user token is: \(UserSession.instance.token!)")
         }
         if let userId = params["user_id"] {
             UserSession.instance.userId = Int(userId)
-            print("Acctual user ID is: \(UserSession.instance.userId!)")
+            print("INFO: Acctual user ID is: \(UserSession.instance.userId!)")
         }
         
         decisionHandler(.cancel)

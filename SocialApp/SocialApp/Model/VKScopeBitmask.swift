@@ -17,8 +17,9 @@ struct VKScopeBitmask: OptionSet {
     static let wall = VKScopeBitmask(rawValue: 1 << 13)
     static let offline = VKScopeBitmask(rawValue: 1 << 16)
     static let groups = VKScopeBitmask(rawValue: 1 << 18)
+    static let notifications = VKScopeBitmask(rawValue: 1 << 19)
     
     static let all: VKScopeBitmask = [
-        .notify, .friends, .photos, .status, .wall, .offline, .groups
+        .notify, .friends, .photos, .status, .wall, .offline, .groups, .notifications
     ]
 }

@@ -10,14 +10,9 @@ import UIKit
 class FriendsTableViewController: UITableViewController, UISearchResultsUpdating {
     
     @IBOutlet weak var friendsTableView: UITableView!
+    let activityIndicator = UIActivityIndicatorView()
     
-    // Getting friends from all users Signleton...
-    /*
-    let friendsArray: [User] = UserDataBase.instance.item.filter({ (item) -> Bool in
-        return item.friendship == true
-    })
-    */
-    
+    // Array for downloaded objects
     var friendsArray: [Friend] = []
     
     // Indexation...
@@ -29,6 +24,8 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             temporaryIndex.append(String(item.lastName.first!))
         }
         friendIndex = Array(Set(temporaryIndex)).sorted()
+        print("\nCreated index: ")
+        print(self.friendIndex)
     }
     //
     
@@ -60,18 +57,10 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         navigationItem.searchController = searchField
         definesPresentationContext = true
         
-        NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friendsArray in
-            DispatchQueue.main.async {
-                guard let self = self, let friendsArray = friendsArray else { return }
-                self.friendsArray = friendsArray
-                self.createIndex()
-                self.friendsTableView.reloadData()
-                print("\nFriends from TBC: L = \(friendsArray.count), V = \(friendsArray.count), but self = \(self.friendsArray.count)")
-                print(self.friendsArray.map { $0.firstName } )
-                print("\nCreated index: ")
-                print(self.friendIndex)
-            }
-        }
+        startActivityIndicator()
+        downloadFriends()
+        
+        print("\nINFO: FriendsTableViewController.viewDidLoad()\n")
     }
 
     // MARK: - Table view data source
@@ -102,7 +91,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 28))
-        sectionHeaderView.backgroundColor = UIColor.systemGray6
+        sectionHeaderView.backgroundColor = UIColor.systemGray5
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: sectionHeaderView.frame.width, height: 28))
         label.tintColor = .label
         switch isFiltering {
@@ -142,7 +131,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             }
             dataFromArray = buffer[indexPath.row]
         }
-        cell.configureCell(fullName: "\(dataFromArray.lastName) \(dataFromArray.firstName)", lastSeen: dataFromArray.lastSeen, occupation: dataFromArray.occupationName)
+        cell.configureCell(fullName: "\(dataFromArray.lastName) \(dataFromArray.firstName)", lastSeen: dataFromArray.lastSeen, occupation: dataFromArray.occupationName, avatar: dataFromArray.avatar, online: dataFromArray.online)
         return cell
     }
         
@@ -164,7 +153,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     func filterContentForSearchText(_ searchText: String) {
         searchedFriend = friendsArray.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
-        
         friendsTableView.reloadData()
     }
     
@@ -210,9 +198,10 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case "segueToPeople":
-            print("Segue to People has been choosen.")
+            print("\nINFO: Segue to SearchPeopleViewController has been choosen.\n")
             return
         case "segueToFriendProfile":
+            print("\nINFO: Segue to FriendProfileViewController has been choosen.\n")
             if let indexPath = friendsTableView.indexPathForSelectedRow {
                 let friend: Friend
                 if isFiltering {
@@ -223,20 +212,66 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
                     }
                     friend = buffer[indexPath.row]
                  }
-                
-//                let buffer = friendsArray.filter{ (friend) -> Bool in
-//                    friendIndex[indexPath.section] == String(friend.lastName.first!)
-//                }
-//                friend = buffer[indexPath.row]
-                
                 let friendProfileVC = segue.destination as! FriendProfileViewController
-                friendProfileVC.title = "\(friend.lastName) \(friend.firstName)"
+                friendProfileVC.friendProfile = friend
             }
         default:
             print("ERROR - NAVIGATION: Unknown segue from FriendsTableViewController.")
             return
         }
-        
+    }
+    
+}
+
+extension FriendsTableViewController {
+    
+    func downloadFriends() {
+        NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friendsArray in
+            DispatchQueue.main.async {
+                guard let self = self, let friendsArray = friendsArray else { return }
+                self.friendsArray = friendsArray
+                print("\nFriends from TBC: L = \(friendsArray.count), V = \(friendsArray.count), and SELF = \(self.friendsArray.count)")
+                print(self.friendsArray.map { $0.firstName } )
+                
+                self.createIndex()
+                
+                self.friendsTableView.reloadData()
+                print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
+                
+                self.downloadAvatars()
+            }
+        }
+    }
+    
+    func downloadAvatars() {
+        //DispatchQueue.main.async {
+        for friend in self.friendsArray {
+            if let url = URL(string: friend.photo50!) {
+                guard let data = try? Data(contentsOf: url) else { return }
+                friend.avatar = UIImage(data: data)
+                print("Photo downloaded: \(url)")
+            }
+        }
+        self.friendsTableView.reloadData()
+        print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
+        stopActivityIndicator()
+        print("\nAll photos is downloaded...")
+        print("\nActivity indicator is hidden...")
+        //}
+    }
+
+    func startActivityIndicator() {
+        activityIndicator.center.x = self.view.center.x
+        activityIndicator.center.y = self.view.frame.width / 5
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .large
+        self.view.addSubview(activityIndicator)
+    }
+    
+    func stopActivityIndicator() {
+        self.activityIndicator.stopAnimating()
+        self.activityIndicator.isHidden = true
     }
     
 }

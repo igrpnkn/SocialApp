@@ -11,6 +11,8 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
     
     @IBOutlet weak var groupsSearchTableView: UITableView!
     
+    var searchedGroupsArray: [Group] = []
+    
     var searchedGroup: [Group] = []
     let searchField = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
@@ -54,7 +56,7 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
         case true:
             return searchedGroup.count
         case false:
-            return GroupDataBase.instance.item.count
+            return searchedGroupsArray.count
         }
     }
 
@@ -66,14 +68,10 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
         if isFiltering {
             dataFromArray = searchedGroup[indexPath.row]
         } else {
-            dataFromArray = GroupDataBase.instance.item[indexPath.row]
+            dataFromArray = searchedGroupsArray[indexPath.row]
         }
         
         cell.groupName.text = dataFromArray.name
-        cell.groupImage.image = dataFromArray.image
-        cell.groupFollowers.text = "\(dataFromArray.followersCount ?? 0) followers"
-        cell.groupSubscription.isHidden = !dataFromArray.subscription
-        cell.groupDescription.text = dataFromArray.description
 
         return cell
     }
@@ -105,7 +103,7 @@ class GroupsSearchTableViewController: UITableViewController, UISearchResultsUpd
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedGroup = GroupDataBase.instance.item.filter({ (group: Group) -> Bool in
+        searchedGroup = searchedGroupsArray.filter({ (group: Group) -> Bool in
             return group.name.lowercased().contains(searchText.lowercased())
         })
         NetworkManager.groupsSearch(search: searchText)

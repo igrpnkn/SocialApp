@@ -10,6 +10,9 @@ import UIKit
 class GroupsTableViewController: UITableViewController, UISearchResultsUpdating {
     
     @IBOutlet weak var groupsTableView: UITableView!
+    let activityIndicator = UIActivityIndicatorView()
+    
+    var groupsArray: [Group] = []
     
     // Search...
     var searchedGroup: [Group] = []
@@ -27,10 +30,8 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         groupsTableView.delegate = self
         groupsTableView.dataSource = self
-        
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         
@@ -40,7 +41,10 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         navigationItem.searchController = searchField
         definesPresentationContext = true
         
-        NetworkManager.groupsGet()
+        startActivityIndicator()
+        downloadUserGroups()
+        
+        print("\nINFO: GroupsTableViewController.viewDidLoad() is completed.")
     }
 
     // MARK: - Table view data source
@@ -51,45 +55,23 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        /*
-        if isFiltering {
-            return searchedGroup.count
-        } else {
-            return groupsArray.count
-        }
-        */
         switch isFiltering {
         case true:
             return searchedGroup.count
         case false:
-            let rowsOfGroupWeSubscripted = GroupDataBase.instance.item.filter { (i) -> Bool in
-                return i.subscription == true
-            }
-            return rowsOfGroupWeSubscripted.count
+            return groupsArray.count
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsTableViewCell", for: indexPath) as! GroupsTableViewCell
-        
         var dataFromArray: Group
-        
         if isFiltering {
             dataFromArray = searchedGroup[indexPath.row]
         } else {
-            let rowsOfGroupWeSubscripted = GroupDataBase.instance.item.filter { (i) -> Bool in
-                return i.subscription == true
-            }
-            dataFromArray = rowsOfGroupWeSubscripted[indexPath.row]
+            dataFromArray = groupsArray[indexPath.row]
         }
-        
-        cell.groupName.text = dataFromArray.name
-        cell.groupImage.image = dataFromArray.image
-        cell.groupFollowers.text = "\(dataFromArray.followersCount ?? 0) followers"
-        cell.groupSubscription.isHidden = !dataFromArray.subscription
-        cell.groupDescription.text = dataFromArray.description
-
+        cell.configureCell(name: dataFromArray.name, image: dataFromArray.avatar, followersCount: dataFromArray.membersCount, activity: dataFromArray.activity)
         return cell
     }
     
@@ -110,11 +92,7 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedGroup = GroupDataBase.instance.item.filter{(i) -> Bool in return i.subscription == true}.filter{(i: Group) -> Bool in return i.name.lowercased().contains(searchText.lowercased())}
-        
-//        searchedGroup = GroupDataBase.instance.item.filter({ (group: Group) -> Bool in
-//            return group.name.lowercased().contains(searchText.lowercased())
-//        })
+        searchedGroup = groupsArray.filter{(i: Group) -> Bool in return i.name.lowercased().contains(searchText.lowercased())}
         groupsTableView.reloadData()
     }
     
@@ -173,4 +151,55 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     }
     */
 
+}
+
+extension GroupsTableViewController {
+    
+    func downloadUserGroups() {
+        NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groupsArray in
+            DispatchQueue.main.async {
+                guard let self = self, let groupsArray = groupsArray else { return }
+                self.groupsArray = groupsArray
+                print("\nFriends from TBC: L = \(groupsArray.count), V = \(groupsArray.count), and SELF = \(self.groupsArray.count)")
+                print(self.groupsArray.map { $0.name } )
+                
+                self.groupsTableView.reloadData()
+                print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
+                
+                self.downloadAvatars()
+            }
+        }
+    }
+    
+    func downloadAvatars() {
+        //DispatchQueue.main.async {
+        for group in self.groupsArray {
+            if let url = URL(string: group.photo50!) {
+                guard let data = try? Data(contentsOf: url) else { return }
+                group.avatar = UIImage(data: data)
+                print("Photo downloaded: \(url)")
+            }
+        }
+        self.groupsTableView.reloadData()
+        print("\nINFO: TableView is reload from GroupsTableViewController.downloadAvatars() func.")
+        stopActivityIndicator()
+        print("\nAll photos is downloaded...")
+        print("\nActivity indicator is hidden...")
+        //}
+    }
+    
+    func startActivityIndicator() {
+        activityIndicator.center.x = self.view.center.x
+        activityIndicator.center.y = self.view.frame.width / 5
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .large
+        self.view.addSubview(activityIndicator)
+    }
+    
+    func stopActivityIndicator() {
+        self.activityIndicator.stopAnimating()
+        self.activityIndicator.isHidden = true
+    }
+    
 }

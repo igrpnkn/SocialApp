@@ -39,6 +39,10 @@ class AccountTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        print("\nINFO: AccountTableViewController is loaded from parent: " + (self.parent?.debugDescription ?? "AccountTableViewController has no parent."))
+        
+        //NetworkManager.photosGetForProfile(for: UserSession.instance.userId!)
     }
 
     // MARK: - Table view data source

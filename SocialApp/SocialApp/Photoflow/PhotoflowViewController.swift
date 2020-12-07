@@ -10,17 +10,19 @@ import UIKit
 class PhotoflowViewController: UIViewController {
 
     @IBOutlet weak var photoflowCollectionView: UICollectionView!
+    let activityIndicator = UIActivityIndicatorView()
     
     let reuseIdentifier = "PhotoflowCollectionViewCell"
+    var photoflow: [Photo] = []
     var photoArray: [UIImage?] = []
+    var userId: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         photoflowCollectionView.dataSource = self
         photoflowCollectionView.delegate = self
-        for i in 0...10 {
-            photoArray.append(UIImage(named: "guy\(i)"))
-        }
+        startActivityIndicator()
+        downloadPhotoflow()
     }
     
 
@@ -63,4 +65,57 @@ extension PhotoflowViewController: UICollectionViewDataSource, UICollectionViewD
         vc.indexPath = indexPath
         self.navigationController?.pushViewController(vc, animated: true)
     }
+}
+
+extension PhotoflowViewController {
+    
+    func downloadPhotoflow() {
+        NetworkManager.photosGetForProfile(for: userId!) { [weak self] photoflow in
+            DispatchQueue.main.async {
+                guard let self = self, let photoflow = photoflow else { return }
+                self.photoflow = photoflow
+                //print(self.photoData.map { $0.type } )
+                print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
+                self.downloadPhotos()
+            }
+        }
+    }
+    
+    func downloadPhotos() {
+        //DispatchQueue.main.async {
+        for photo in self.photoflow {
+            let size = photo.sizes.filter { (size) -> Bool in
+                return size.type == "x"
+            }
+            guard let photoURL = size.last?.url else {
+                return
+            }
+            if let url = URL(string: photoURL) {
+                guard let data = try? Data(contentsOf: url) else { return }
+                photoArray.append(UIImage(data: data))
+                print("Photo downloaded: \(url)")
+            }
+        }
+        self.photoflowCollectionView.reloadData()
+        print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
+        stopActivityIndicator()
+        print("\nAll photos is downloaded...")
+        print("\nActivity indicator is hidden...")
+        //}
+    }
+
+    func startActivityIndicator() {
+        activityIndicator.center.x = self.view.center.x
+        activityIndicator.center.y = self.view.frame.width / 2
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .large
+        self.view.addSubview(activityIndicator)
+    }
+    
+    func stopActivityIndicator() {
+        self.activityIndicator.stopAnimating()
+        self.activityIndicator.isHidden = true
+    }
+    
 }

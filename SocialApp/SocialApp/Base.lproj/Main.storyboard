@@ -129,7 +129,7 @@
                         <subviews>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c2B-pc-U2i">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" systemColor="labelColor"/>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                     <wkPreferences key="preferences"/>
@@ -137,7 +137,7 @@
                             </wkWebView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="UHQ-XS-6VT"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="labelColor"/>
                         <constraints>
                             <constraint firstItem="UHQ-XS-6VT" firstAttribute="bottom" secondItem="c2B-pc-U2i" secondAttribute="bottom" id="6a6-os-gk5"/>
                             <constraint firstItem="c2B-pc-U2i" firstAttribute="top" secondItem="UHQ-XS-6VT" secondAttribute="top" id="HRt-L6-urL"/>
@@ -266,7 +266,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vMA-Xe-AqA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2271" y="-2737"/>
+            <point key="canvasLocation" x="2270.625" y="-2738.0281690140846"/>
         </scene>
         <!--People-->
         <scene sceneID="OBc-pz-gEL">
@@ -1203,7 +1203,7 @@
                                                                 <constraint firstAttribute="height" constant="24" id="rdu-rf-6GH"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Work" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yDQ-A4-Xvk">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Work" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yDQ-A4-Xvk">
                                                             <rect key="frame" x="34" y="0.0" width="266" height="24"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="24" id="Xbv-l6-hIH"/>
@@ -1343,7 +1343,6 @@
                                             <outlet property="icon" destination="asv-tS-Bfr" id="gc1-YH-pvo"/>
                                             <outlet property="subTitle" destination="l8d-X4-cVy" id="A4Y-oV-HRC"/>
                                             <outlet property="title" destination="dWF-Av-w16" id="PDC-ql-L12"/>
-                                            <segue destination="kl9-kL-Upz" kind="show" id="4ze-vj-llw"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1416,7 +1415,7 @@
                         <viewLayoutGuide key="safeArea" id="pwq-RD-Kma"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Photoflow" largeTitleDisplayMode="never" id="3EV-aI-fZV"/>
+                    <navigationItem key="navigationItem" title="Photoflow" largeTitleDisplayMode="always" id="3EV-aI-fZV"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="photoflowCollectionView" destination="6K3-mk-wqr" id="Zr2-Od-cPd"/>
@@ -1424,7 +1423,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wrH-sR-T1d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4176" y="-2738"/>
+            <point key="canvasLocation" x="3921" y="-2738"/>
         </scene>
         <!--Full Screen View Controller-->
         <scene sceneID="M2G-b4-zCu">
@@ -1500,7 +1499,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BLf-ob-sVH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4942.5" y="-2738.0281690140846"/>
+            <point key="canvasLocation" x="4553" y="-2738"/>
         </scene>
         <!--Friends-->
         <scene sceneID="hqs-6f-22o">

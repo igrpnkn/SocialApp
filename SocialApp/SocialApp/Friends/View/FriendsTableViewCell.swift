@@ -26,15 +26,29 @@ class FriendsTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configureCell(fullName: String, lastSeen: Int?, occupation: String?) {
+    func configureCell(fullName: String, lastSeen: Int?, occupation: String?, avatar: UIImage?, online: Int?) {
         self.friendName.text = fullName
-        //self.friendImage.image = image
-        if let lastSeenTime = lastSeen {
-            self.friendLastSeen.text = String(lastSeenTime)
-        } else {
-            self.friendLastSeen.text = "Deleted or banned"
-        }
+        self.friendImage.image = avatar ?? UIImage(named: "camera")
         self.friendOccupation.text = occupation ?? ""
+        
+        switch online {
+        case 1:
+            self.friendLastSeen.text = "Online"
+            self.friendLastSeen.textColor = .systemGreen
+        default:
+            if let lastSeenTime = lastSeen {
+                let date = Date(timeIntervalSince1970: Double(lastSeenTime))
+                let dateFormatter = DateFormatter()
+                dateFormatter.timeStyle = DateFormatter.Style.short //Set time style
+                dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+                dateFormatter.timeZone = .current
+                let localDate = dateFormatter.string(from: date)
+                self.friendLastSeen.text = "Last seen " + String(localDate)
+                self.friendLastSeen.textColor = .systemGray
+            } else {
+                self.friendLastSeen.text = "Deleted or banned profile"
+            }
+        }
     }
     
 }

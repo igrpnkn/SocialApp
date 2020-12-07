@@ -28,7 +28,6 @@ class MessengerTableViewController: UITableViewController, UISearchResultsUpdati
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("TabBarController is loaded with token \(UserSession.instance.token)")
         
         self.messengerTableView.delegate = self
         self.messengerTableView.dataSource = self

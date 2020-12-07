@@ -13,6 +13,7 @@ class TabBarController: UITabBarController {
         super.viewDidLoad()
         self.selectedIndex = 2
         // Do any additional setup after loading the view.
+        print("INFO: TabBarController is loaded with token \(UserSession.instance.token!)\n")
     }
     
 

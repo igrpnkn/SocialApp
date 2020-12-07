@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: - Parsing with Codable
 //struct Friend: Codable {
@@ -74,12 +75,15 @@ class Friend: Decodable {
     var bdate: String? = ""
     var city: String? = ""
     var country: String? = ""
-    var photo400orig: String? = ""
+    var photoMax: String? = ""
     var status: String? = ""
     var lastSeen: Int? = 0
     var occupationName: String? = ""
     var occupationType: String? = ""
     var relation: Int? = 0
+    // property to save avatar downloaded separately
+    var avatar: UIImage?
+    var avatarMax: UIImage?
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
@@ -95,7 +99,7 @@ class Friend: Decodable {
         case bdate = "bdate"
         case city = "city" // container
         case country = "country" // container
-        case photo400orig = "photo_400_orig"
+        case photoMax = "photo_max"
         case status = "status"
         case lastSeen = "last_seen" // container
         case occupation = "occupation" // container
@@ -132,7 +136,7 @@ class Friend: Decodable {
         self.nickname = try? values.decode(String.self, forKey: .nickname)
         self.domain = try? values.decode(String.self, forKey: .domain)
         self.bdate = try? values.decode(String.self, forKey: .bdate)
-        self.photo400orig = try? values.decode(String.self, forKey: .photo400orig)
+        self.photoMax = try? values.decode(String.self, forKey: .photoMax)
         self.status = try? values.decode(String.self, forKey: .status)
         self.relation = try? values.decode(Int.self, forKey: .relation)
 

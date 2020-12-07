@@ -19,20 +19,19 @@ extension Session {
 
 class NetworkManager {
     
-    
-    static func friendsGet(for userId: Int, completion: @escaping ([Friend]?) -> Void) -> Request {
+    static func friendsGet(for userId: Int, completion: @escaping ([Friend]?) -> Void) {
         let parameters: Parameters = [
             "user_id": userId,
             "lang": "ru",
             "order": "hints",
-            "count": 100,
+            "count": 500,
             "name_case": "nom",
-            "fields": "domain,online,first_name,last_name,nickname,status,bdate,sex,relation,photo_50,photo_400_orig,city,country,occupation,last_seen",
+            "fields": "domain,online,first_name,last_name,nickname,status,bdate,sex,relation,photo_50,photo_max,city,country,occupation,last_seen",
             "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
         
-        return Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseData { response in
+        Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseData { response in
             guard
                 let data = response.value
             else {
@@ -47,28 +46,42 @@ class NetworkManager {
                 completion(nil)
                 return
             }
-            
             completion(friends.response.items)
             print("\nFriends from NetworkManager: \(friends.response.items.count)")
             print(friends.response.items.map { $0.firstName } )
-            //print(friend)
         }
     }
     
-    static func groupsGet() {
-        let userId = UserSession.instance.userId
-        let token = UserSession.instance.token
+    static func groupsGet(for userId: Int, completion: @escaping ([Group]?) -> Void) {
         let parameters: Parameters = [
-            "user_id": userId!,
+            "user_id": userId,
             "lang": "ru",
             "extended": 1,
-            "fields": "members_count",
-            "count": 10,
-            "access_token": token!,
+            "fields": "activity,members_count,photo_50",
+            "count": 500,
+            "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
-        Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters).responseJSON { respone in
-            print(respone.value)
+        
+        Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters).responseData { response in
+            //print(response.value)
+            guard
+                let data = response.value
+            else {
+                print("\nINFO: Data getting failed...")
+                completion(nil)
+                return
+            }
+            guard
+                let groups = try? JSONDecoder().decode(GroupData.self, from: data)
+            else {
+                print("\nINFO: JSON parsing failed...")
+                completion(nil)
+                return
+            }
+            completion(groups.response.items)
+            print("\nGroups from NetworkManager: \(groups.response.items.count)")
+            print(groups.response.items.map { $0.name } )
         }
     }
     
@@ -82,26 +95,47 @@ class NetworkManager {
             "access_token": token!,
             "v": "5.126"
         ]
+        
         Session.custom.request("https://api.vk.com/method/groups.search", parameters: parameters).responseJSON { respone in
             print(respone.value)
         }
     }
     
-    static func photosGet() {
-        let userId = UserSession.instance.userId
-        let token = UserSession.instance.token
+    static func photosGetForProfile(for userId: Int, completion: @escaping ([Photo]?) -> Void) {
         let parameters: Parameters = [
-            "onwer_id": userId,
+            "owner_id": userId,
             "lang": "ru",
             "album_id": "profile",
             "extended": 1,
             "photo_sizes": 1,
             "count": 10,
-            "access_token": token!,
+            "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
-        Session.custom.request("https://api.vk.com/method/photos.get", parameters: parameters).responseJSON { respone in
-            print(respone.value)
+        
+        Session.custom.request("https://api.vk.com/method/photos.get", parameters: parameters).responseData { response in
+            //print(response.value)
+            guard
+                let data = response.value
+            else {
+                print("\nINFO: Data getting failed...")
+                completion(nil)
+                return
+            }
+            guard
+                let photos = try? JSONDecoder().decode(PhotoData.self, from: data)
+            else {
+                print("\nINFO: JSON parsing failed...")
+                completion(nil)
+                return
+            }
+            completion(photos.response.items)
+            print("\nPhotos from JSON - count: \(photos.response.count)")
+            print("\nPhotos from NetworkManager: \(photos.response.items.count)")
+            print(photos.response.items.map { $0.id } )
+            print(photos.response.items.map { $0.sizes.map { $0.url
+            } } )
+            //print(photos)
         }
     }
 }
