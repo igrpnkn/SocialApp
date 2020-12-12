@@ -7,18 +7,19 @@
 
 import Foundation
 import UIKit
+import RealmSwift
 
 // MARK: - Parsing with Decodable
-class Group: Decodable {
+class Group: Object, Decodable {
     // required fields
-    var id: Int = 0
-    var name: String = ""
+    @objc dynamic var id: Int = 0
+    @objc dynamic var name: String = ""
     // optional fields
-    var activity: String? = ""
-    var membersCount: Int? = 0
-    var photo50: String? = ""
+    @objc dynamic var activity: String? = ""
+    @objc dynamic var membersCount: Int = 0
+    @objc dynamic var photo50: String? = ""
     // property to save avatar downloaded separately
-    var avatar: UIImage?
+    var avatar: UIImage = UIImage(named: "camera")!
     
     enum CodingKeys: String, CodingKey {
         case id = "id"
@@ -28,12 +29,18 @@ class Group: Decodable {
         case photo50 = "photo_50"
     }
     
+    override init() {
+        super.init()
+    }
+    
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(Int.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
         self.activity = try? container.decode(String.self, forKey: .activity)
-        self.membersCount = try? container.decode(Int.self, forKey: .membersCount)
+        if let membersCountValue = try? container.decode(Int.self, forKey: .membersCount) {
+            self.membersCount = membersCountValue
+        }
         self.photo50 = try? container.decode(String.self, forKey: .photo50)
     }
 }

@@ -12,7 +12,7 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     @IBOutlet weak var groupsTableView: UITableView!
     let activityIndicator = UIActivityIndicatorView()
     
-    var groupsArray: [Group] = []
+    var groupsArray: [Group] = RealmManager.groupsGetFromRealm() ?? []
     
     // Search...
     var searchedGroup: [Group] = []
@@ -42,9 +42,19 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         definesPresentationContext = true
         
         startActivityIndicator()
-        downloadUserGroups()
         
-        print("\nINFO: GroupsTableViewController.viewDidLoad() is completed.")
+        //RealmManager.deleteAllGroupsObject()
+        if self.groupsArray.isEmpty {
+            downloadUserGroups()
+            print("\nINFO: GroupsTableViewController.viewDidLoad()")
+            print("\nINFO: Groups were loaded from Internet.")
+        }
+        else {
+            print(self.groupsArray.map { $0.name } )
+            self.downloadAvatars()
+            print("\nINFO: Groups were loaded from Realm...\n")
+            stopActivityIndicator()
+        }
     }
 
     // MARK: - Table view data source
@@ -160,12 +170,10 @@ extension GroupsTableViewController {
             DispatchQueue.main.async {
                 guard let self = self, let groupsArray = groupsArray else { return }
                 self.groupsArray = groupsArray
-                print("\nFriends from TBC: L = \(groupsArray.count), V = \(groupsArray.count), and SELF = \(self.groupsArray.count)")
+                print("\nINFO: Groups from GroupsTableViewController: \(self.groupsArray.count)")
                 print(self.groupsArray.map { $0.name } )
-                
                 self.groupsTableView.reloadData()
-                print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
-                
+                print("\nINFO: GroupsTableView is reload from NetworkManager.friendsGet(for:) closure.")
                 self.downloadAvatars()
             }
         }
@@ -176,15 +184,16 @@ extension GroupsTableViewController {
         for group in self.groupsArray {
             if let url = URL(string: group.photo50!) {
                 guard let data = try? Data(contentsOf: url) else { return }
-                group.avatar = UIImage(data: data)
-                print("Photo downloaded: \(url)")
+                group.avatar = UIImage(data: data) ?? UIImage(named: "camera")!
+                //print("Photo downloaded: \(url)")
             }
         }
+        RealmManager.saveGotGroupsInRealm(groups: self.groupsArray)
         self.groupsTableView.reloadData()
-        print("\nINFO: TableView is reload from GroupsTableViewController.downloadAvatars() func.")
+        print("\nINFO: GroupsTableView is reload from GroupsTableViewController.downloadAvatars() func.")
         stopActivityIndicator()
-        print("\nAll photos is downloaded...")
-        print("\nActivity indicator is hidden...")
+        print("\nINFO: All photos is downloaded.")
+        print("\nINFO: Activity indicator is hidden.")
         //}
     }
     

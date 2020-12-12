@@ -7,5 +7,7 @@ target 'SocialApp' do
 
   # Pods for SocialApp
   pod 'Alamofire', '~> 5.4'
+  pod 'RealmSwift', '~> 10.3'
+  pod 'SwiftKeychainWrapper', '~> 4.0'
 
 end

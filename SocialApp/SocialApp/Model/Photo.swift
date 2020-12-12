@@ -7,12 +7,13 @@
 
 import Foundation
 import UIKit
+import RealmSwift
 
-class PhotoSizes: Decodable {
-    var height: Int? = 0
-    var type: String? = ""
-    var url: String? = ""
-    var width: Int? = 0
+class PhotoSizes: Object, Decodable {
+    @objc dynamic var height: Int = 0
+    @objc dynamic var type: String? = ""
+    @objc dynamic var url: String? = ""
+    @objc dynamic var width: Int = 0
     
     enum CodingKeys: String, CodingKey {
         case height = "height"
@@ -21,22 +22,30 @@ class PhotoSizes: Decodable {
         case width = "width"
     }
     
+    override init() {
+        super.init()
+    }
+    
     required init(from decoder: Decoder) throws {
         let container = try? decoder.container(keyedBy: CodingKeys.self)
-        self.height = try? container?.decode(Int.self, forKey: .height)
         self.type = try? container?.decode(String.self, forKey: .type)
         self.url = try? container?.decode(String.self, forKey: .url)
-        self.width = try? container?.decode(Int.self, forKey: .width)
+        if let widthValue = try? container?.decode(Int.self, forKey: .width) {
+            self.width = widthValue
+        }
+        if let heightValue = try? container?.decode(Int.self, forKey: .height) {
+            self.height = heightValue
+        }
     }
 }
 
-class Photo: Decodable {
-    var date: Int
-    var id: Int
+class Photo: Object, Decodable {
+    @objc dynamic var date: Int = 0
+    @objc dynamic var id: Int = 0
     //var commentsCount: Int
     //var likesCount: Int
-    var text: String
-    var sizes: [PhotoSizes]
+    @objc dynamic var text: String = ""
+    var sizes = List<PhotoSizes>()
 }
 
 class PhotoResponse: Decodable {

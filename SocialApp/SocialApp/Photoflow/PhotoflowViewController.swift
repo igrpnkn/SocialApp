@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class PhotoflowViewController: UIViewController {
 
@@ -13,16 +14,27 @@ class PhotoflowViewController: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     
     let reuseIdentifier = "PhotoflowCollectionViewCell"
-    var photoflow: [Photo] = []
+    var photoflow: [Photo] = RealmManager.photosGetFromRealm() ?? []
     var photoArray: [UIImage?] = []
     var userId: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        photoflowCollectionView.frame.size = CGSize(width: self.view.bounds.width, height: self.view.bounds.height)
         photoflowCollectionView.dataSource = self
         photoflowCollectionView.delegate = self
         startActivityIndicator()
-        downloadPhotoflow()
+        
+        //RealmManager.deleteAllPhotosObject()
+        if self.photoflow.isEmpty {
+            downloadPhotoflow()
+            print("\nINFO: PhotoflowViewController.viewDidLoad()")
+            print("\nINFO: Photoflow was loaded from Internet.")
+        }
+        else {
+            self.downloadPhotos()
+            print("\nINFO: Photos were loaded from Realm.\n")
+        }
     }
     
 
@@ -74,8 +86,9 @@ extension PhotoflowViewController {
             DispatchQueue.main.async {
                 guard let self = self, let photoflow = photoflow else { return }
                 self.photoflow = photoflow
+                RealmManager.saveGotPhotosInRealm(photos: self.photoflow)
                 //print(self.photoData.map { $0.type } )
-                print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
+                //print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
                 self.downloadPhotos()
             }
         }
@@ -87,7 +100,7 @@ extension PhotoflowViewController {
             let size = photo.sizes.filter { (size) -> Bool in
                 return size.type == "x"
             }
-            guard let photoURL = size.last?.url else {
+            guard let photoURL = size.first?.url else {
                 return
             }
             if let url = URL(string: photoURL) {
@@ -97,10 +110,10 @@ extension PhotoflowViewController {
             }
         }
         self.photoflowCollectionView.reloadData()
-        print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
+        print("\nINFO: TableView is reload from PhotoflowViewController.downloadPhotos() method.")
         stopActivityIndicator()
-        print("\nAll photos is downloaded...")
-        print("\nActivity indicator is hidden...")
+        print("\nINFO: All photos are downloaded.")
+        print("\nINFO: Activity indicator is hidden.")
         //}
     }
 

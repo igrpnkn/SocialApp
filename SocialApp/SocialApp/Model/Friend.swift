@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import RealmSwift
+
 
 // MARK: - Parsing with Codable
 //struct Friend: Codable {
@@ -59,31 +61,31 @@ import UIKit
 //}
 
 // MARK: - Parsing with Decodable
-class Friend: Decodable {
+class Friend: Object, Decodable {
     // required fields
-    var firstName: String = ""
-    var id: Int = 0
-    var lastName: String = ""
-    var isClosed: Bool? = false
-    var canAccessClosed: Bool? = false
+    @objc dynamic var firstName: String = ""
+    @objc dynamic var id: Int = 0
+    @objc dynamic var lastName: String = ""
+    @objc dynamic var isClosed: Bool = false
+    @objc dynamic var canAccessClosed: Bool = false
     // optional fields
-    var sex: Int? = 0
-    var photo50: String? = ""
-    var online: Int? = 0
-    var nickname: String? = ""
-    var domain: String? = ""
-    var bdate: String? = ""
-    var city: String? = ""
-    var country: String? = ""
-    var photoMax: String? = ""
-    var status: String? = ""
-    var lastSeen: Int? = 0
-    var occupationName: String? = ""
-    var occupationType: String? = ""
-    var relation: Int? = 0
+    @objc dynamic var sex: Int = 0
+    @objc dynamic var photo50: String? = ""
+    @objc dynamic var online: Int = 0
+    @objc dynamic var nickname: String? = ""
+    @objc dynamic var domain: String? = ""
+    @objc dynamic var bdate: String? = ""
+    @objc dynamic var city: String? = ""
+    @objc dynamic var country: String? = ""
+    @objc dynamic var photoMax: String? = ""
+    @objc dynamic var status: String? = ""
+    @objc dynamic var lastSeen: Int = 0
+    @objc dynamic var occupationName: String? = ""
+    @objc dynamic var occupationType: String? = ""
+    @objc dynamic var relation: Int = 0
     // property to save avatar downloaded separately
-    var avatar: UIImage?
-    var avatarMax: UIImage?
+    var avatar: UIImage = UIImage(named: "camera")!
+    var avatarMax: UIImage = UIImage(named: "camera")!
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
@@ -123,22 +125,44 @@ class Friend: Decodable {
         case occupationType = "type"
     }
     
+    override init() {
+        super.init()
+    }
+    
     required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.firstName = try values.decode(String.self, forKey: .firstName)
         self.id = try values.decode(Int.self, forKey: .id)
         self.lastName = try values.decode(String.self, forKey: .lastName)
-        self.isClosed = try? values.decode(Bool.self, forKey: .isClosed)
-        self.canAccessClosed = try? values.decode(Bool.self, forKey: .canAccessClosed)
-        self.sex = try? values.decode(Int.self, forKey: .sex)
-        self.photo50 = try? values.decode(String.self, forKey: .photo50)
-        self.online = try? values.decode(Int.self, forKey: .online)
+        if let isClosedValue = try? values.decode(Bool.self, forKey: .isClosed) {
+            self.isClosed = isClosedValue
+        }
+        //self.isClosed = try values.decode(Bool.self, forKey: .isClosed)
+        if let canAccessClosedValue = try? values.decode(Bool.self, forKey: .canAccessClosed) {
+            self.canAccessClosed = canAccessClosedValue
+        }
+        //self.canAccessClosed = try values.decode(Bool.self, forKey: .canAccessClosed)
+        if let sexValue = try? values.decode(Int.self, forKey: .sex) {
+            self.sex = sexValue
+        }
+        //self.sex = try values.decode(Int.self, forKey: .sex)
+        if let photo50Value = try? values.decode(String.self, forKey: .photo50) {
+            self.photo50 = photo50Value
+        }
+        //self.photo50 = try values.decode(String.self, forKey: .photo50)
+        if let onlineValue = try? values.decode(Int.self, forKey: .online) {
+            self.online = onlineValue
+        }
+        //self.online = try values.decode(Int.self, forKey: .online)
         self.nickname = try? values.decode(String.self, forKey: .nickname)
         self.domain = try? values.decode(String.self, forKey: .domain)
         self.bdate = try? values.decode(String.self, forKey: .bdate)
         self.photoMax = try? values.decode(String.self, forKey: .photoMax)
         self.status = try? values.decode(String.self, forKey: .status)
-        self.relation = try? values.decode(Int.self, forKey: .relation)
+        if let relationValue = try? values.decode(Int.self, forKey: .relation) {
+            self.relation = relationValue
+        }
+        //self.relation = try values.decode(Int.self, forKey: .relation)
 
         let cityContainer = try? values.nestedContainer(keyedBy: CodingCity.self, forKey: .city)
         self.city = try? cityContainer?.decode(String.self, forKey: .city)
@@ -147,7 +171,10 @@ class Friend: Decodable {
         self.country = try? countryContainer?.decode(String.self, forKey: .country)
 
         let lastSeenContainer = try? values.nestedContainer(keyedBy: CodingLastSeen.self, forKey: .lastSeen)
-        self.lastSeen = try? lastSeenContainer?.decode(Int.self, forKey: .lastSeen)
+        if let lastSeenValue = try? lastSeenContainer?.decode(Int.self, forKey: .lastSeen) {
+            self.lastSeen = lastSeenValue
+        }
+        //self.lastSeen = try! lastSeenContainer?.decode(Int.self, forKey: .lastSeen) as! Int
 
         let occupationContainer = try? values.nestedContainer(keyedBy: CodingOccupation.self, forKey: .occupation)
         self.occupationType = try? occupationContainer?.decode(String.self, forKey: .occupationType)

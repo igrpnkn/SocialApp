@@ -13,7 +13,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     let activityIndicator = UIActivityIndicatorView()
     
     // Array for downloaded objects
-    var friendsArray: [Friend] = []
+    var friendsArray: [Friend] = RealmManager.friendsGetFromRealm() ?? []
     
     // Indexation...
     var friendIndex: [String] = []
@@ -47,10 +47,8 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         super.viewDidLoad()
         friendsTableView.delegate = self
         friendsTableView.dataSource = self
-        
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
-        
         searchField.searchResultsUpdater = self
         searchField.obscuresBackgroundDuringPresentation = false
         searchField.searchBar.placeholder = "Search..."
@@ -58,9 +56,21 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         definesPresentationContext = true
         
         startActivityIndicator()
-        downloadFriends()
         
-        print("\nINFO: FriendsTableViewController.viewDidLoad()\n")
+        //RealmManager.deleteAllFriendsObject()
+        if self.friendsArray.isEmpty {
+            downloadFriends()
+            print("\nINFO: FriendsTableViewController.viewDidLoad()")
+            print("\nINFO: Friends were loaded from Internet.")
+        }
+        else {
+            //self.friendsArray =
+            self.createIndex()
+            print(self.friendsArray.map { $0.firstName } )
+            self.downloadAvatars()
+            print("\nINFO: Friends were loaded from Realm...\n")
+            stopActivityIndicator()
+        }
     }
 
     // MARK: - Table view data source
@@ -230,37 +240,37 @@ extension FriendsTableViewController {
             DispatchQueue.main.async {
                 guard let self = self, let friendsArray = friendsArray else { return }
                 self.friendsArray = friendsArray
-                print("\nFriends from TBC: L = \(friendsArray.count), V = \(friendsArray.count), and SELF = \(self.friendsArray.count)")
+                print("\nINFO: Friends from FriendsTableViewController: \(self.friendsArray.count)")
                 print(self.friendsArray.map { $0.firstName } )
-                
                 self.createIndex()
-                
                 self.friendsTableView.reloadData()
-                print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
-                
+                //RealmManager.saveGotFriendsInRealm(freinds: friendsArray)
+                print("\nINFO: FriendsTableView is reload from NetworkManager.friendsGet(for:) closure.")
                 self.downloadAvatars()
             }
         }
     }
     
     func downloadAvatars() {
-        //DispatchQueue.main.async {
-        for friend in self.friendsArray {
-            if let url = URL(string: friend.photo50!) {
-                guard let data = try? Data(contentsOf: url) else { return }
-                friend.avatar = UIImage(data: data)
-                print("Photo downloaded: \(url)")
+        DispatchQueue.main.async {
+            for friend in self.friendsArray {
+                if let url = URL(string: friend.photo50!) {
+                    guard let data = try? Data(contentsOf: url) else { return }
+                    friend.avatar = UIImage(data: data) ?? UIImage(named: "camera")!
+                    //print("Photo downloaded: \(url)")
+                }
             }
+            RealmManager.saveGotFriendsInRealm(freinds: self.friendsArray)
+            self.friendsTableView.reloadData()
+            print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
+            self.stopActivityIndicator()
+            print("\nINFO: All photos is downloaded.")
+            print("\nINFO: Activity indicator is hidden.")
         }
-        self.friendsTableView.reloadData()
-        print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
-        stopActivityIndicator()
-        print("\nAll photos is downloaded...")
-        print("\nActivity indicator is hidden...")
-        //}
     }
 
     func startActivityIndicator() {
+        print("\nINFO: Loading \(self.description) has begun.")
         activityIndicator.center.x = self.view.center.x
         activityIndicator.center.y = self.view.frame.width / 5
         activityIndicator.startAnimating()

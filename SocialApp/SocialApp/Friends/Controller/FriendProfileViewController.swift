@@ -20,8 +20,8 @@ class FriendProfileViewController: UIViewController  {
         super.viewDidLoad()
         friendProfileTableView.dataSource = self
         friendProfileTableView.delegate = self
-//        self.navigationController?.navigationBar.prefersLargeTitles = true
-//        self.navigationController?.navigationItem.largeTitleDisplayMode = .always
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         self.title = "\(friendProfile?.lastName ?? "Profile") \(friendProfile?.firstName ?? "unavailable")"
         
         print("\nINFO: FriendProfileTableViewController.viewDidLoad()\n")
@@ -52,6 +52,15 @@ extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegat
             return 1
         } else {
             return titles.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.section {
+        case 0:
+            return tableView.bounds.width
+        default:
+            return UITableView.automaticDimension
         }
     }
     
@@ -90,14 +99,14 @@ extension FriendProfileViewController {
     func downloadProfilePhoto() {
         guard let photoURL = friendProfile?.photoMax else {
             print("\nERROR - DOWNLOADING PROFILE PHOTO: Breaken URL while downloading \(friendProfile?.domain ?? "UNKNOWN's") main photo.")
-            friendProfile?.avatar = UIImage(named: "camera")
+            friendProfile?.avatar = UIImage(named: "camera")!
             self.stopActivityIndicator()
             return
         }
         DispatchQueue.main.async {
             if let url = URL(string: photoURL) {
                 guard let data = try? Data(contentsOf: url) else { return }
-                self.friendProfile?.avatarMax = UIImage(data: data)
+                self.friendProfile?.avatarMax = UIImage(data: data) ?? UIImage(named: "camera")!
                 print("Photo downloaded: \(url)")
                 self.stopActivityIndicator()
             }

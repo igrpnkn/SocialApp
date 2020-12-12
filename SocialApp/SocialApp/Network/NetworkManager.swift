@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import RealmSwift
 
 // Alamofire's class
 extension Session {
@@ -19,6 +20,8 @@ extension Session {
 
 class NetworkManager {
     
+    //public static var shared = NetworkManager()
+    
     static func friendsGet(for userId: Int, completion: @escaping ([Friend]?) -> Void) {
         let parameters: Parameters = [
             "user_id": userId,
@@ -30,7 +33,6 @@ class NetworkManager {
             "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
-        
         Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters).responseData { response in
             guard
                 let data = response.value
@@ -139,3 +141,4 @@ class NetworkManager {
         }
     }
 }
+
