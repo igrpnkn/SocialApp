@@ -46,6 +46,13 @@ class Photo: Object, Decodable {
     //var likesCount: Int
     @objc dynamic var text: String = ""
     var sizes = List<PhotoSizes>()
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
+    override init() {
+    }
 }
 
 class PhotoResponse: Decodable {

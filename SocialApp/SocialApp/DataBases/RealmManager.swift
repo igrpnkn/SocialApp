@@ -32,9 +32,10 @@ extension RealmManager {
     
     static func saveGotFriendsInRealm(freinds: [Friend]) {
         let realm = try! Realm()
+        print(realm.configuration.fileURL)
         // 1 способ
         try? realm.write{
-            realm.add(freinds)
+            realm.add(freinds, update: .modified)
         }
         // 2 способ
         /*
@@ -46,6 +47,7 @@ extension RealmManager {
     
     static func friendsGetFromRealm() -> [Friend]? {
         let realm = try! Realm()
+        print(realm.configuration.fileURL)
         let friends = realm.objects(Friend.self)
         return Array(friends)
     }
@@ -73,7 +75,7 @@ extension RealmManager {
     static func saveGotGroupsInRealm(groups: [Group]) {
         let realm = try! Realm()
         try? realm.write{
-            realm.add(groups)
+            realm.add(groups, update: .modified)
         }
     }
     
@@ -102,23 +104,53 @@ extension RealmManager {
 // MARK: - PHOTO METHODS
 extension RealmManager {
     
-    static func saveGotPhotosInRealm(photos: [Photo]) {
-        let realm = try! Realm()
-        try? realm.write{
-            realm.add(photos)
+//    static func saveGotPhotosInRealm(photos: [Photo]) {
+//        let realm = try! Realm()
+//        try? realm.write{
+//            realm.add(photos, update: .modified)
+//        }
+//    }
+    
+    static func saveGotPhotosInRealm(save photos: [Photo], for userID: Int) {
+        guard let realm = try? Realm() else {
+            print("\nERROR - GETTING ACCESS TO REALM: Aborting saving photos for userID: \(userID).")
+            return
+        }
+        do {
+            //let friend = realm.objects(Friend.self).filter("id = %@", userID)
+            let friend = realm.object(ofType: Friend.self, forPrimaryKey: userID)!
+            try realm.write {
+                friend.photos.append(objectsIn: photos)
+                realm.add(friend, update: .modified)
+            }
+        } catch {
+            print("\nERROR - APPENDING/ADDING TRANSACTION: Aborting saving photos for userID: \(userID).")
         }
     }
     
-    static func photosGetFromRealm() -> [Photo]? {
-        let realm = try! Realm()
-        let photos = realm.objects(Photo.self)
-        return Array(photos)
+//    static func photosGetFromRealm() -> [Photo]? {
+//        let realm = try! Realm()
+//        let photos = realm.objects(Photo.self)
+//        return Array(photos)
+//    }
+    
+    static func photosGetFromRealm(for userID: Int) -> [Photo] {
+        guard let realm = try? Realm() else {
+            print("\nERROR - GETTING ACCESS TO REALM: Aborting getting photos for userID: \(userID).")
+            return []
+        }
+        guard let friend = realm.object(ofType: Friend.self, forPrimaryKey: userID) else {
+            print("\nERROR - GETTING ACCESS TO OBJECT: Aborting saving photos for userID: \(userID).")
+            return []
+        }
+        let photos = Array(friend.photos)
+        return photos
     }
     
     static func deleteAllPhotosObject() {
         do {
             let realm = try Realm()
-            let objects = realm.objects(Group.self)
+            let objects = realm.objects(Photo.self)
             try! realm.write {
                 realm.delete(objects)
             }

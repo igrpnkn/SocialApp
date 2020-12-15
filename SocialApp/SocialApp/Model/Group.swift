@@ -29,6 +29,10 @@ class Group: Object, Decodable {
         case photo50 = "photo_50"
     }
     
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+    
     override init() {
         super.init()
     }

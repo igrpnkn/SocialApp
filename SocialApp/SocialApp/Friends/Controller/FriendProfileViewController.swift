@@ -20,8 +20,8 @@ class FriendProfileViewController: UIViewController  {
         super.viewDidLoad()
         friendProfileTableView.dataSource = self
         friendProfileTableView.delegate = self
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationController?.navigationItem.largeTitleDisplayMode = .always
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+        //self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
         self.title = "\(friendProfile?.lastName ?? "Profile") \(friendProfile?.firstName ?? "unavailable")"
         
         print("\nINFO: FriendProfileTableViewController.viewDidLoad()\n")

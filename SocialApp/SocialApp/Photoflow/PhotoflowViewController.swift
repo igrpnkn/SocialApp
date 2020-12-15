@@ -14,7 +14,7 @@ class PhotoflowViewController: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     
     let reuseIdentifier = "PhotoflowCollectionViewCell"
-    var photoflow: [Photo] = RealmManager.photosGetFromRealm() ?? []
+    var photoflow: [Photo] = []
     var photoArray: [UIImage?] = []
     var userId: Int?
     
@@ -24,29 +24,18 @@ class PhotoflowViewController: UIViewController {
         photoflowCollectionView.dataSource = self
         photoflowCollectionView.delegate = self
         startActivityIndicator()
-        
+        print("\nINFO: PhotoflowViewController.viewDidLoad()")
         //RealmManager.deleteAllPhotosObject()
-        if self.photoflow.isEmpty {
+        let savedPhotosLinks = RealmManager.photosGetFromRealm(for: userId!)
+        if savedPhotosLinks.isEmpty {
             downloadPhotoflow()
-            print("\nINFO: PhotoflowViewController.viewDidLoad()")
             print("\nINFO: Photoflow was loaded from Internet.")
         }
         else {
-            self.downloadPhotos()
-            print("\nINFO: Photos were loaded from Realm.\n")
+            self.downloadPhotosFromRealm(by: savedPhotosLinks)
+            print("\nINFO: Photos were loaded from Realm.")
         }
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 }
 
 extension PhotoflowViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
@@ -86,17 +75,37 @@ extension PhotoflowViewController {
             DispatchQueue.main.async {
                 guard let self = self, let photoflow = photoflow else { return }
                 self.photoflow = photoflow
-                RealmManager.saveGotPhotosInRealm(photos: self.photoflow)
-                //print(self.photoData.map { $0.type } )
-                //print("\nINFO: TableView is reload from NetworkManager.friendsGet(for:) closure.")
+                //RealmManager.saveGotPhotosInRealm(photos: self.photoflow)
+                RealmManager.saveGotPhotosInRealm(save: self.photoflow, for: self.userId!)
                 self.downloadPhotos()
             }
         }
     }
     
     func downloadPhotos() {
-        //DispatchQueue.main.async {
         for photo in self.photoflow {
+            let size = photo.sizes.filter { (size) -> Bool in
+                return size.type == "x"
+            }
+            guard let photoURL = size.first?.url else {
+                return
+            }
+            if let url = URL(string: photoURL) {
+                guard let data = try? Data(contentsOf: url) else { return }
+                photoArray.append(UIImage(data: data))
+                print("Photo downloaded: \(url)")
+            }
+            self.photoflowCollectionView.reloadData()
+        }
+        //self.photoflowCollectionView.reloadData()
+        print("\nINFO: TableView is reload from PhotoflowViewController.downloadPhotos() method.")
+        stopActivityIndicator()
+        print("\nINFO: All photos are downloaded.")
+        print("\nINFO: Activity indicator is hidden.")
+    }
+    
+    func downloadPhotosFromRealm(by links: [Photo]) {
+        for photo in links {
             let size = photo.sizes.filter { (size) -> Bool in
                 return size.type == "x"
             }
@@ -114,7 +123,6 @@ extension PhotoflowViewController {
         stopActivityIndicator()
         print("\nINFO: All photos are downloaded.")
         print("\nINFO: Activity indicator is hidden.")
-        //}
     }
 
     func startActivityIndicator() {

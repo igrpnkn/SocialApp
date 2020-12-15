@@ -9,57 +9,6 @@ import Foundation
 import UIKit
 import RealmSwift
 
-
-// MARK: - Parsing with Codable
-//struct Friend: Codable {
-//    let response: FriendResponse
-//}
-//
-//struct FriendResponse: Codable {
-//    let count: Int
-//    let items: [FriendItem]
-//}
-//
-//struct FriendCity: Codable {
-//    let id: Int
-//    let title: String
-//}
-//
-//struct FriendCountry: Codable {
-//    let id: Int
-//    let title: String
-//}
-//
-//struct FriendOccupation: Codable {
-//    let type: String
-//    let id: Int
-//    let name: String
-//}
-//
-//struct FriendLastSeen: Codable {
-//    let time: Int
-//    let platform: Int
-//}
-//
-//struct FriendItem: Codable {
-//    let id: Int
-//    let domain: String
-//    let online: Int
-//    let first_name: String
-//    let last_name: String
-//    let nickname: String
-//    let status: String
-//    let bdate: String
-//    let sex: Int
-//    let relation: Int
-//    let photo_50: String
-//    let photo_400_orig: String
-//    let city: FriendCity
-//    let country: FriendCountry
-//    let occupation: FriendOccupation
-//    let last_seen: FriendLastSeen
-//}
-
 // MARK: - Parsing with Decodable
 class Friend: Object, Decodable {
     // required fields
@@ -83,7 +32,8 @@ class Friend: Object, Decodable {
     @objc dynamic var occupationName: String? = ""
     @objc dynamic var occupationType: String? = ""
     @objc dynamic var relation: Int = 0
-    // property to save avatar downloaded separately
+    // property to save avatar downloaded later
+    var photos = List<Photo>()
     var avatar: UIImage = UIImage(named: "camera")!
     var avatarMax: UIImage = UIImage(named: "camera")!
     
@@ -123,6 +73,10 @@ class Friend: Object, Decodable {
     enum CodingOccupation: String, CodingKey {
         case occupationName = "name"
         case occupationType = "type"
+    }
+    
+    override static func primaryKey() -> String? {
+        return "id"
     }
     
     override init() {
