@@ -47,12 +47,9 @@ class Photo: Object, Decodable {
     @objc dynamic var text: String = ""
     var sizes = List<PhotoSizes>()
     
-    override static func primaryKey() -> String? {
-        return "id"
-    }
-    
-    override init() {
-    }
+//    override static func primaryKey() -> String? {
+//        return "id"
+//    }
 }
 
 class PhotoResponse: Decodable {

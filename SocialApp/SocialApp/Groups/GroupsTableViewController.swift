@@ -6,13 +6,16 @@
 //
 
 import UIKit
+import RealmSwift
 
 class GroupsTableViewController: UITableViewController, UISearchResultsUpdating {
     
     @IBOutlet weak var groupsTableView: UITableView!
     let activityIndicator = UIActivityIndicatorView()
+    var realmToken: NotificationToken?  // it is responsible for updating state of Realm objects or collections
     
-    var groupsArray: [Group] = RealmManager.groupsGetFromRealm() ?? []
+    //var groupsArray: [Group] = RealmManager.groupsGetFromRealm() ?? []
+    var groups: Results<Group>? = RealmManager.groupsGetFromRealm()
     
     // Search...
     var searchedGroup: [Group] = []
@@ -30,8 +33,9 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        groupsTableView.delegate = self
-        groupsTableView.dataSource = self
+        self.groupsTableView.delegate = self
+        self.groupsTableView.dataSource = self
+        
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         
@@ -42,19 +46,33 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         definesPresentationContext = true
         
         startActivityIndicator()
+    
+        self.realmToken = groups?.observe({ (changes: RealmCollectionChange) in
+            print("\nINFO: Realm <Groups> has been changed.\n")
+            switch changes {
+            case .initial(let results):
+                print("\nINFO: Realm Groups Data has been initiated: \(results)")
+                self.groupsTableView.reloadData()
+            case .update(let results, let deletions, let insertions, let modifications):
+                print(results, deletions, insertions, modifications)
+                
+            case .error(let error):
+                print("\nINFO: Realm groups.observe{} error: \(error.localizedDescription)")
+            }
+        })
         
-        //RealmManager.deleteAllGroupsObject()
-        if self.groupsArray.isEmpty {
-            downloadUserGroups()
-            print("\nINFO: GroupsTableViewController.viewDidLoad()")
-            print("\nINFO: Groups were loaded from Internet.")
-        }
-        else {
-            print(self.groupsArray.map { $0.name } )
-            self.downloadAvatars()
-            print("\nINFO: Groups were loaded from Realm...\n")
-            stopActivityIndicator()
-        }
+//        //RealmManager.deleteAllGroupsObject()
+//        if self.groupsArray.isEmpty {
+//            downloadUserGroups()
+//            print("\nINFO: GroupsTableViewController.viewDidLoad()")
+//            print("\nINFO: Groups were loaded from Internet.")
+//        }
+//        else {
+//            print(self.groupsArray.map { $0.name } )
+//            self.downloadAvatars()
+//            print("\nINFO: Groups were loaded from Realm...\n")
+//            stopActivityIndicator()
+//        }
     }
 
     // MARK: - Table view data source
@@ -69,17 +87,20 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         case true:
             return searchedGroup.count
         case false:
-            return groupsArray.count
+            return groups?.count ?? 0
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsTableViewCell", for: indexPath) as! GroupsTableViewCell
+        guard let groups = self.groups else {
+            return cell
+        }
         var dataFromArray: Group
         if isFiltering {
             dataFromArray = searchedGroup[indexPath.row]
         } else {
-            dataFromArray = groupsArray[indexPath.row]
+            dataFromArray = groups[indexPath.row]
         }
         cell.configureCell(name: dataFromArray.name, image: dataFromArray.avatar, followersCount: dataFromArray.membersCount, activity: dataFromArray.activity)
         return cell
@@ -102,8 +123,10 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedGroup = groupsArray.filter{(i: Group) -> Bool in return i.name.lowercased().contains(searchText.lowercased())}
-        groupsTableView.reloadData()
+        if let groupsForSearching = self.groups {
+            searchedGroup = Array(groupsForSearching).filter {(i: Group) -> Bool in return i.name.lowercased().contains(searchText.lowercased())}
+            groupsTableView.reloadData()
+        }
     }
     
     /*
@@ -166,35 +189,36 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
 extension GroupsTableViewController {
     
     func downloadUserGroups() {
-        NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groupsArray in
-            DispatchQueue.main.async {
-                guard let self = self, let groupsArray = groupsArray else { return }
-                self.groupsArray = groupsArray
-                print("\nINFO: Groups from GroupsTableViewController: \(self.groupsArray.count)")
-                print(self.groupsArray.map { $0.name } )
-                self.groupsTableView.reloadData()
-                print("\nINFO: GroupsTableView is reload from NetworkManager.friendsGet(for:) closure.")
+        NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
+            //DispatchQueue.main.async {
+                guard let self = self, let groupsArray = groups else { return }
+                RealmManager.saveGotGroupsInRealm(groups: groupsArray)
                 self.downloadAvatars()
-            }
+            //}
         }
     }
     
     func downloadAvatars() {
-        //DispatchQueue.main.async {
-        for group in self.groupsArray {
-            if let url = URL(string: group.photo50!) {
-                guard let data = try? Data(contentsOf: url) else { return }
-                group.avatar = UIImage(data: data) ?? UIImage(named: "camera")!
-                //print("Photo downloaded: \(url)")
+        guard let groupsArray = self.groups else { return }
+        DispatchQueue.main.async {
+            for group in groupsArray {
+                do {
+                    let url = URL(string: group.photo50!)
+                    let data = try? Data(contentsOf: url!)
+                    group.avatar = UIImage(data: data!) ?? UIImage(named: "camera")!
+                }
+                catch {
+                    print("\nINFO: ERROR while downloading group's avatars: \(error.localizedDescription)")
+                    return
+                }
             }
+            RealmManager.saveGotGroupsInRealm(groups: Array(groupsArray))
+            //self.groupsTableView.reloadData()
+            print("\nINFO: GroupsTableView is reload from GroupsTableViewController.downloadAvatars() func.")
+            self.stopActivityIndicator()
+            print("\nINFO: All photos is downloaded.")
+            print("\nINFO: Activity indicator is hidden.")
         }
-        RealmManager.saveGotGroupsInRealm(groups: self.groupsArray)
-        self.groupsTableView.reloadData()
-        print("\nINFO: GroupsTableView is reload from GroupsTableViewController.downloadAvatars() func.")
-        stopActivityIndicator()
-        print("\nINFO: All photos is downloaded.")
-        print("\nINFO: Activity indicator is hidden.")
-        //}
     }
     
     func startActivityIndicator() {

@@ -79,10 +79,10 @@ extension RealmManager {
         }
     }
     
-    static func groupsGetFromRealm() -> [Group]? {
+    static func groupsGetFromRealm() -> Results<Group>? {
         let realm = try! Realm()
         let groups = realm.objects(Group.self)
-        return Array(groups)
+        return groups
     }
     
     static func deleteAllGroupsObject() {

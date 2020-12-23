@@ -64,7 +64,6 @@ class NetworkManager {
             "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]
-        
         Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters).responseData { response in
             //print(response.value)
             guard
