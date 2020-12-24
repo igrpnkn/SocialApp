@@ -14,6 +14,9 @@ class FullScreenViewController: UIViewController {
     let reuseIdentifier = "FullScreenCollectionViewCell"
     var photoArray: [UIImage?] = []
     var indexPath: IndexPath!
+    override var prefersStatusBarHidden: Bool {
+            return true
+        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,8 +24,8 @@ class FullScreenViewController: UIViewController {
         fullScreenCollectionView.dataSource = self
         self.navigationController?.hidesBarsOnTap = true
         self.navigationController?.isNavigationBarHidden = true
-//        self.navigationController?.navigationBar.barTintColor = .black
-//        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.barTintColor = .black
+        self.navigationController?.navigationBar.isTranslucent = false
         
         fullScreenCollectionView.performBatchUpdates(nil) { (result) in
             self.fullScreenCollectionView.scrollToItem(at: self.indexPath, at: .centeredHorizontally, animated: false)
@@ -32,8 +35,8 @@ class FullScreenViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.hidesBarsOnTap = false
         self.navigationController?.isNavigationBarHidden = false
-//        self.navigationController?.navigationBar.barTintColor = .white
-//        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.barTintColor = .systemGray6
+        self.navigationController?.navigationBar.isTranslucent = true
     }
     
     /*

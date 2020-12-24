@@ -19,7 +19,8 @@ class Group: Object, Decodable {
     @objc dynamic var membersCount: Int = 0
     @objc dynamic var photo50: String? = ""
     // property to save avatar downloaded separately
-    var avatar: UIImage = UIImage(named: "camera")!
+    @objc dynamic var avatar: Data? = nil
+    //var avatar: UIImage = UIImage(named: "camera")!
     
     enum CodingKeys: String, CodingKey {
         case id = "id"

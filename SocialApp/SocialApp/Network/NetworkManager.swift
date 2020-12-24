@@ -65,24 +65,24 @@ class NetworkManager {
             "v": "5.126"
         ]
         Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters).responseData { response in
-            //print(response.value)
+            //print("\nINFO: Raw Data of response: \(response.value)")
             guard
                 let data = response.value
             else {
-                print("\nINFO: Data getting failed...")
+                print("\nINFO: NetworkManager.groupsGet() - Data getting failed...")
                 completion(nil)
                 return
             }
             guard
                 let groups = try? JSONDecoder().decode(GroupData.self, from: data)
             else {
-                print("\nINFO: JSON parsing failed...")
+                print("\nINFO: NetworkManager.groupsGet() - JSON parsing failed...")
                 completion(nil)
                 return
             }
-            completion(groups.response.items)
-            print("\nGroups from NetworkManager: \(groups.response.items.count)")
+            print("\nINFO: Groups from NetworkManager: \(groups.response.items.count)")
             print(groups.response.items.map { $0.name } )
+            completion(groups.response.items)
         }
     }
     

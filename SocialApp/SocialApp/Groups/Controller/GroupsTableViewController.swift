@@ -55,12 +55,18 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
                 self.groupsTableView.reloadData()
             case .update(let results, let deletions, let insertions, let modifications):
                 print(results, deletions, insertions, modifications)
-                
+                self.groupsTableView.beginUpdates()
+                self.groupsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
+                }), with: .automatic)
+                self.groupsTableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+                self.groupsTableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+                self.groupsTableView.endUpdates()
             case .error(let error):
                 print("\nINFO: Realm groups.observe{} error: \(error.localizedDescription)")
             }
         })
         
+        downloadUserGroups()
 //        //RealmManager.deleteAllGroupsObject()
 //        if self.groupsArray.isEmpty {
 //            downloadUserGroups()
@@ -190,40 +196,37 @@ extension GroupsTableViewController {
     
     func downloadUserGroups() {
         NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
-            //DispatchQueue.main.async {
-                guard let self = self, let groupsArray = groups else { return }
-                RealmManager.saveGotGroupsInRealm(groups: groupsArray)
-                self.downloadAvatars()
-            //}
+            guard let self = self, let groupsArray = groups else { return }
+            RealmManager.saveGotGroupsInRealm(groups: groupsArray)
+            self.downloadAvatars()
         }
     }
     
     func downloadAvatars() {
-        guard let groupsArray = self.groups else { return }
         DispatchQueue.main.async {
-            for group in groupsArray {
-                do {
-                    let url = URL(string: group.photo50!)
-                    let data = try? Data(contentsOf: url!)
-                    group.avatar = UIImage(data: data!) ?? UIImage(named: "camera")!
-                }
-                catch {
-                    print("\nINFO: ERROR while downloading group's avatars: \(error.localizedDescription)")
-                    return
-                }
+        for group in self.groups! {
+            do {
+                let url = URL(string: group.photo50!)
+                let data = try? Data(contentsOf: url!)
+                RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
             }
-            RealmManager.saveGotGroupsInRealm(groups: Array(groupsArray))
-            //self.groupsTableView.reloadData()
-            print("\nINFO: GroupsTableView is reload from GroupsTableViewController.downloadAvatars() func.")
-            self.stopActivityIndicator()
-            print("\nINFO: All photos is downloaded.")
-            print("\nINFO: Activity indicator is hidden.")
+            catch {
+                print("\nINFO: ERROR while downloading group's avatars: \(error.localizedDescription)")
+                return
+            }
+        }
+        //RealmManager.saveGotGroupsInRealm(groups: groupsArray)
+        //self.groupsTableView.reloadData()
+        print("\nINFO: GroupsTableView is reload from GroupsTableViewController.downloadAvatars() func.")
+        self.stopActivityIndicator()
+        print("\nINFO: All photos is downloaded.")
+        print("\nINFO: Activity indicator is hidden.")
         }
     }
     
     func startActivityIndicator() {
         activityIndicator.center.x = self.view.center.x
-        activityIndicator.center.y = self.view.frame.width / 5
+        activityIndicator.center.y = self.navigationController!.navigationBar.bounds.height / 2
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.style = .large

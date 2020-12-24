@@ -235,10 +235,9 @@
 		3A2D55C7252CF3460085C278 /* Groups */ = {
 			isa = PBXGroup;
 			children = (
-				3A63AEA9252B9C02000C2046 /* GroupsTableViewController.swift */,
-				3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */,
-				3A2D55C8252CF37B0085C278 /* GroupsSearchTableViewController.swift */,
-				3A2D55CC252CF9720085C278 /* GroupsSearchTableViewCell.swift */,
+				8B3CC3F32594D6FE00874547 /* Model */,
+				8B3CC3F22594D6EC00874547 /* View */,
+				8B3CC3F12594D6B000874547 /* Controller */,
 			);
 			path = Groups;
 			sourceTree = "<group>";
@@ -256,7 +255,6 @@
 			isa = PBXGroup;
 			children = (
 				3A38B906252DD1460057542D /* User.swift */,
-				3A38B909252DD2810057542D /* Group.swift */,
 				3A9CADBF253CB74F00B187FB /* NewsFeed.swift */,
 				3A07C8AB256DB441004D8B22 /* UserSession.swift */,
 				3A07C8AE256DB559004D8B22 /* VKScopeBitmask.swift */,
@@ -336,6 +334,32 @@
 				3AFB251925363C2500908839 /* MessageStatusView.swift */,
 			);
 			path = Messenger;
+			sourceTree = "<group>";
+		};
+		8B3CC3F12594D6B000874547 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3A63AEA9252B9C02000C2046 /* GroupsTableViewController.swift */,
+				3A2D55C8252CF37B0085C278 /* GroupsSearchTableViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		8B3CC3F22594D6EC00874547 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */,
+				3A2D55CC252CF9720085C278 /* GroupsSearchTableViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		8B3CC3F32594D6FE00874547 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3A38B909252DD2810057542D /* Group.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		FEE16C89C8D282C500EE354C /* Pods */ = {

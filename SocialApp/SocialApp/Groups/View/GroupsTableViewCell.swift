@@ -27,12 +27,14 @@ class GroupsTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configureCell(name: String, image: UIImage?, followersCount: Int?, activity: String?) {
+    func configureCell(name: String, image: Data?, followersCount: Int?, activity: String?) {
         self.groupName.text = name
-        self.groupImage.image = image
         self.groupFollowers.text = String(followersCount!) + " subscribers"
         self.groupDescription.text = activity
         self.groupSubscription.isHidden = false
+        if let image = image {
+            self.groupImage.image = UIImage(data: image)
+        }
     }
 
 }

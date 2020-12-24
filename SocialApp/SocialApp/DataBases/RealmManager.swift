@@ -27,7 +27,6 @@ class RealmManager {
 }
 
 // MARK: - FRIENDS METHODS
-
 extension RealmManager {
     
     static func saveGotFriendsInRealm(freinds: [Friend]) {
@@ -69,13 +68,20 @@ extension RealmManager {
 }
 
 // MARK: - GROUPS METHODS
-
 extension RealmManager {
     
     static func saveGotGroupsInRealm(groups: [Group]) {
         let realm = try! Realm()
         try? realm.write{
             realm.add(groups, update: .modified)
+        }
+    }
+    
+    static func saveAvatarForGroupID(image data: Data?, groupID: Int) {
+        let realm = try! Realm()
+        let group = realm.object(ofType: Group.self, forPrimaryKey: groupID)
+        try? realm.write{
+            group?.avatar = data
         }
     }
     
