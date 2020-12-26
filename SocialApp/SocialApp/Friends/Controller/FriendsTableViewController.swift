@@ -6,21 +6,24 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FriendsTableViewController: UITableViewController, UISearchResultsUpdating {
     
     @IBOutlet weak var friendsTableView: UITableView!
     let activityIndicator = UIActivityIndicatorView()
+    var realmToken: NotificationToken?
     
     // Array for downloaded objects
-    var friendsArray: [Friend] = RealmManager.friendsGetFromRealm() ?? []
+    //var friendsArray: [Friend] = RealmManager.friendsGetFromRealm() ?? []
+    var friends: Results<Friend>? = RealmManager.friendsGetFromRealm()
     
     // Indexation...
     var friendIndex: [String] = []
     func createIndex() {
         // Logic of indexation - getting unique first letter of .lastName into friendIndex[]
         var temporaryIndex: [String] = []
-        for item in friendsArray {
+        for item in self.friends! {
             temporaryIndex.append(String(item.lastName.first!))
         }
         friendIndex = Array(Set(temporaryIndex)).sorted()
@@ -56,21 +59,22 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         definesPresentationContext = true
         
         startActivityIndicator()
-        
-        //RealmManager.deleteAllFriendsObject()
-        if self.friendsArray.isEmpty {
-            downloadFriends()
-            print("\nINFO: FriendsTableViewController.viewDidLoad()")
-            print("\nINFO: Friends were loaded from Internet.")
-        }
-        else {
-            //self.friendsArray =
-            self.createIndex()
-            print(self.friendsArray.map { $0.firstName } )
-            self.downloadAvatars()
-            print("\nINFO: Friends were loaded from Realm...\n")
-            stopActivityIndicator()
-        }
+        observeRealmFriendsCollection()
+        downloadUserFriends()
+//        RealmManager.deleteAllFriendsObject()
+//        if self.friendsArray.isEmpty {
+//            downloadFriends()
+//            print("\nINFO: FriendsTableViewController.viewDidLoad()")
+//            print("\nINFO: Friends were loaded from Internet.")
+//        }
+//        else {
+//            //self.friendsArray =
+//            self.createIndex()
+//            print(self.friendsArray.map { $0.firstName } )
+//            self.downloadAvatars()
+//            print("\nINFO: Friends were loaded from Realm...\n")
+//            stopActivityIndicator()
+//        }
     }
 
     // MARK: - Table view data source
@@ -123,8 +127,8 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         case true:
             return searchedFriend.count
         case false:
-            let buffer = friendsArray.filter{ (friend) -> Bool in
-                friendIndex[section] == String(friend.lastName.first!)
+            let buffer = friends!.filter{ [weak self] (friend) -> Bool in
+                self?.friendIndex[section] == String(friend.lastName.first!)
             }
             return buffer.count
         }
@@ -132,12 +136,13 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsTableViewCell", for: indexPath) as! FriendsTableViewCell
+        let friends = Array(self.friends!)
         var dataFromArray: Friend
         if isFiltering {
             dataFromArray = searchedFriend[indexPath.row]
         } else {
-            let buffer = friendsArray.filter{ (friend) -> Bool in
-                friendIndex[indexPath.section] == String(friend.lastName.first!)
+            let buffer = friends.filter{ (friend) -> Bool in
+                self.friendIndex[indexPath.section] == String(friend.lastName.first!)
             }
             dataFromArray = buffer[indexPath.row]
         }
@@ -162,7 +167,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedFriend = friendsArray.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
+        searchedFriend = friends!.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
         friendsTableView.reloadData()
     }
     
@@ -214,11 +219,12 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
             print("\nINFO: Segue to FriendProfileViewController has been choosen.\n")
             if let indexPath = friendsTableView.indexPathForSelectedRow {
                 let friend: Friend
+                let friendsArray = Array(self.friends!)
                 if isFiltering {
                     friend = searchedFriend[indexPath.row]
                  } else {
                     let buffer = friendsArray.filter{ (friend) -> Bool in
-                        friendIndex[indexPath.section] == String(friend.lastName.first!)
+                        self.friendIndex[indexPath.section] == String(friend.lastName.first!)
                     }
                     friend = buffer[indexPath.row]
                  }
@@ -235,38 +241,53 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
 
 extension FriendsTableViewController {
     
-    func downloadFriends() {
-        NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friendsArray in
-            DispatchQueue.main.async {
-                guard let self = self, let friendsArray = friendsArray else { return }
-                self.friendsArray = friendsArray
-                print("\nINFO: Friends from FriendsTableViewController: \(self.friendsArray.count)")
-                print(self.friendsArray.map { $0.firstName } )
+    func observeRealmFriendsCollection() {
+        self.realmToken = friends?.observe(on: DispatchQueue.main, { (changes: RealmCollectionChange) in
+            switch changes {
+            case .initial(let results):
+                print("\nINFO: Realm Groups Data has been initiated: \(results)")
                 self.createIndex()
                 self.friendsTableView.reloadData()
-                //RealmManager.saveGotFriendsInRealm(freinds: friendsArray)
-                print("\nINFO: FriendsTableView is reload from NetworkManager.friendsGet(for:) closure.")
-                self.downloadAvatars()
+            case .update(let results, let deletions, let insertions, let modifications):
+                print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions),\nInsertion: \(insertions),\nModifications: \(modifications)")
+//                self.friendsTableView.beginUpdates()
+//
+//                for item in deletions {
+//
+//                }
+//
+//                self.friendsTableView.deleteRows(at: deletions, with: .automatic)
+//
+//                self.friendsTableView.endUpdates()
+            case .error(let error):
+                print("\nINFO: Realm friends.observe{} error: \(error.localizedDescription)")
             }
+        })
+    }
+    
+    func downloadUserFriends() {
+        NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friends in
+            guard let self = self, let friendsArray = friends else { return }
+            RealmManager.saveGotFriendsInRealm(freinds: friendsArray)
+            self.downloadAvatars()
         }
     }
     
     func downloadAvatars() {
-        DispatchQueue.main.async {
-            for friend in self.friendsArray {
-                if let url = URL(string: friend.photo50!) {
-                    guard let data = try? Data(contentsOf: url) else { return }
-                    friend.avatar = UIImage(data: data) ?? UIImage(named: "camera")!
-                    //print("Photo downloaded: \(url)")
-                }
+        for friend in self.friends! {
+            guard
+                let url = URL(string: friend.photo50!),
+                let data = try? Data(contentsOf: url)
+            else {
+                print("\nINFO: ERROR - While downloading avatar for friend ID: \(friend.id) \n")
+                return
             }
-            RealmManager.saveGotFriendsInRealm(freinds: self.friendsArray)
-            self.friendsTableView.reloadData()
-            print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
-            self.stopActivityIndicator()
-            print("\nINFO: All photos is downloaded.")
-            print("\nINFO: Activity indicator is hidden.")
+            RealmManager.saveAvatarForUserID(image: data, userID: friend.id)
         }
+        print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
+        self.stopActivityIndicator()
+        print("\nINFO: All photos is downloaded.")
+        print("\nINFO: Activity indicator is hidden.")
     }
 
     func startActivityIndicator() {

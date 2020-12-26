@@ -26,11 +26,12 @@ class FriendsTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configureCell(fullName: String, lastSeen: Int?, occupation: String?, avatar: UIImage?, online: Int?) {
+    func configureCell(fullName: String, lastSeen: Int?, occupation: String?, avatar: Data?, online: Int?) {
         self.friendName.text = fullName
-        self.friendImage.image = avatar ?? UIImage(named: "camera")
         self.friendOccupation.text = occupation ?? ""
-        
+        if let avatar = avatar {
+            self.friendImage.image = UIImage(data: avatar)
+        }
         switch online {
         case 1:
             self.friendLastSeen.text = "Online"

@@ -44,11 +44,19 @@ extension RealmManager {
          */
     }
     
-    static func friendsGetFromRealm() -> [Friend]? {
+    static func saveAvatarForUserID(image data: Data?, userID: Int) {
+        let realm = try! Realm()
+        let friend = realm.object(ofType: Friend.self, forPrimaryKey: userID)
+        try? realm.write{
+            friend?.avatar = data
+        }
+    }
+    
+    static func friendsGetFromRealm() -> Results<Friend>? {
         let realm = try! Realm()
         print(realm.configuration.fileURL)
         let friends = realm.objects(Friend.self)
-        return Array(friends)
+        return friends
     }
     
     static func deleteAllFriendsObject() {
@@ -87,6 +95,7 @@ extension RealmManager {
     
     static func groupsGetFromRealm() -> Results<Group>? {
         let realm = try! Realm()
+        print(realm.configuration.fileURL)
         let groups = realm.objects(Group.self)
         return groups
     }
@@ -116,7 +125,6 @@ extension RealmManager {
 //            realm.add(photos, update: .modified)
 //        }
 //    }
-    
     static func saveGotPhotosInRealm(save photos: [Photo], for userID: Int) {
         guard let realm = try? Realm() else {
             print("\nERROR - GETTING ACCESS TO REALM: Aborting saving photos for userID: \(userID).")
@@ -139,7 +147,6 @@ extension RealmManager {
 //        let photos = realm.objects(Photo.self)
 //        return Array(photos)
 //    }
-    
     static func photosGetFromRealm(for userID: Int) -> [Photo] {
         guard let realm = try? Realm() else {
             print("\nERROR - GETTING ACCESS TO REALM: Aborting getting photos for userID: \(userID).")

@@ -46,39 +46,8 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         definesPresentationContext = true
         
         startActivityIndicator()
-    
-        self.realmToken = groups?.observe({ (changes: RealmCollectionChange) in
-            print("\nINFO: Realm <Groups> has been changed.\n")
-            switch changes {
-            case .initial(let results):
-                print("\nINFO: Realm Groups Data has been initiated: \(results)")
-                self.groupsTableView.reloadData()
-            case .update(let results, let deletions, let insertions, let modifications):
-                print(results, deletions, insertions, modifications)
-                self.groupsTableView.beginUpdates()
-                self.groupsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
-                }), with: .automatic)
-                self.groupsTableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
-                self.groupsTableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
-                self.groupsTableView.endUpdates()
-            case .error(let error):
-                print("\nINFO: Realm groups.observe{} error: \(error.localizedDescription)")
-            }
-        })
-        
+        observeRealmGroupsCollection()
         downloadUserGroups()
-//        //RealmManager.deleteAllGroupsObject()
-//        if self.groupsArray.isEmpty {
-//            downloadUserGroups()
-//            print("\nINFO: GroupsTableViewController.viewDidLoad()")
-//            print("\nINFO: Groups were loaded from Internet.")
-//        }
-//        else {
-//            print(self.groupsArray.map { $0.name } )
-//            self.downloadAvatars()
-//            print("\nINFO: Groups were loaded from Realm...\n")
-//            stopActivityIndicator()
-//        }
     }
 
     // MARK: - Table view data source
@@ -194,6 +163,27 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
 
 extension GroupsTableViewController {
     
+    func observeRealmGroupsCollection() {
+        self.realmToken = groups?.observe(on: DispatchQueue.main, { (changes: RealmCollectionChange) in
+            print("\nINFO: Realm <Groups> has been changed.\n")
+            switch changes {
+            case .initial(let results):
+                print("\nINFO: Realm Groups Data has been initiated: \(results)")
+                self.groupsTableView.reloadData()
+            case .update(let results, let deletions, let insertions, let modifications):
+                print("\nINFO: Realm Groups data has been updated:\nResults: \(results),\nDeletions: \(deletions),\nInsertion: \(insertions),\nModifications: \(modifications)")
+                self.groupsTableView.beginUpdates()
+                self.groupsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
+                }), with: .automatic)
+                self.groupsTableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+                self.groupsTableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+                self.groupsTableView.endUpdates()
+            case .error(let error):
+                print("\nINFO: Realm groups.observe{} error: \(error.localizedDescription)")
+            }
+        })
+    }
+    
     func downloadUserGroups() {
         NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
             guard let self = self, let groupsArray = groups else { return }
@@ -203,25 +193,16 @@ extension GroupsTableViewController {
     }
     
     func downloadAvatars() {
-        DispatchQueue.main.async {
         for group in self.groups! {
-            do {
-                let url = URL(string: group.photo50!)
-                let data = try? Data(contentsOf: url!)
-                RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
-            }
-            catch {
-                print("\nINFO: ERROR while downloading group's avatars: \(error.localizedDescription)")
-                return
+            if let url = URL(string: group.photo50!) {
+                if let data = try? Data(contentsOf: url) {
+                    RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
+                }
             }
         }
-        //RealmManager.saveGotGroupsInRealm(groups: groupsArray)
-        //self.groupsTableView.reloadData()
-        print("\nINFO: GroupsTableView is reload from GroupsTableViewController.downloadAvatars() func.")
+        print("\nINFO: All groups avatars are downloaded.")
         self.stopActivityIndicator()
-        print("\nINFO: All photos is downloaded.")
         print("\nINFO: Activity indicator is hidden.")
-        }
     }
     
     func startActivityIndicator() {

@@ -99,7 +99,6 @@ extension FriendProfileViewController {
     func downloadProfilePhoto() {
         guard let photoURL = friendProfile?.photoMax else {
             print("\nERROR - DOWNLOADING PROFILE PHOTO: Breaken URL while downloading \(friendProfile?.domain ?? "UNKNOWN's") main photo.")
-            friendProfile?.avatar = UIImage(named: "camera")!
             self.stopActivityIndicator()
             return
         }
