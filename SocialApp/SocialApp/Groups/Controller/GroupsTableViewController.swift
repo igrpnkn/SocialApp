@@ -187,6 +187,7 @@ extension GroupsTableViewController {
     func downloadUserGroups() {
         NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
             guard let self = self, let groupsArray = groups else { return }
+            RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
             RealmManager.saveGotGroupsInRealm(groups: groupsArray)
             self.downloadAvatars()
         }
@@ -206,12 +207,16 @@ extension GroupsTableViewController {
     }
     
     func startActivityIndicator() {
-        activityIndicator.center.x = self.view.center.x
-        activityIndicator.center.y = self.navigationController!.navigationBar.bounds.height / 2
+        print("\nINFO: Loading \(self.description) has begun.")
+//        activityIndicator.center.x = self.view.center.x
+//        activityIndicator.center.y = self.view.frame.width / 5
+        activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
+        activityIndicator.center.y = (self.navigationController?.navigationBar.center.y)!*0.75
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.style = .large
-        self.view.addSubview(activityIndicator)
+//        self.view.addSubview(activityIndicator)
+        self.navigationController?.view.addSubview(activityIndicator)
     }
     
     func stopActivityIndicator() {

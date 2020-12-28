@@ -59,8 +59,9 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         definesPresentationContext = true
         
         startActivityIndicator()
-        observeRealmFriendsCollection()
         downloadUserFriends()
+        observeRealmFriendsCollection()
+        
 //        RealmManager.deleteAllFriendsObject()
 //        if self.friendsArray.isEmpty {
 //            downloadFriends()
@@ -249,16 +250,9 @@ extension FriendsTableViewController {
                 self.createIndex()
                 self.friendsTableView.reloadData()
             case .update(let results, let deletions, let insertions, let modifications):
-                print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions),\nInsertion: \(insertions),\nModifications: \(modifications)")
-//                self.friendsTableView.beginUpdates()
-//
-//                for item in deletions {
-//
-//                }
-//
-//                self.friendsTableView.deleteRows(at: deletions, with: .automatic)
-//
-//                self.friendsTableView.endUpdates()
+                print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions.count),\nInsertion: \(insertions.count),\nModifications: \(modifications.count)")
+                self.friendsTableView.reloadData()
+                
             case .error(let error):
                 print("\nINFO: Realm friends.observe{} error: \(error.localizedDescription)")
             }
@@ -268,6 +262,7 @@ extension FriendsTableViewController {
     func downloadUserFriends() {
         NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friends in
             guard let self = self, let friendsArray = friends else { return }
+            RealmManager.deleteAllFriendsObject() // is used to resolve logical conflict when we have deleted Friend in vk.com but in RealmDB it still is there
             RealmManager.saveGotFriendsInRealm(freinds: friendsArray)
             self.downloadAvatars()
         }
@@ -292,12 +287,15 @@ extension FriendsTableViewController {
 
     func startActivityIndicator() {
         print("\nINFO: Loading \(self.description) has begun.")
-        activityIndicator.center.x = self.view.center.x
-        activityIndicator.center.y = self.view.frame.width / 5
+//        activityIndicator.center.x = self.view.center.x
+//        activityIndicator.center.y = self.view.frame.width / 5
+        activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
+        activityIndicator.center.y = (self.navigationController?.navigationBar.center.y)!*0.75
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.style = .large
-        self.view.addSubview(activityIndicator)
+//        self.view.addSubview(activityIndicator)
+        self.navigationController?.view.addSubview(activityIndicator)
     }
     
     func stopActivityIndicator() {
