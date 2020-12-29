@@ -173,8 +173,7 @@ extension GroupsTableViewController {
             case .update(let results, let deletions, let insertions, let modifications):
                 print("\nINFO: Realm Groups data has been updated:\nResults: \(results),\nDeletions: \(deletions),\nInsertion: \(insertions),\nModifications: \(modifications)")
                 self.groupsTableView.beginUpdates()
-                self.groupsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
-                }), with: .automatic)
+                self.groupsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
                 self.groupsTableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
                 self.groupsTableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
                 self.groupsTableView.endUpdates()
