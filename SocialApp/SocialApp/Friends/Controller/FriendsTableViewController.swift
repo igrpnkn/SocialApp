@@ -14,22 +14,21 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     let activityIndicator = UIActivityIndicatorView()
     var realmToken: NotificationToken?
     
-    // Array for downloaded objects
-    //var friendsArray: [Friend] = RealmManager.friendsGetFromRealm() ?? []
+    // Downloaded objects
     var friends: Results<Friend>? = RealmManager.friendsGetFromRealm()
     
     // Indexation...
-    var friendIndex: [String] = []
-    func createIndex() {
-        // Logic of indexation - getting unique first letter of .lastName into friendIndex[]
-        var temporaryIndex: [String] = []
-        for item in self.friends! {
-            temporaryIndex.append(String(item.lastName.first!))
-        }
-        friendIndex = Array(Set(temporaryIndex)).sorted()
-        print("\nCreated index: ")
-        print(self.friendIndex)
-    }
+//    var friendIndex: [String] = []
+//    func createIndex() {
+//        // Logic of indexation - getting unique first letter of .lastName into friendIndex[]
+//        var temporaryIndex: [String] = []
+//        for item in self.friends! {
+//            temporaryIndex.append(String(item.lastName.first!))
+//        }
+//        friendIndex = Array(Set(temporaryIndex)).sorted()
+//        print("\nCreated index: ")
+//        print(self.friendIndex)
+//    }
     //
     
     // Search...
@@ -61,36 +60,15 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         startActivityIndicator()
         downloadUserFriends()
         observeRealmFriendsCollection()
-        
-//        RealmManager.deleteAllFriendsObject()
-//        if self.friendsArray.isEmpty {
-//            downloadFriends()
-//            print("\nINFO: FriendsTableViewController.viewDidLoad()")
-//            print("\nINFO: Friends were loaded from Internet.")
-//        }
-//        else {
-//            //self.friendsArray =
-//            self.createIndex()
-//            print(self.friendsArray.map { $0.firstName } )
-//            self.downloadAvatars()
-//            print("\nINFO: Friends were loaded from Realm...\n")
-//            stopActivityIndicator()
-//        }
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        switch isFiltering {
-        case true:
-            return 1
-        case false:
-            return friendIndex.count
-        }
+        return 1
         //return friendIndex.count
     }
-    
     
     // Does not work with method: tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     /*
@@ -113,25 +91,17 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         case true:
             label.text = "Found:"
         case false:
-            label.text = String(friendIndex[section])
+            label.text = "Totally \(friends!.count) friends"
         }
         sectionHeaderView.addSubview(label)
         return sectionHeaderView
     }
     
-    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return friendIndex
-    }
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch isFiltering {
-        case true:
+        if isFiltering {
             return searchedFriend.count
-        case false:
-            let buffer = friends!.filter{ [weak self] (friend) -> Bool in
-                self?.friendIndex[section] == String(friend.lastName.first!)
-            }
-            return buffer.count
+        } else {
+            return friends!.count
         }
     }
 
@@ -142,10 +112,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         if isFiltering {
             dataFromArray = searchedFriend[indexPath.row]
         } else {
-            let buffer = friends.filter{ (friend) -> Bool in
-                self.friendIndex[indexPath.section] == String(friend.lastName.first!)
-            }
-            dataFromArray = buffer[indexPath.row]
+            dataFromArray = friends[indexPath.row]
         }
         cell.configureCell(fullName: "\(dataFromArray.lastName) \(dataFromArray.firstName)", lastSeen: dataFromArray.lastSeen, occupation: dataFromArray.occupationName, avatar: dataFromArray.avatar, online: dataFromArray.online)
         return cell
@@ -224,10 +191,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
                 if isFiltering {
                     friend = searchedFriend[indexPath.row]
                  } else {
-                    let buffer = friendsArray.filter{ (friend) -> Bool in
-                        self.friendIndex[indexPath.section] == String(friend.lastName.first!)
-                    }
-                    friend = buffer[indexPath.row]
+                    friend = friendsArray[indexPath.row]
                  }
                 let friendProfileVC = segue.destination as! FriendProfileViewController
                 friendProfileVC.friendProfile = friend
@@ -247,23 +211,30 @@ extension FriendsTableViewController {
             switch changes {
             case .initial(let results):
                 print("\nINFO: Realm Groups Data has been initiated: \(results)")
-                self.createIndex()
                 self.friendsTableView.reloadData()
             case .update(let results, let deletions, let insertions, let modifications):
                 print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions.count),\nInsertion: \(insertions.count),\nModifications: \(modifications.count)")
-                self.friendsTableView.reloadData()
-                
+                self.friendsTableView.beginUpdates()
+                self.friendsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
+                }), with: .automatic)
+                self.friendsTableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+                self.friendsTableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
+                self.friendsTableView.endUpdates()
             case .error(let error):
                 print("\nINFO: Realm friends.observe{} error: \(error.localizedDescription)")
+                let alert = UIAlertController(title: "ERROR", message: "Connection to the server is not available. Please, check Wi-Fi or Internet settings.", preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(action)
+                self.present(alert, animated: true, completion: nil)
             }
         })
     }
     
     func downloadUserFriends() {
         NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friends in
-            guard let self = self, let friendsArray = friends else { return }
+            guard let self = self, let friendsArray = friends  else { return }
             RealmManager.deleteAllFriendsObject() // is used to resolve logical conflict when we have deleted Friend in vk.com but in RealmDB it still is there
-            RealmManager.saveGotFriendsInRealm(freinds: friendsArray)
+            RealmManager.saveGotFriendsInRealm(freinds: friendsArray.sorted { $0.lastName.first! < $1.lastName.first! })
             self.downloadAvatars()
         }
     }

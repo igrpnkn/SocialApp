@@ -26,7 +26,7 @@ class NetworkManager {
         let parameters: Parameters = [
             "user_id": userId,
             "lang": "ru",
-            "order": "hints",
+            "order": "name",
             "count": 500,
             "name_case": "nom",
             "fields": "domain,online,first_name,last_name,nickname,status,bdate,sex,relation,photo_50,photo_max,city,country,occupation,last_seen",
