@@ -29,12 +29,13 @@ class RealmManager {
 // MARK: - FRIENDS METHODS
 extension RealmManager {
     
-    static func saveGotFriendsInRealm(freinds: [Friend]) {
+    static func saveGotFriendsInRealm(friends: [Friend]) {
         let realm = try! Realm()
         print(realm.configuration.fileURL)
         // 1 способ
+        print("\n\nBefore saving in Realm: \(friends.map({$0.lastName }))")
         try? realm.write{
-            realm.add(freinds, update: .modified)
+            realm.add(friends, update: .modified)
         }
         // 2 способ
         /*

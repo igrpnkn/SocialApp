@@ -82,21 +82,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     */
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 28))
-        sectionHeaderView.backgroundColor = UIColor.systemGray5
-        let label = UILabel(frame: CGRect(x: 10, y: 0, width: sectionHeaderView.frame.width, height: 28))
-        label.tintColor = .label
-        switch isFiltering {
-        case true:
-            label.text = "Found:"
-        case false:
-            label.text = "Totally \(friends!.count) friends"
-        }
-        sectionHeaderView.addSubview(label)
-        return sectionHeaderView
-    }
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isFiltering {
             return searchedFriend.count
@@ -211,9 +196,10 @@ extension FriendsTableViewController {
             switch changes {
             case .initial(let results):
                 print("\nINFO: Realm Groups Data has been initiated: \(results)")
+                self.friends = results
                 self.friendsTableView.reloadData()
             case .update(let results, let deletions, let insertions, let modifications):
-                print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions.count),\nInsertion: \(insertions.count),\nModifications: \(modifications.count)")
+                //print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions.count),\nInsertion: \(insertions.count),\nModifications: \(modifications.count)")
                 self.friendsTableView.beginUpdates()
                 self.friendsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
                 }), with: .automatic)
@@ -234,7 +220,7 @@ extension FriendsTableViewController {
         NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friends in
             guard let self = self, let friendsArray = friends  else { return }
             RealmManager.deleteAllFriendsObject() // is used to resolve logical conflict when we have deleted Friend in vk.com but in RealmDB it still is there
-            RealmManager.saveGotFriendsInRealm(freinds: friendsArray.sorted { $0.lastName.first! < $1.lastName.first! })
+            RealmManager.saveGotFriendsInRealm(friends: friendsArray)
             self.downloadAvatars()
         }
     }
@@ -258,14 +244,11 @@ extension FriendsTableViewController {
 
     func startActivityIndicator() {
         print("\nINFO: Loading \(self.description) has begun.")
-//        activityIndicator.center.x = self.view.center.x
-//        activityIndicator.center.y = self.view.frame.width / 5
         activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
         activityIndicator.center.y = (self.navigationController?.navigationBar.center.y)!*0.75
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.style = .large
-//        self.view.addSubview(activityIndicator)
         self.navigationController?.view.addSubview(activityIndicator)
     }
     

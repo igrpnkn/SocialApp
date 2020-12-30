@@ -187,6 +187,7 @@ extension GroupsTableViewController {
         NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
             guard let self = self, let groupsArray = groups else { return }
             RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
+            
             RealmManager.saveGotGroupsInRealm(groups: groupsArray)
             self.downloadAvatars()
         }
