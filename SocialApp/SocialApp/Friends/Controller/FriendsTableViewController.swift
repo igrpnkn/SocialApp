@@ -17,20 +17,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     // Downloaded objects
     var friends: Results<Friend>? = RealmManager.friendsGetFromRealm()
     
-    // Indexation...
-//    var friendIndex: [String] = []
-//    func createIndex() {
-//        // Logic of indexation - getting unique first letter of .lastName into friendIndex[]
-//        var temporaryIndex: [String] = []
-//        for item in self.friends! {
-//            temporaryIndex.append(String(item.lastName.first!))
-//        }
-//        friendIndex = Array(Set(temporaryIndex)).sorted()
-//        print("\nCreated index: ")
-//        print(self.friendIndex)
-//    }
-    //
-    
     // Search...
     var searchedFriend: [Friend] = []
     let searchField = UISearchController(searchResultsController: nil)
@@ -61,6 +47,13 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         downloadUserFriends()
         observeRealmFriendsCollection()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .always
+    }
 
     // MARK: - Table view data source
 
@@ -69,18 +62,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         return 1
         //return friendIndex.count
     }
-    
-    // Does not work with method: tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
-    /*
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch isFiltering {
-        case true:
-            return "Found:"
-        case false:
-            return String(friendIndex[section])
-        }
-    }
-    */
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isFiltering {
@@ -123,42 +104,6 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         searchedFriend = friends!.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
         friendsTableView.reloadData()
     }
-    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
     
     // MARK: - Navigation
 

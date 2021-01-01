@@ -244,7 +244,7 @@
                             <outlet property="delegate" destination="jSe-VS-AO3" id="8s0-tx-ZtW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Friends" id="6ve-El-pFP">
+                    <navigationItem key="navigationItem" title="Friends" largeTitleDisplayMode="always" id="6ve-El-pFP">
                         <leftBarButtonItems>
                             <barButtonItem image="square.and.arrow.up" catalog="system" style="plain" id="r7k-k9-c6o">
                                 <color key="tintColor" name="AccentColor"/>
@@ -1358,7 +1358,7 @@
                             <constraint firstItem="mal-6A-Beb" firstAttribute="top" secondItem="Cz1-wX-qLH" secondAttribute="top" id="t6a-vA-A6C"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Friend profile" id="G7w-Ve-UfK"/>
+                    <navigationItem key="navigationItem" title="Friend profile" largeTitleDisplayMode="always" id="G7w-Ve-UfK"/>
                     <connections>
                         <outlet property="friendProfileTableView" destination="mal-6A-Beb" id="wF2-jJ-irt"/>
                     </connections>
@@ -1509,7 +1509,7 @@
                         <color key="badgeColor" systemColor="systemRedColor"/>
                     </tabBarItem>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleAspectFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="nQn-1j-QSB">
+                    <navigationBar key="navigationBar" clipsSubviews="YES" contentMode="scaleAspectFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="nQn-1j-QSB">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" name="AccentColor"/>

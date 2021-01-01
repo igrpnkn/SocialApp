@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 import RealmSwift
 
 class PhotoSizes: Object, Decodable {
@@ -42,10 +41,15 @@ class PhotoSizes: Object, Decodable {
 class Photo: Object, Decodable {
     @objc dynamic var date: Int = 0
     @objc dynamic var id: Int = 0
+    @objc dynamic var owner_id: Int = 0
     //var commentsCount: Int
     //var likesCount: Int
     @objc dynamic var text: String = ""
     var sizes = List<PhotoSizes>()
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
 }
 
 class PhotoResponse: Decodable {

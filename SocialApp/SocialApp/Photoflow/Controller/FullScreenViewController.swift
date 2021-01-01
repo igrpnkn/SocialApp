@@ -12,8 +12,8 @@ class FullScreenViewController: UIViewController {
     @IBOutlet weak var fullScreenCollectionView: UICollectionView!
     
     let reuseIdentifier = "FullScreenCollectionViewCell"
-    var photoArray: [UIImage?] = []
-    var indexPath: IndexPath!
+    var photoArray: [Photoflow] = []
+    var indexPath: IndexPath?
     override var prefersStatusBarHidden: Bool {
             return true
         }
@@ -25,14 +25,15 @@ class FullScreenViewController: UIViewController {
         self.navigationController?.hidesBarsOnTap = true
         self.navigationController?.isNavigationBarHidden = true
         self.navigationController?.navigationBar.barTintColor = .black
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         
         fullScreenCollectionView.performBatchUpdates(nil) { (result) in
-            self.fullScreenCollectionView.scrollToItem(at: self.indexPath, at: .centeredHorizontally, animated: false)
+            self.fullScreenCollectionView.scrollToItem(at: self.indexPath!, at: .centeredHorizontally, animated: false)
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         self.navigationController?.hidesBarsOnTap = false
         self.navigationController?.isNavigationBarHidden = false
         self.navigationController?.navigationBar.barTintColor = .systemGray6
@@ -58,8 +59,8 @@ extension FullScreenViewController: UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FullScreenCollectionViewCell
-        if let image = photoArray[indexPath.item] {
-            cell.fullScreenImageView.image = image
+        if let data = photoArray[indexPath.item].data {
+            cell.fullScreenImageView.image = UIImage(data: data)
         }
         cell.fullScreenImageView.contentMode = .scaleAspectFit
         return cell

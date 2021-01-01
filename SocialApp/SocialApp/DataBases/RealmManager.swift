@@ -126,17 +126,20 @@ extension RealmManager {
 //            realm.add(photos, update: .modified)
 //        }
 //    }
-    static func saveGotPhotosInRealm(save photos: [Photo], for userID: Int) {
+    static func savePhotosMetaData(save photos: [Photo], for userID: Int) {
         guard let realm = try? Realm() else {
             print("\nERROR - GETTING ACCESS TO REALM: Aborting saving photos for userID: \(userID).")
             return
         }
         do {
-            //let friend = realm.objects(Friend.self).filter("id = %@", userID)
+            //let friend = realm.objects(Friend.self).filter("id == %@", userID)
             let friend = realm.object(ofType: Friend.self, forPrimaryKey: userID)!
+            let photoList = List<Photo>()
+            photoList.append(objectsIn: photos)
+            print("\n\n\\nINFO:  PHOTO LIST: \n\(photoList)\n\n\n")
             try realm.write {
-                friend.photos.append(objectsIn: photos)
-                realm.add(friend, update: .modified)
+                friend.photos = photoList
+                realm.add(friend.photos, update: .modified)
             }
         } catch {
             print("\nERROR - APPENDING/ADDING TRANSACTION: Aborting saving photos for userID: \(userID).")
@@ -148,23 +151,58 @@ extension RealmManager {
 //        let photos = realm.objects(Photo.self)
 //        return Array(photos)
 //    }
-    static func photosGetFromRealm(for userID: Int) -> [Photo] {
+    static func getPhotosMetaData(for userID: Int) -> Results<Photo>? {
         guard let realm = try? Realm() else {
             print("\nERROR - GETTING ACCESS TO REALM: Aborting getting photos for userID: \(userID).")
-            return []
+            return nil
         }
-        guard let friend = realm.object(ofType: Friend.self, forPrimaryKey: userID) else {
-            print("\nERROR - GETTING ACCESS TO OBJECT: Aborting saving photos for userID: \(userID).")
-            return []
-        }
-        let photos = Array(friend.photos)
-        return photos
+        let photoMetaData = realm.objects(Photo.self).filter("owner_id == %@", userID)
+        return photoMetaData
     }
     
-    static func deleteAllPhotosObject() {
+    static func deleteAllPhotos() {
         do {
             let realm = try Realm()
             let objects = realm.objects(Photo.self)
+            try! realm.write {
+                realm.delete(objects)
+            }
+        }
+        catch {
+            print("\nINFO: Error of deleting realm objects in RealmManager.deleteObject(for key: String):")
+            print(error.localizedDescription)
+        }
+    }
+    
+}
+
+// MARK: - PHOTOFLOW METHODS
+extension RealmManager {
+    
+    static func savePhotoflow(photoID: Int, ownerID: Int, data: Data?) {
+        let realm = try! Realm()
+        let photoflow = Photoflow()
+        photoflow.id = photoID
+        photoflow.ownerID = ownerID
+        photoflow.data = data
+        try? realm.write{
+            realm.add(photoflow, update: .modified)
+        }
+    }
+    
+    static func getPhotoflow(userID: Int) -> Results<Photoflow>? {
+        guard let realm = try? Realm() else {
+            print("\nERROR - GETTING ACCESS TO REALM: Aborting getting photos for userID: \(userID).\n")
+            return nil
+        }
+        let photoflow = realm.objects(Photoflow.self).filter("ownerID == %@", userID)
+        return photoflow
+    }
+    
+    static func deletePhotoflow(userID: Int) {
+        do {
+            let realm = try Realm()
+            let objects = realm.objects(Photoflow.self).filter("ownerID == %@", userID)
             try! realm.write {
                 realm.delete(objects)
             }

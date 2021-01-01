@@ -54,6 +54,7 @@
 		3ABC48B82548282D00905805 /* FullScreenScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABC48B72548282D00905805 /* FullScreenScrollView.swift */; };
 		3AD2379425471D83007E30DA /* FullScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD2379325471D83007E30DA /* FullScreenViewController.swift */; };
 		3AD23798254721B9007E30DA /* FullScreenCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD23797254721B9007E30DA /* FullScreenCollectionViewCell.swift */; };
+		3AE82EEC259F6D2E00A39B2B /* Photoflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE82EEB259F6D2E00A39B2B /* Photoflow.swift */; };
 		3AFB250E2535E37E00908839 /* MessengerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */; };
 		3AFB25162535E44A00908839 /* MessengerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */; };
 		3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */; };
@@ -111,6 +112,7 @@
 		3ABC48B72548282D00905805 /* FullScreenScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenScrollView.swift; sourceTree = "<group>"; };
 		3AD2379325471D83007E30DA /* FullScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenViewController.swift; sourceTree = "<group>"; };
 		3AD23797254721B9007E30DA /* FullScreenCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenCollectionViewCell.swift; sourceTree = "<group>"; };
+		3AE82EEB259F6D2E00A39B2B /* Photoflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photoflow.swift; sourceTree = "<group>"; };
 		3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewController.swift; sourceTree = "<group>"; };
 		3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewCell.swift; sourceTree = "<group>"; };
 		3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessengerTableViewCell.xib; sourceTree = "<group>"; };
@@ -204,9 +206,9 @@
 		3A0EB2F52523382900BC6F04 /* SocialApp */ = {
 			isa = PBXGroup;
 			children = (
+				3A07C8C2256DD1DE004D8B22 /* Network */,
 				3AA20B7B258403D900857933 /* DataBases */,
 				3A2D5B3825741E4400D029D0 /* Photoflow */,
-				3A07C8C2256DD1DE004D8B22 /* Network */,
 				3A07C89E256DAE46004D8B22 /* Application */,
 				3A44566A2543135500198FC2 /* RawFeatures */,
 				3A3EA889254072CC002EB846 /* Extensions */,
@@ -321,6 +323,7 @@
 			isa = PBXGroup;
 			children = (
 				3A84CC09257CF2FF005ED340 /* Photo.swift */,
+				3AE82EEB259F6D2E00A39B2B /* Photoflow.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -595,6 +598,7 @@
 				3A38B90A252DD2810057542D /* Group.swift in Sources */,
 				3A9CADBD253C996000B187FB /* NewsTableViewCell.swift in Sources */,
 				3A6C24D02537497800B97B0E /* AccountTableViewController.swift in Sources */,
+				3AE82EEC259F6D2E00A39B2B /* Photoflow.swift in Sources */,
 				3A0EB2F92523382900BC6F04 /* SceneDelegate.swift in Sources */,
 				3A3553A12544993E00E88C58 /* FriendProfileTableViewCell.swift in Sources */,
 				3A44566C2543138400198FC2 /* RawFeatures.swift in Sources */,

@@ -109,7 +109,7 @@ class NetworkManager {
             "album_id": "profile",
             "extended": 1,
             "photo_sizes": 1,
-            "count": 10,
+            "count": 15,
             "access_token": UserSession.instance.token!,
             "v": "5.126"
         ]

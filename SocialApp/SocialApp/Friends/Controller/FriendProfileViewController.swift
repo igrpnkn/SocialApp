@@ -21,7 +21,7 @@ class FriendProfileViewController: UIViewController  {
         friendProfileTableView.dataSource = self
         friendProfileTableView.delegate = self
         self.navigationController?.navigationBar.prefersLargeTitles = false
-        //self.navigationController?.navigationItem.largeTitleDisplayMode = .automatic
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         self.title = "\(friendProfile?.lastName ?? "Profile") \(friendProfile?.firstName ?? "unavailable")"
         
         print("\nINFO: FriendProfileTableViewController.viewDidLoad()\n")
@@ -30,16 +30,13 @@ class FriendProfileViewController: UIViewController  {
         downloadProfilePhoto()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationItem.largeTitleDisplayMode = .always
     }
-    */
+    
 }
 
 extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegate {
@@ -89,6 +86,7 @@ extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegat
             let photoflowViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PhotoflowViewController") as! PhotoflowViewController
             photoflowViewController.modalPresentationStyle = .fullScreen
             photoflowViewController.userId = friendProfile?.id
+            photoflowViewController.title = "Profile photos"
             self.navigationController?.pushViewController(photoflowViewController, animated: true)
         }
     }
@@ -118,12 +116,13 @@ extension FriendProfileViewController {
     }
 
     func startActivityIndicator() {
-        activityIndicator.center.x = self.view.center.x
-        activityIndicator.center.y = self.view.frame.width / 2
+        print("\nINFO: Loading \(self.description) has begun.")
+        activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
+        activityIndicator.center.y = (self.navigationController?.navigationBar.center.y)!*0.75
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.style = .large
-        self.view.addSubview(activityIndicator)
+        self.navigationController?.view.addSubview(activityIndicator)
     }
     
     func stopActivityIndicator() {
