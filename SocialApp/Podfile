@@ -10,5 +10,9 @@ target 'SocialApp' do
   pod 'RealmSwift', '~> 10.3'
   pod 'SwiftKeychainWrapper', '~> 4.0'
   pod 'Kingfisher', '~> 5.15'
+  pod 'FirebaseCore', '~> 7.3'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
+  pod 'Firebase/Database'
 
 end

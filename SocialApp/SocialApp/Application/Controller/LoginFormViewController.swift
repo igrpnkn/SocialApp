@@ -16,6 +16,16 @@ class LoginFormViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Root controller
+        /*
+        let controllerName: String = ""
+        guard
+            let vc = storyboard?.instantiateViewController(identifier: controllerName),
+            let window = self.view.window
+        else { return }
+        window.rootViewController = vc
+        */
+        
         let hideKeyboardGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         scrollView?.addGestureRecognizer(hideKeyboardGesture)
         

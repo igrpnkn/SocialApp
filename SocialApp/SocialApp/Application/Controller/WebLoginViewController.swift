@@ -7,10 +7,13 @@
 
 import UIKit
 import WebKit
+import FirebaseDatabase
 
 class WebLoginViewController: UIViewController {
 
     @IBOutlet weak var webView: WKWebView!
+    private var userSessions = [FirebaseUserSession]()
+    private let ref = Database.database().reference(withPath: "userSessions")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,15 +68,32 @@ extension WebLoginViewController: WKNavigationDelegate {
             UserSession.instance.token = token
             print("\nINFO: Acctual user token is: \(UserSession.instance.token!)")
         }
-        if let userId = params["user_id"] {
-            UserSession.instance.userId = Int(userId)
+        if let userID = params["user_id"] {
+            UserSession.instance.userId = Int(userID)
             print("INFO: Acctual user ID is: \(UserSession.instance.userId!)")
+            sendUserSessionToFirebase(userID: userID)
         }
         
         decisionHandler(.cancel)
-        let tbc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "TabBarController") as! TabBarController
-        tbc.modalPresentationStyle = .fullScreen
-        present(tbc, animated: true, completion: nil)
+//        let tbc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "TabBarController") as! TabBarController
+//        tbc.modalPresentationStyle = .fullScreen
+//        present(tbc, animated: true, completion: nil)
+        
+        let controllerName: String = "TabBarController"
+        guard
+            let tbc = storyboard?.instantiateViewController(identifier: controllerName),
+            let window = self.view.window
+        else { return }
+        window.rootViewController = tbc
+    }
+    
+    func sendUserSessionToFirebase(userID: String) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let currentDate = dateFormatter.string(from: Date())
+        let fbUserSession = FirebaseUserSession(authDate: currentDate, userID: UserSession.instance.userId!)
+        let userRef = self.ref.child(userID)
+        userRef.setValue(fbUserSession.toAnyObject())
     }
     
 }

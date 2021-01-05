@@ -17,13 +17,15 @@ class AccountTableViewController: UITableViewController {
         UserDefaults.standard.set(nil, forKey: "userPassword")
         UserDefaults.standard.synchronize()
         
-        self.parent?.dismiss(animated: true, completion: {print("Dismissed parent")})
-        self.dismiss(animated: true, completion: { print("Dismissed AccountTVC") })
-//        self.dismiss(animated: true, completion: {
-//            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LoginFormViewController") as! LoginFormViewController
-//            vc.modalPresentationStyle = .fullScreen
-//            self.present(vc, animated: true, completion: nil)
-//        })
+//        self.parent?.dismiss(animated: true, completion: {print("Dismissed parent")})
+//        self.dismiss(animated: true, completion: { print("Dismissed AccountTVC") })
+        
+        let controllerName: String = "WebLoginViewController"
+        guard
+            let vc = storyboard?.instantiateViewController(identifier: controllerName),
+            let window = self.view.window
+        else { return }
+        window.rootViewController = vc
     }
     
     override func viewDidLoad() {

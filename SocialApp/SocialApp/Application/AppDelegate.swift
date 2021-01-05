@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import Firebase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // Primary dafault configuration of FireBase
+        FirebaseApp.configure()
         
         // Getting service info about app name, version, biuld
         if let displayName = Bundle.main.localizedInfoDictionary?["CFBundleDisplayName"] as? String {

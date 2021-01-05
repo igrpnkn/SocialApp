@@ -55,6 +55,7 @@
 		3AD2379425471D83007E30DA /* FullScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD2379325471D83007E30DA /* FullScreenViewController.swift */; };
 		3AD23798254721B9007E30DA /* FullScreenCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD23797254721B9007E30DA /* FullScreenCollectionViewCell.swift */; };
 		3AE82EEC259F6D2E00A39B2B /* Photoflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE82EEB259F6D2E00A39B2B /* Photoflow.swift */; };
+		3AE82EFC25A33D7E00A39B2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3AE82EFB25A33D7E00A39B2B /* GoogleService-Info.plist */; };
 		3AFB250E2535E37E00908839 /* MessengerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */; };
 		3AFB25162535E44A00908839 /* MessengerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */; };
 		3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */; };
@@ -113,6 +114,7 @@
 		3AD2379325471D83007E30DA /* FullScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenViewController.swift; sourceTree = "<group>"; };
 		3AD23797254721B9007E30DA /* FullScreenCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenCollectionViewCell.swift; sourceTree = "<group>"; };
 		3AE82EEB259F6D2E00A39B2B /* Photoflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photoflow.swift; sourceTree = "<group>"; };
+		3AE82EFB25A33D7E00A39B2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3AFB250D2535E37E00908839 /* MessengerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewController.swift; sourceTree = "<group>"; };
 		3AFB25142535E44A00908839 /* MessengerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerTableViewCell.swift; sourceTree = "<group>"; };
 		3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessengerTableViewCell.xib; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 				3A2D55C7252CF3460085C278 /* Groups */,
 				3A9CADB7253C7A6100B187FB /* News */,
 				3A0EB2FF2523382C00BC6F04 /* Assets.xcassets */,
+				3AE82EFB25A33D7E00A39B2B /* GoogleService-Info.plist */,
 				3A0EB3042523382C00BC6F04 /* Info.plist */,
 			);
 			path = SocialApp;
@@ -526,6 +529,7 @@
 				3A3553AD2544D4BD00E88C58 /* PhotoflowCollectionViewCell.xib in Resources */,
 				3A0EB2FE2523382900BC6F04 /* Main.storyboard in Resources */,
 				3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */,
+				3AE82EFC25A33D7E00A39B2B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
