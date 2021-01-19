@@ -16,23 +16,25 @@ class NewsTableViewController: UITableViewController {
     
     @IBOutlet weak var newsTableView: UITableView!
     
-    var newsArray: [News] = NewsDataBase.instance.item
+    var newsFeed: [News]? = []
+    var newsFeedBiulder = NewsFeedBiulder()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         newsTableView.delegate = self
         newsTableView.dataSource = self
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        //self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        //self.navigationItem.rightBarButtonItem = self.editButtonItem
+        downloadNews(fromNext: "")
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return newsArray.count
+        return newsFeed?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -42,7 +44,7 @@ class NewsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 14))
-        sectionHeaderView.backgroundColor = UIColor.systemGray6
+        sectionHeaderView.backgroundColor = UIColor.systemGray5
         return sectionHeaderView
     }
     
@@ -56,39 +58,28 @@ class NewsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.row {
-        case 0:
+        case 0: // Header
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseHeaderIdentifier, for: indexPath) as! NewsHeaderTableViewCell
-            cell.avatar.image = newsArray[indexPath.section].avatar
-            cell.author.text = newsArray[indexPath.section].author
-            cell.time.text = newsArray[indexPath.section].time
+            //let author = self.matchPostAuthor(authorID: newsFeed?.items?[indexPath.section].source_id, postSection: indexPath.section)
+            cell.configureCell(avatar: newsFeed?[indexPath.section].avatar, author: newsFeed?[indexPath.section].author, time: newsFeed?[indexPath.section].time)
             return cell
-        case 1:
+        case 1: // Text
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseTextIdentifier, for: indexPath) as! NewsTextTableViewCell
-            cell.postedText.text = newsArray[indexPath.section].text!
+            cell.configureCell(text: newsFeed?[indexPath.section].text)
             return cell
-        case 2:
+        case 2: // Photos
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseMediaIdentifier, for: indexPath) as! NewsMediaTableViewCell
-            cell.imagesArray = newsArray[indexPath.section].images
+            cell.imagesArray = newsFeed?[indexPath.section].photos
             cell.mediaCollectionView.reloadData()
             return cell
-        case 3:
+        case 3: // Footer
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseFooterIdentifier, for: indexPath) as! NewsFooterTableViewCell
-            cell.likeCount.text = String(newsArray[indexPath.section].likeCount!)
-            cell.commentCount.text = String(newsArray[indexPath.section].commentCount!)
-            cell.reviewCount.text = String(newsArray[indexPath.section].reviewCount!)
+            cell.configureCell(likes: newsFeed?[indexPath.section].likeCount, comments: newsFeed?[indexPath.section].commentCount, reviews: newsFeed?[indexPath.section].reviewCount, userLiked: newsFeed?[indexPath.section].liked)
             cell.likeButton.tag = indexPath.section
-            if newsArray[indexPath.section].liked == true {
-                cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-                cell.likeButton.tintColor = UIColor.systemRed
-                cell.likeButton.animationOfPulsation()
-            } else if newsArray[indexPath.section].liked == false {
-                cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
-                cell.likeButton.tintColor = UIColor.label
-            }
             return cell
         default:
-            print("What the hell was here!? o_O")
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseMediaIdentifier, for: indexPath) as! NewsMediaTableViewCell
+            print("\nINFO: What the hell was here!? o_O\n")
+            let cell = tableView.dequeueReusableCell(withIdentifier: reuseHeaderIdentifier, for: indexPath) as! NewsHeaderTableViewCell
             return cell
         }
     }
@@ -96,9 +87,9 @@ class NewsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 2:
-            if 0 == newsArray[indexPath.section].images?.count ?? 0 {
+            if 0 == newsFeed?[indexPath.section].photosURL?.count ?? 0 {
                 return 0
-            } else if 1 == newsArray[indexPath.section].images?.count ?? 0 {
+            } else if 1 == newsFeed?[indexPath.section].photosURL?.count ?? 0 {
                 return tableView.frame.width
             } else {
                 return tableView.frame.width/2
@@ -110,41 +101,19 @@ class NewsTableViewController: UITableViewController {
     
     @IBAction private func likeButtonPressed(_ sender: UIButton) {
         print("Button LIKE in \(sender.tag) section of NEWSFEED has been pressed!")
-        switch newsArray[sender.tag].liked {
-        case true:
+        if 1 == newsFeed?[sender.tag].liked ?? 0 {
             print("Post is being disliked!")
-            newsArray[sender.tag].likeCount! -= 1
-            NewsDataBase.instance.item[sender.tag].likeCount! -= 1
-            if newsArray[sender.tag].likeCount! == NewsDataBase.instance.item[sender.tag].likeCount! {
-                newsArray[sender.tag].liked = false
-                NewsDataBase.instance.item[sender.tag].liked = false
-            } else {
-                print("Disliking failed!")
-            }
-            if newsArray[sender.tag].liked == NewsDataBase.instance.item[sender.tag].liked {
-                print("Disliking succeeded!")
-                self.newsTableView.reloadData()
-            } else {
-                print("Disliking failed!")
-            }
-        case false:
+            newsFeed?[sender.tag].likeCount! -= 1
+            newsFeed?[sender.tag].liked = 0
+            self.newsTableView.reloadData()
+        } else {
             print("Post is being liked!")
-            newsArray[sender.tag].likeCount! += 1
-            NewsDataBase.instance.item[sender.tag].likeCount! += 1
-            if newsArray[sender.tag].likeCount! == NewsDataBase.instance.item[sender.tag].likeCount! {
-                newsArray[sender.tag].liked = true
-                NewsDataBase.instance.item[sender.tag].liked = true
-            } else {
-                print("Liking failed!")
-            }
-            if newsArray[sender.tag].liked == NewsDataBase.instance.item[sender.tag].liked {
-                print("Liking succeeded!")
-                self.newsTableView.reloadData()
-            } else {
-                print("Liking failed!")
-            }
+            newsFeed?[sender.tag].likeCount! += 1
+            newsFeed?[sender.tag].liked = 1
+            self.newsTableView.reloadData()
         }
     }
+    
     
     /*
     // Override to support conditional editing of the table view.
@@ -193,3 +162,78 @@ class NewsTableViewController: UITableViewController {
 
 }
 
+extension NewsTableViewController {
+    
+    func downloadNews(fromNext: String) {
+        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, nextFrom: fromNext, completion: { response in
+            guard let response = response,
+                  let posts = response.items
+            else {
+                print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
+                return
+            }
+            print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
+            self.biuldNewsFeed(newsFeed: response)
+        })
+    }
+    
+    func biuldNewsFeed(newsFeed response: PostResponse) {
+        self.newsFeed = self.newsFeedBiulder.buildNewsFeed(parsedJSON: response)
+        print("\nINFO: \(#function) has total built news: \(newsFeed?.count ?? 0)")
+        self.newsTableView.reloadData()
+        downloadMedia()
+    }
+    
+    func downloadMedia() {
+        DispatchQueue.global().async {
+            print("\nINFO: \(#function) Starting downloading avatars.")
+            for news in self.newsFeed! {
+                if let url = URL(string: news.avatarURL!) {
+                    if let data = try? Data(contentsOf: url) {
+                        news.avatar = data
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                print("\nINFO: \(#function) Reloading data after downloading avatars.")
+                self.newsTableView.reloadData()
+            }
+        }
+        
+        DispatchQueue.global().async {
+            print("\nINFO: \(#function) Starting downloading photos.")
+            for news in self.newsFeed! {
+                if let urlStrings = news.photosURL {
+                    for urlString in urlStrings {
+                        if let url = URL(string: urlString) {
+                            if let data = try? Data(contentsOf: url) {
+                                news.photos?.append(data)
+                            }
+                        }
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                print("\nINFO: \(#function) Reloading data after downloading photos.")
+                self.newsTableView.reloadData()
+            }
+        }
+        
+    }
+    
+    /*
+    func matchPostAuthor(authorID: Int?, postSection: Int) -> String? {
+        guard let authorID = authorID else {
+            print("\nINFO: ERROR - Unexpectedly nil in \(#function)\n")
+            return nil
+        }
+        if authorID < 0 {
+            let author = self.newsFeed?.groups?.filter({ $0.id == (-1 * authorID) })
+            return author?.first?.name
+        } else {
+            let author = self.newsFeed?.profiles?.filter({ $0.id == authorID })
+            return ((author?.first?.first_name ?? "") + " " + (author?.first?.last_name ?? ""))
+        }
+    }
+    */
+}

@@ -15,6 +15,7 @@ class NewsHeaderTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.avatar.image = UIImage(named: "camera")
         // Initialization code
     }
 
@@ -24,4 +25,22 @@ class NewsHeaderTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    func configureCell(avatar: Data?, author: String?, time: Int?) {
+        if let author = author {
+            self.author.text = author
+        }
+        if let avatar = avatar {
+            self.avatar.image = UIImage(data: avatar)
+        }
+        if let time = time {
+            let date = Date(timeIntervalSince1970: Double(time))
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeStyle = DateFormatter.Style.short //Set time style
+            dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
+            dateFormatter.timeZone = .current
+            let localDate = dateFormatter.string(from: date)
+            self.time.text = "Posted " + String(localDate)
+        }
+    }
+    
 }

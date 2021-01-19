@@ -17,11 +17,9 @@ class WebLoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         webView.navigationDelegate = self
         
         let scope = VKScopeBitmask.all
-        
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "oauth.vk.com"
@@ -30,13 +28,12 @@ class WebLoginViewController: UIViewController {
             URLQueryItem(name: "client_id", value: "7676176"),
             URLQueryItem(name: "display", value: "mobile"),
             URLQueryItem(name: "redirect_uri", value: "https://oauth.vk.com/blank.html"),
-            URLQueryItem(name: "scope", value: "\(scope)"),
+            URLQueryItem(name: "scope", value: "\(scope.rawValue)"),
             URLQueryItem(name: "response_type", value: "token"),
             URLQueryItem(name: "v", value: "5.126")
         ]
-        
+        print("\nINFO: AUTH URL: \(urlComponents.url!)\n")
         let request = URLRequest(url: urlComponents.url!)
-      
         webView.load(request)
     }
     
@@ -66,25 +63,17 @@ extension WebLoginViewController: WKNavigationDelegate {
         
         if let token = params["access_token"] {
             UserSession.instance.token = token
-            print("\nINFO: Acctual user token is: \(UserSession.instance.token!)")
+            UserDefaults.standard.set(UserSession.instance.token, forKey: "UserSessionToken")
+            print("\n\nINFO: Acctual user token is: \(UserSession.instance.token!)")
         }
         if let userID = params["user_id"] {
             UserSession.instance.userId = Int(userID)
-            print("INFO: Acctual user ID is: \(UserSession.instance.userId!)")
+            UserDefaults.standard.set(UserSession.instance.userId, forKey: "UserSessionUserID")
+            print("INFO: Acctual user ID is: \(UserSession.instance.userId!)\n\n")
             sendUserSessionToFirebase(userID: userID)
         }
-        
         decisionHandler(.cancel)
-//        let tbc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "TabBarController") as! TabBarController
-//        tbc.modalPresentationStyle = .fullScreen
-//        present(tbc, animated: true, completion: nil)
-        
-        let controllerName: String = "TabBarController"
-        guard
-            let tbc = storyboard?.instantiateViewController(identifier: controllerName),
-            let window = self.view.window
-        else { return }
-        window.rootViewController = tbc
+        launchTabBarController()
     }
     
     func sendUserSessionToFirebase(userID: String) {
@@ -94,6 +83,18 @@ extension WebLoginViewController: WKNavigationDelegate {
         let fbUserSession = FirebaseUserSession(authDate: currentDate, userID: UserSession.instance.userId!)
         let userRef = self.ref.child(userID)
         userRef.setValue(fbUserSession.toAnyObject())
+    }
+    
+    func launchTabBarController() {
+        let controllerName: String = "TabBarController"
+        guard
+            let tbc = storyboard?.instantiateViewController(identifier: controllerName),
+            let window = self.view.window
+        else { return }
+        window.rootViewController = tbc
+        //        let tbc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "TabBarController") as! TabBarController
+        //        tbc.modalPresentationStyle = .fullScreen
+        //        present(tbc, animated: true, completion: nil)
     }
     
 }

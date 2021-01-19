@@ -14,6 +14,10 @@ class PhotoflowViewController: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     var realmToken: NotificationToken?
     
+    override var prefersStatusBarHidden: Bool {
+            return false
+        }
+    
     let reuseIdentifier = "PhotoflowCollectionViewCell"
     var photoflow: Results<Photoflow>?
     var photoMetaData: Results<Photo>?

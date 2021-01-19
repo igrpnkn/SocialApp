@@ -12,6 +12,7 @@ class NewsTextTableViewCell: UITableViewCell {
     @IBOutlet weak var postedText: UILabel!
     
     @IBAction func expandText(_ sender: Any) {
+        self.postedText.numberOfLines = 0
     }
     
     
@@ -26,4 +27,10 @@ class NewsTextTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    func configureCell(text: String?) {
+        if let text = text {
+            self.postedText.text = text
+        }
+    }
+    
 }

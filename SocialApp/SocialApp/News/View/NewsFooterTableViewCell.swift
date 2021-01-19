@@ -24,4 +24,25 @@ class NewsFooterTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func configureCell(likes: Int?, comments: Int?, reviews: Int?, userLiked: Int?) {
+        if let likes = likes {
+            self.likeCount.text = String(likes)
+        }
+        if let comments = comments {
+            self.commentCount.text = String(comments)
+        }
+        if let reviews = reviews {
+            self.reviewCount.text = String(reviews)
+        }
+        if userLiked == 1 {
+            self.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            self.likeButton.tintColor = UIColor.systemRed
+            self.likeButton.animationOfPulsation()
+        } else if userLiked == 0 {
+            self.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            self.likeButton.tintColor = UIColor.label
+        }
+    }
+    
 }

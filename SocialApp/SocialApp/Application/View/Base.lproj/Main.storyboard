@@ -474,7 +474,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UnF-we-oJW">
-                                            <rect key="frame" x="60" y="34" width="180" height="24"/>
+                                            <rect key="frame" x="60" y="34" width="220" height="24"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="xZZ-Pb-p75"/>
                                             </constraints>
@@ -495,7 +495,7 @@
                                         <constraint firstItem="Edk-QI-0dc" firstAttribute="top" secondItem="1wL-Jo-Fvd" secondAttribute="top" constant="10" id="AMc-2d-QDs"/>
                                         <constraint firstAttribute="bottom" secondItem="a3t-Q2-Kfh" secondAttribute="bottom" constant="6" id="BNk-cD-3Hf"/>
                                         <constraint firstItem="a3t-Q2-Kfh" firstAttribute="leading" secondItem="1wL-Jo-Fvd" secondAttribute="leading" constant="6" id="Gm5-CK-E6U"/>
-                                        <constraint firstAttribute="trailing" secondItem="UnF-we-oJW" secondAttribute="trailing" constant="80" id="PBy-Jp-N3y"/>
+                                        <constraint firstAttribute="trailing" secondItem="UnF-we-oJW" secondAttribute="trailing" constant="40" id="PBy-Jp-N3y"/>
                                         <constraint firstItem="UnF-we-oJW" firstAttribute="top" secondItem="Edk-QI-0dc" secondAttribute="bottom" id="POT-8i-Q5v"/>
                                         <constraint firstItem="UnF-we-oJW" firstAttribute="top" secondItem="Edk-QI-0dc" secondAttribute="bottom" id="RXO-MT-4uH"/>
                                         <constraint firstItem="a3t-Q2-Kfh" firstAttribute="top" secondItem="1wL-Jo-Fvd" secondAttribute="top" constant="10" id="dzo-RB-RR8"/>

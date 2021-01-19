@@ -13,7 +13,7 @@ class NewsMediaTableViewCell: UITableViewCell {
     
     let reuseMediaIdentifier = "NewsMediaCollectionViewCell"
  
-    var imagesArray: [UIImage]? = nil
+    var imagesArray: [Data]? = nil
     
  
     
@@ -39,9 +39,9 @@ class NewsMediaTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func setImagesArray(images: [UIImage]?) {
-        self.imagesArray = images
-    }
+//    func setImagesArray(images: [UIImage]?) {
+//        self.imagesArray = images
+//    }
 }
 
 extension NewsMediaTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -69,7 +69,7 @@ extension NewsMediaTableViewCell: UICollectionViewDelegate, UICollectionViewData
 //            cell.addSubview(imageView)
 //        }
         if let image = imagesArray?[indexPath.item] {
-            cell.newsMediaPhoto.image = image
+            cell.newsMediaPhoto.image = UIImage(data: image)
         }
         return cell
     }
