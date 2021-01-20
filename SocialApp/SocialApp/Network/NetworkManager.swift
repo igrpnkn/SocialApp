@@ -151,7 +151,7 @@ extension NetworkManager {
             "filters": "post",
             "max_photos": 5,
             "start_from": nextFrom,
-            "count": 100,
+            "count": 50,
             "fields": "",
             "access_token": UserSession.instance.token!,
             "v": "5.126"

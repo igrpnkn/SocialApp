@@ -201,17 +201,20 @@ extension NewsTableViewController {
         }
         
         DispatchQueue.global().async {
-            print("\nINFO: \(#function) Starting downloading photos.")
+            print("\nINFO: \(#function) Starting downloading photos for NewsFeed.")
             for news in self.newsFeed! {
+                print("\nINFO: Trying downloading photos for \(news.author ?? "") with \(news.photosURL?.count ?? 0) URLs.")
                 if let urlStrings = news.photosURL {
                     for urlString in urlStrings {
                         if let url = URL(string: urlString) {
                             if let data = try? Data(contentsOf: url) {
+                                print("INFO: Downloaded photo from: \(url.absoluteString)")
                                 news.photos?.append(data)
                             }
                         }
                     }
                 }
+                print("\n\n\nINFO: Downloaded photos for \(news.author!) with \(news.photos?.count ?? 0) photos.")
             }
             DispatchQueue.main.async {
                 print("\nINFO: \(#function) Reloading data after downloading photos.")

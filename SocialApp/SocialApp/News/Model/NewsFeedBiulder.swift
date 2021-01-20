@@ -14,8 +14,8 @@ class News {
     var author: String?
     var time: Int?
     var text: String?
-    var photos: [Data]?
-    var photosURL: [String]?
+    var photos: [Data]? = []
+    var photosURL: [String]? = []
     var likeCount: Int?
     var commentCount: Int?
     var reviewCount: Int?
@@ -41,6 +41,7 @@ class NewsFeedBiulder {
             news.commentCount = item.comments?.count
             news.text = item.text
             news = fillAttachedPhotosURL(attachments: item.attachments, news: news)
+            print("\nINFO: \(#function) News posted by \(news.author) has \(news.photosURL?.count ?? 0)")
             newsFeed.append(news)
         }
         return self.newsFeed
@@ -62,10 +63,13 @@ class NewsFeedBiulder {
     
     private func fillAttachedPhotosURL(attachments: [PostAttachment]?, news: News) -> News {
         guard let attachments = attachments else {
+            print("\nINFO: ERROR - Guard detected that \(#function) has NIL value\n")
             return news
         }
         for attachment in attachments {
-            news.photosURL?.append((attachment.photo?.sizes.first?.url)!)
+            news.photosURL?.append((attachment.photo?.sizes.first?.url) ?? "")
+            print("\nINFO: News posted by \(news.author ?? "Unknown") has been added Photo's url: \(attachment.photo?.sizes.first?.url ?? "NO URL")")
+            print("INFO: News posted by \(news.author!) has \(news.photosURL?.count ?? 0) URLs")
         }
         return news
     }
