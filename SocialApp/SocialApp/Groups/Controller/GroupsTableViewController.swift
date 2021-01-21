@@ -187,7 +187,6 @@ extension GroupsTableViewController {
         NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
             guard let self = self, let groupsArray = groups else { return }
             RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
-            
             RealmManager.saveGotGroupsInRealm(groups: groupsArray)
             self.downloadAvatars()
         }
@@ -196,14 +195,16 @@ extension GroupsTableViewController {
     func downloadAvatars() {
         for group in self.groups! {
             if let url = URL(string: group.photo50!) {
-                if let data = try? Data(contentsOf: url) {
-                    RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
+                DispatchQueue.global().async {
+                    if let data = try? Data(contentsOf: url) {
+                        DispatchQueue.main.async {
+                            RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
+                        }
+                    }
                 }
             }
         }
-        print("\nINFO: All groups avatars are downloaded.")
         self.stopActivityIndicator()
-        print("\nINFO: Activity indicator is hidden.")
     }
     
     func startActivityIndicator() {

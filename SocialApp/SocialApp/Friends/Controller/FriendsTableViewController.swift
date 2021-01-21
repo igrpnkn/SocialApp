@@ -172,19 +172,17 @@ extension FriendsTableViewController {
     
     func downloadAvatars() {
         for friend in self.friends! {
-            guard
-                let url = URL(string: friend.photo50!),
-                let data = try? Data(contentsOf: url)
-            else {
-                print("\nINFO: ERROR - While downloading avatar for friend ID: \(friend.id) \n")
-                return
+            if let url = URL(string: friend.photo50!) {
+                DispatchQueue.global().async {
+                    if let data = try? Data(contentsOf: url) {
+                        DispatchQueue.main.async {
+                            RealmManager.saveAvatarForUserID(image: data, userID: friend.id)
+                        }
+                    }
+                }
             }
-            RealmManager.saveAvatarForUserID(image: data, userID: friend.id)
         }
-        print("\nINFO: TableView is reload from FriendsTableViewController.downloadAvatars() func.")
         self.stopActivityIndicator()
-        print("\nINFO: All photos is downloaded.")
-        print("\nINFO: Activity indicator is hidden.")
     }
 
     func startActivityIndicator() {
