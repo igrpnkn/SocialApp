@@ -14,8 +14,9 @@ class FullScreenViewController: UIViewController {
     let reuseIdentifier = "FullScreenCollectionViewCell"
     var photoArray: [Photoflow] = []
     var indexPath: IndexPath?
+    var statusBarIsHidden: Bool = true
     override var prefersStatusBarHidden: Bool {
-            return true
+            return statusBarIsHidden
         }
     
     override func viewDidLoad() {
@@ -33,11 +34,13 @@ class FullScreenViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        //super.viewWillDisappear(animated)
         self.navigationController?.hidesBarsOnTap = false
         self.navigationController?.isNavigationBarHidden = false
         self.navigationController?.navigationBar.barTintColor = .systemGray6
         self.navigationController?.navigationBar.isTranslucent = true
+        self.statusBarIsHidden = false
+        self.setNeedsStatusBarAppearanceUpdate()
     }
     
     /*

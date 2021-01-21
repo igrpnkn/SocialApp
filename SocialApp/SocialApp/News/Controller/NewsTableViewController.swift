@@ -29,6 +29,7 @@ class NewsTableViewController: UITableViewController {
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
         downloadNews(fromNext: "")
     }
+    
 
     // MARK: - Table view data source
 

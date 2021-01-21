@@ -14,8 +14,9 @@ class PhotoflowViewController: UIViewController {
     let activityIndicator = UIActivityIndicatorView()
     var realmToken: NotificationToken?
     
+    var statusBarIsHidden: Bool = false
     override var prefersStatusBarHidden: Bool {
-            return false
+            return statusBarIsHidden
         }
     
     let reuseIdentifier = "PhotoflowCollectionViewCell"
@@ -42,7 +43,7 @@ class PhotoflowViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        //super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
@@ -106,11 +107,13 @@ extension PhotoflowViewController {
     }
     
     func downloadPhotoMetaData() {
-        NetworkManager.photosGetForProfile(for: userId!) { [weak self] photoMetaData in
-            DispatchQueue.main.async {
-                guard let self = self, let photoMetaData = photoMetaData else { return }
-                RealmManager.savePhotosMetaData(save: photoMetaData, for: self.userId!)
-                self.downloadPhotos()
+        DispatchQueue.global().async {
+            NetworkManager.photosGetForProfile(for: self.userId!) { photoMetaData in
+                DispatchQueue.main.async {
+                    guard let photoMetaData = photoMetaData else { return }
+                    RealmManager.savePhotosMetaData(save: photoMetaData, for: self.userId!)
+                    self.downloadPhotos()
+                }
             }
         }
     }
@@ -120,12 +123,17 @@ extension PhotoflowViewController {
             let size = photo.sizes.filter { (size) -> Bool in
                 return size.type == "x"
             }
-            guard let photoURL = size.first?.url else {
+            guard let photoURL = size.first?.url,
+                  let url = URL(string: photoURL)
+            else {
                 return
             }
-            if let url = URL(string: photoURL) {
-                guard let data = try? Data(contentsOf: url) else { break }
-                RealmManager.savePhotoflow(photoID: photo.id, ownerID: photo.owner_id, data: data)
+            DispatchQueue.global().async {
+                if let data = try? Data(contentsOf: url) {
+                    DispatchQueue.main.async {
+                        RealmManager.savePhotoflow(photoID: photo.id, ownerID: photo.owner_id, data: data)
+                    }
+                }
                 print("Photo downloaded: \(url)")
             }
         }
