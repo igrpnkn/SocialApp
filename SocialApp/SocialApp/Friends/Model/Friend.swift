@@ -11,6 +11,7 @@ import RealmSwift
 
 // MARK: - Parsing with Decodable
 class Friend: Object, Decodable {
+    
     // required fields
     @objc dynamic var firstName: String = ""
     @objc dynamic var id: Int = 0

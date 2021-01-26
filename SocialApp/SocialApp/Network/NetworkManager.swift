@@ -7,7 +7,6 @@
 
 import Foundation
 import Alamofire
-import RealmSwift
 
 // Alamofire's class
 extension Session {
@@ -98,7 +97,7 @@ class NetworkManager {
         ]
         
         Session.custom.request("https://api.vk.com/method/groups.search", parameters: parameters).responseJSON { respone in
-            print(respone.value)
+            print(respone.value!)
         }
     }
     
@@ -179,6 +178,26 @@ extension NetworkManager {
             print(json)
         }
         */
+    }
+    
+}
+
+// MARK: - REQUEST BUILDER's METHODS
+
+extension NetworkManager {
+    
+    static func biuldRequest() -> DataRequest {
+        let parameters: Parameters = [
+            "user_id": UserSession.instance.userId!,
+            "lang": "ru",
+            "order": "name",
+            "count": 500,
+            "name_case": "nom",
+            "fields": "domain,online,first_name,last_name,nickname,status,bdate,sex,relation,photo_50,photo_max,city,country,occupation,last_seen",
+            "access_token": UserSession.instance.token!,
+            "v": "5.126"
+        ]
+        return Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters)
     }
     
 }

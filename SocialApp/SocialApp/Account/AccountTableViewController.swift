@@ -30,21 +30,24 @@ class AccountTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         accountTableView.dataSource = self
         accountTableView.delegate = self
-        
-        accountTableView.rowHeight = accountTableView.frame.width
+        accountTableView.rowHeight = accountTableView.bounds.width
         //accountTableView.estimatedRowHeight = accountTableView.frame.width
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        
         print("\nINFO: AccountTableViewController is loaded from parent: " + (self.parent?.debugDescription ?? "AccountTableViewController has no parent."))
         
-        //NetworkManager.photosGetForProfile(for: UserSession.instance.userId!)
+        // Just to try work with Operation
+        let operaionQueue = OperationQueue()
+        let request = NetworkManager.biuldRequest()
+        let networkOperation = NetworkOperation(request: request)
+        networkOperation.completionBlock = {
+            print("\nINFO: NetworkOperation has done for \(request.cURLDescription())")
+        }
+        operaionQueue.addOperation(networkOperation)
     }
 
     // MARK: - Table view data source

@@ -44,7 +44,8 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         definesPresentationContext = true
         
         startActivityIndicator()
-        downloadUserFriends()
+        //downloadUserFriends()
+        downloadUserFriendsWithOperations()
         observeRealmFriendsCollection()
     }
     
@@ -140,9 +141,10 @@ extension FriendsTableViewController {
         self.realmToken = friends?.observe(on: DispatchQueue.main, { (changes: RealmCollectionChange) in
             switch changes {
             case .initial(let results):
-                print("\nINFO: Realm Groups Data has been initiated: \(results)")
+                print("\nINFO: Realm Friends data has been initiated: \(results)")
                 self.friends = results
                 self.friendsTableView.reloadData()
+                self.stopActivityIndicator()
             case .update(let results, let deletions, let insertions, let modifications):
                 //print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions.count),\nInsertion: \(insertions.count),\nModifications: \(modifications.count)")
                 self.friendsTableView.beginUpdates()
@@ -151,6 +153,7 @@ extension FriendsTableViewController {
                 self.friendsTableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
                 self.friendsTableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }), with: .automatic)
                 self.friendsTableView.endUpdates()
+                self.stopActivityIndicator()
             case .error(let error):
                 print("\nINFO: Realm friends.observe{} error: \(error.localizedDescription)")
                 let alert = UIAlertController(title: "ERROR", message: "Connection to the server is not available. Please, check Wi-Fi or Internet settings.", preferredStyle: .alert)
@@ -170,21 +173,32 @@ extension FriendsTableViewController {
         }
     }
     
-    func downloadAvatars() {
-        for friend in self.friends! {
-            if let url = URL(string: friend.photo50!) {
-                DispatchQueue.global().async {
-                    if let data = try? Data(contentsOf: url) {
-                        DispatchQueue.main.async {
-                            RealmManager.saveAvatarForUserID(image: data, userID: friend.id)
-                        }
-                    }
-                }
-            }
-        }
-        self.stopActivityIndicator()
+    func downloadUserFriendsWithOperations() {
+        let operationQueue = OperationQueue()
+        
+        let request = NetworkManager.biuldRequest()
+        let networkOperation = NetworkOperation.init(request: request)
+        
+        let parsingOperation = ParsingOperation()
+        parsingOperation.addDependency(networkOperation)
+        
+        let savingOperation = SavingOperation()
+        savingOperation.addDependency(parsingOperation)
+        
+        let downladingAvatarsOperation = DownloadingAvatarsOperation()
+        downladingAvatarsOperation.addDependency(savingOperation)
+        
+        operationQueue.addOperation(networkOperation)
+        operationQueue.addOperation(parsingOperation)
+        OperationQueue.main.addOperation(savingOperation)
+        OperationQueue.main.addOperation(downladingAvatarsOperation)
     }
-
+    
+    func downloadAvatars() {
+//        AvatarDownloader.downloadForType(objects: Array(self.friends!), objectType: .friend)
+//        self.stopActivityIndicator()
+    }
+    
     func startActivityIndicator() {
         print("\nINFO: Loading \(self.description) has begun.")
         activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
