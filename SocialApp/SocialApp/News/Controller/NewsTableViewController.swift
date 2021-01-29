@@ -189,10 +189,10 @@ extension NewsTableViewController {
         DispatchQueue.global().async {
             print("\nINFO: \(#function) Starting downloading avatars.")
             for news in self.newsFeed! {
-                if let url = URL(string: news.avatarURL!) {
-                    if let data = try? Data(contentsOf: url) {
-                        news.avatar = data
-                    }
+                if let avatarURL = news.avatarURL,
+                   let url = URL(string: avatarURL),
+                   let data = try? Data(contentsOf: url) {
+                    news.avatar = data
                 }
             }
             DispatchQueue.main.async {
@@ -224,20 +224,5 @@ extension NewsTableViewController {
         }
         
     }
-    
-    /*
-    func matchPostAuthor(authorID: Int?, postSection: Int) -> String? {
-        guard let authorID = authorID else {
-            print("\nINFO: ERROR - Unexpectedly nil in \(#function)\n")
-            return nil
-        }
-        if authorID < 0 {
-            let author = self.newsFeed?.groups?.filter({ $0.id == (-1 * authorID) })
-            return author?.first?.name
-        } else {
-            let author = self.newsFeed?.profiles?.filter({ $0.id == authorID })
-            return ((author?.first?.first_name ?? "") + " " + (author?.first?.last_name ?? ""))
-        }
-    }
-    */
+
 }

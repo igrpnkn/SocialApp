@@ -14,5 +14,6 @@ target 'SocialApp' do
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
   pod 'Firebase/Database'
-
+  pod 'PromiseKit', '~> 6.13'
+  
 end

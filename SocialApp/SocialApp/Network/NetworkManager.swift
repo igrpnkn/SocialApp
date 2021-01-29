@@ -7,12 +7,13 @@
 
 import Foundation
 import Alamofire
+import PromiseKit
 
 // Alamofire's class
 extension Session {
     static let custom: Session = {
         let configuration = URLSessionConfiguration.default
-        let sessionManager = Session(configuration: configuration)
+        let sessionManager = Session(configuration: configuration, requestQueue: DispatchQueue.global(), serializationQueue: DispatchQueue.global())
         return sessionManager
     }()
 }
@@ -50,38 +51,6 @@ class NetworkManager {
             completion(friends.response.items)
             print("\nFriends from NetworkManager: \(friends.response.items.count)")
             print(friends.response.items.map { $0.firstName } )
-        }
-    }
-    
-    static func groupsGet(for userId: Int, completion: @escaping ([Group]?) -> Void) {
-        let parameters: Parameters = [
-            "user_id": userId,
-            "lang": "ru",
-            "extended": 1,
-            "fields": "activity,members_count,photo_50",
-            "count": 500,
-            "access_token": UserSession.instance.token!,
-            "v": "5.126"
-        ]
-        Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters).responseData { response in
-            //print("\nINFO: Raw Data of response: \(response.value)")
-            guard
-                let data = response.value
-            else {
-                print("\nINFO: NetworkManager.groupsGet() - Data getting failed...")
-                completion(nil)
-                return
-            }
-            guard
-                let groups = try? JSONDecoder().decode(GroupData.self, from: data)
-            else {
-                print("\nINFO: NetworkManager.groupsGet() - JSON parsing failed...")
-                completion(nil)
-                return
-            }
-            print("\nINFO: Groups from NetworkManager: \(groups.response.items.count)")
-            print(groups.response.items.map { $0.name } )
-            completion(groups.response.items)
         }
     }
     
@@ -140,6 +109,75 @@ class NetworkManager {
     }
 }
 
+// MARK: - GROUPS METHODS
+extension NetworkManager {
+    
+    static func groupsGet(for userId: Int, completion: @escaping ([Group]?) -> Void) {
+        let parameters: Parameters = [
+            "user_id": userId,
+            "lang": "ru",
+            "extended": 1,
+            "fields": "activity,members_count,photo_50",
+            "count": 500,
+            "access_token": UserSession.instance.token!,
+            "v": "5.126"
+        ]
+        Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters).responseData { response in
+            //print("\nINFO: Raw Data of response: \(response.value)")
+            guard
+                let data = response.value
+            else {
+                print("\nINFO: NetworkManager.groupsGet() - Data getting failed...")
+                completion(nil)
+                return
+            }
+            guard
+                let groups = try? JSONDecoder().decode(GroupData.self, from: data)
+            else {
+                print("\nINFO: NetworkManager.groupsGet() - JSON parsing failed...")
+                completion(nil)
+                return
+            }
+            print("\nINFO: Groups from NetworkManager: \(groups.response.items.count)")
+            print(groups.response.items.map { $0.name } )
+            completion(groups.response.items)
+        }
+    }
+    
+    static func groupsGet(for userId: Int) -> Promise<[Group]> {
+        let schemaURL = "https://"
+        let baseURL = "api.vk.com"
+        let pathURL = "/method/groups.get"
+        let parametersURL: Parameters = [
+            "user_id": userId,
+            "lang": "ru",
+            "extended": 1,
+            "fields": "activity,members_count,photo_50",
+            "count": 500,
+            "access_token": UserSession.instance.token!,
+            "v": "5.126"
+        ]
+        let promise = Promise<[Group]> { resolver in
+            Session.custom.request(schemaURL + baseURL + pathURL, method: .get, parameters: parametersURL).responseData { response in
+                switch response.result {
+                case .success(let data):
+                    do {
+                        let groups = try JSONDecoder().decode(GroupData.self, from: data)
+                        resolver.fulfill(groups.response.items)
+                    } catch {
+                        resolver.reject(error)
+                    }
+                case .failure(let error):
+                    print("\nINFO: NetworkManager.\(#function) - Data getting failed...\nERROR: \(error.localizedDescription)")
+                    resolver.reject(error)
+                }
+            }
+        }
+        return promise
+    }
+    
+}
+
 // MARK: - NEWSFEED METHODS
 extension NetworkManager {
     
@@ -185,7 +223,7 @@ extension NetworkManager {
 // MARK: - REQUEST BUILDER's METHODS
 
 extension NetworkManager {
-    
+
     static func biuldRequest() -> DataRequest {
         let parameters: Parameters = [
             "user_id": UserSession.instance.userId!,
@@ -198,6 +236,19 @@ extension NetworkManager {
             "v": "5.126"
         ]
         return Session.custom.request("https://api.vk.com/method/friends.get", parameters: parameters)
+    }
+    
+    static func groupsGetRequest(for userId: Int) -> DataRequest {
+        let parameters: Parameters = [
+            "user_id": userId,
+            "lang": "ru",
+            "extended": 1,
+            "fields": "activity,members_count,photo_50",
+            "count": 500,
+            "access_token": UserSession.instance.token!,
+            "v": "5.126"
+        ]
+        return Session.custom.request("https://api.vk.com/method/groups.get", parameters: parameters)
     }
     
 }

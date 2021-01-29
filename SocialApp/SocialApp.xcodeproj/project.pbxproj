@@ -69,6 +69,7 @@
 		3AFB25172535E44A00908839 /* MessengerTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */; };
 		3AFB251A25363C2500908839 /* MessageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFB251925363C2500908839 /* MessageStatusView.swift */; };
 		7FDC689C76E245D156E7E416 /* Pods_SocialApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B734B77F8E8D2B536F42FDC4 /* Pods_SocialApp.framework */; };
+		8B39F02925C2F371000A6016 /* GroupParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B39F02825C2F371000A6016 /* GroupParser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -137,6 +138,7 @@
 		3AFB25152535E44A00908839 /* MessengerTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessengerTableViewCell.xib; sourceTree = "<group>"; };
 		3AFB251925363C2500908839 /* MessageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStatusView.swift; sourceTree = "<group>"; };
 		70F06DD29DA98926E8ECF9F9 /* Pods-SocialApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocialApp.debug.xcconfig"; path = "Target Support Files/Pods-SocialApp/Pods-SocialApp.debug.xcconfig"; sourceTree = "<group>"; };
+		8B39F02825C2F371000A6016 /* GroupParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupParser.swift; sourceTree = "<group>"; };
 		B30D10EFDD67D92C56BD032F /* Pods-SocialApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocialApp.release.xcconfig"; path = "Target Support Files/Pods-SocialApp/Pods-SocialApp.release.xcconfig"; sourceTree = "<group>"; };
 		B734B77F8E8D2B536F42FDC4 /* Pods_SocialApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SocialApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -478,6 +480,7 @@
 			isa = PBXGroup;
 			children = (
 				3A38B909252DD2810057542D /* Group.swift */,
+				8B39F02825C2F371000A6016 /* GroupParser.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -626,6 +629,7 @@
 				3A0EB30C252343B600BC6F04 /* LoginFormViewController.swift in Sources */,
 				3A0EB3132526717E00BC6F04 /* TabBarController.swift in Sources */,
 				3A0EB2F72523382900BC6F04 /* AppDelegate.swift in Sources */,
+				8B39F02925C2F371000A6016 /* GroupParser.swift in Sources */,
 				3A3EA88B25407301002EB846 /* UIButtonExtension.swift in Sources */,
 				3AC2444D25BDD5B0004D3B0B /* AsyncOperation.swift in Sources */,
 				3A63AEB7252BA89B000C2046 /* FriendsTableViewCell.swift in Sources */,

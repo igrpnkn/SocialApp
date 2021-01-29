@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import PromiseKit
 
 class GroupsTableViewController: UITableViewController, UISearchResultsUpdating {
     
@@ -163,7 +164,7 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
 
 extension GroupsTableViewController {
     
-    func observeRealmGroupsCollection() {
+    private func observeRealmGroupsCollection() {
         self.realmToken = groups?.observe(on: DispatchQueue.main, { (changes: RealmCollectionChange) in
             print("\nINFO: Realm <Groups> has been changed.\n")
             switch changes {
@@ -183,7 +184,7 @@ extension GroupsTableViewController {
         })
     }
     
-    func downloadUserGroups() {
+    private func downloadUserGroups() {
         NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
             guard let self = self, let groupsArray = groups else { return }
             RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
@@ -193,7 +194,7 @@ extension GroupsTableViewController {
         }
     }
     
-    func downloadAvatars() {
+    private func downloadAvatars() {
         for group in self.groups! {
             if let url = URL(string: group.photo50!) {
                 DispatchQueue.global().async {
@@ -204,6 +205,28 @@ extension GroupsTableViewController {
                     }
                 }
             }
+        }
+    }
+    
+    private func promisingUserGroups() {
+        firstly {
+            NetworkManager.groupsGet(for: UserSession.instance.userId!)
+        }.get(on: .main, flags: nil) { (parsedGroups) in
+            RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
+            RealmManager.saveGotGroupsInRealm(groups: parsedGroups)
+        }.done(on: .global(), flags: nil) { (parsedGroups) in
+            for group in parsedGroups {
+                if let url = URL(string: group.photo50!),
+                   let data = try? Data(contentsOf: url) {
+                    DispatchQueue.main.async {
+                        RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
+                    }
+                }
+            }
+        }.done(on: .main, flags: nil) {
+            self.stopActivityIndicator()
+        }.catch { (error) in
+            print("\nINFO: ERROR - \(error.localizedDescription)")
         }
     }
     
