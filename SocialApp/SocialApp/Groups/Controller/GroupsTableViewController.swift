@@ -190,19 +190,16 @@ extension GroupsTableViewController {
             RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
             RealmManager.saveGotGroupsInRealm(groups: groupsArray)
             self.stopActivityIndicator()
-            self.downloadAvatars()
+            self.downloadAvatars(groupsData: Array(self.groups!))
         }
     }
     
-    private func downloadAvatars() {
-        for group in self.groups! {
-            if let url = URL(string: group.photo50!) {
-                DispatchQueue.global().async {
-                    if let data = try? Data(contentsOf: url) {
-                        DispatchQueue.main.async {
-                            RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
-                        }
-                    }
+    private func downloadAvatars(groupsData: [Group]) {
+        for group in groupsData {
+            if let url = URL(string: group.photo50!),
+               let data = try? Data(contentsOf: url) {
+                DispatchQueue.main.async {
+                    RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
                 }
             }
         }
@@ -215,14 +212,7 @@ extension GroupsTableViewController {
             RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
             RealmManager.saveGotGroupsInRealm(groups: parsedGroups)
         }.done(on: .global(), flags: nil) { (parsedGroups) in
-            for group in parsedGroups {
-                if let url = URL(string: group.photo50!),
-                   let data = try? Data(contentsOf: url) {
-                    DispatchQueue.main.async {
-                        RealmManager.saveAvatarForGroupID(image: data, groupID: group.id)
-                    }
-                }
-            }
+            self.downloadAvatars(groupsData: parsedGroups)
         }.done(on: .main, flags: nil) {
             self.stopActivityIndicator()
         }.catch { (error) in
