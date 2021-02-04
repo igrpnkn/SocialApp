@@ -17,28 +17,37 @@ class AccountTableViewController: UITableViewController {
         UserDefaults.standard.set(nil, forKey: "userPassword")
         UserDefaults.standard.synchronize()
         
-        self.parent?.dismiss(animated: true, completion: {print("Dismissed parent")})
-        self.dismiss(animated: true, completion: { print("Dismissed AccountTVC") })
-//        self.dismiss(animated: true, completion: {
-//            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LoginFormViewController") as! LoginFormViewController
-//            vc.modalPresentationStyle = .fullScreen
-//            self.present(vc, animated: true, completion: nil)
-//        })
+//        self.parent?.dismiss(animated: true, completion: {print("Dismissed parent")})
+//        self.dismiss(animated: true, completion: { print("Dismissed AccountTVC") })
+        
+        let controllerName: String = "WebLoginViewController"
+        guard
+            let vc = storyboard?.instantiateViewController(identifier: controllerName),
+            let window = self.view.window
+        else { return }
+        window.rootViewController = vc
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         accountTableView.dataSource = self
         accountTableView.delegate = self
-        
-        accountTableView.rowHeight = accountTableView.frame.width
+        accountTableView.rowHeight = accountTableView.bounds.width
         //accountTableView.estimatedRowHeight = accountTableView.frame.width
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        print("\nINFO: AccountTableViewController is loaded from parent: " + (self.parent?.debugDescription ?? "AccountTableViewController has no parent."))
+        
+        // Just to try work with Operation
+        let operaionQueue = OperationQueue()
+        let request = NetworkManager.biuldRequest()
+        let networkOperation = NetworkOperation(request: request)
+        networkOperation.completionBlock = {
+            print("\nINFO: NetworkOperation has done for \(request.cURLDescription())")
+        }
+        operaionQueue.addOperation(networkOperation)
     }
 
     // MARK: - Table view data source

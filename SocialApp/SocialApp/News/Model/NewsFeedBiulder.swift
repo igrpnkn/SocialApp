@@ -1,0 +1,78 @@
+//
+//  NewsFeed.swift
+//  SocialApp
+//
+//  Created by Игорь Пенкин on 18.10.2020.
+//
+
+import Foundation
+import UIKit
+
+class News {
+    var avatar: Data?
+    var avatarURL: String?
+    var author: String?
+    var time: Int?
+    var text: String?
+    var photos: [Data]? = []
+    var photosURL: [String]? = []
+    var likeCount: Int?
+    var commentCount: Int?
+    var reviewCount: Int?
+    var liked: Int?
+}
+
+class NewsFeedBiulder {
+    var newsFeed: [News]
+    //private var news: News?
+    
+    init() {
+        self.newsFeed = []
+    }
+    
+    func buildNewsFeed(parsedJSON: PostResponse) -> [News] {
+        for item in parsedJSON.items! {
+            var news = News()
+            news = matchPostAuthor(parsedJSON: parsedJSON, id: item.source_id!, news: news)
+            news.time = item.date
+            news.liked = item.likes?.user_likes
+            news.likeCount = item.likes?.count
+            news.reviewCount = item.views?.count
+            news.commentCount = item.comments?.count
+            news.text = item.text
+            news = fillAttachedPhotosURL(attachments: item.attachments, news: news)
+            print("\nINFO: \(#function) News posted by \(news.author) has \(news.photosURL?.count ?? 0)")
+            newsFeed.append(news)
+        }
+        return self.newsFeed
+    }
+    
+    private func matchPostAuthor(parsedJSON: PostResponse, id: Int, news: News) -> News {
+        if id < 0 {
+            let author = parsedJSON.groups?.filter({ $0.id == (-1 * id) })
+            news.author = author?.first?.name ?? ""
+            news.avatarURL = author?.first?.photo_50
+            return news
+        } else {
+            let author = parsedJSON.profiles?.filter({ $0.id == id })
+            news.author = ((author?.first?.first_name ?? "") + " " + (author?.first?.last_name ?? ""))
+            news.avatarURL = author?.first?.photo_50
+            return news
+        }
+    }
+    
+    private func fillAttachedPhotosURL(attachments: [PostAttachment]?, news: News) -> News {
+        guard let attachments = attachments else {
+            print("\nINFO: ERROR - Guard detected that \(#function) has NIL value\n")
+            return news
+        }
+        for attachment in attachments {
+            news.photosURL?.append((attachment.photo?.sizes.first?.url) ?? "")
+            print("\nINFO: News posted by \(news.author ?? "Unknown") has been added Photo's url: \(attachment.photo?.sizes.first?.url ?? "NO URL")")
+            print("INFO: News posted by \(news.author!) has \(news.photosURL?.count ?? 0) URLs")
+        }
+        return news
+    }
+    
+}
+
