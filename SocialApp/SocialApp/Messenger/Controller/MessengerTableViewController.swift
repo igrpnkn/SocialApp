@@ -12,36 +12,24 @@ class MessengerTableViewController: UITableViewController, UISearchResultsUpdati
     @IBOutlet weak var messengerTableView: UITableView!
     
     let reusableCell = "MessengerTableViewCell"
-    var friendsArray: [User] = [
-        User(name: "Johnny", lastName: "Appleseed", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Bobby", lastName: "Axelroude", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Michael", lastName: "Composer", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Bob", lastName: "Dommergoo", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Micky", lastName: "Fiedgerald", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Tom", lastName: "Hawkins", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Alex", lastName: "Burntman", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Mike", lastName: "Rouhgeman", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Rashid", lastName: "Daddario", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Jude", lastName: "Chappman", image: UIImage(named: "guy")!, age: 18, friendship: true),
-        User(name: "Alexander", lastName: "Cross", image: UIImage(named: "guy")!, age: 18, friendship: true)
-    ]
+    
+    var messagesArray: [Message] = MessagesService().getMessages()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.messengerTableView.delegate = self
         self.messengerTableView.dataSource = self
-        
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         
         let searchBar = UISearchController(searchResultsController: nil)
         searchBar.searchResultsUpdater = self
         self.navigationItem.searchController = searchBar
-
+        
+        self.messengerTableView.register(MessengerTableViewCell.self, forCellReuseIdentifier: reusableCell)
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
@@ -55,44 +43,41 @@ class MessengerTableViewController: UITableViewController, UISearchResultsUpdati
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return friendsArray.count
+        return messagesArray.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reusableCell, for: indexPath) as! MessengerTableViewCell
-        
-        cell.friendImage.image = UIImage(named: "guy")
-        //cell.friendImage.layer.cornerRadius = cell.friendImage.bounds.width / 2
-        cell.friendName.text = friendsArray[indexPath.row].lastName + " " + friendsArray[indexPath.row].name
-        cell.friendLastSeen.text = "10:08"
-        cell.friendMessege.text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-        cell.friendReadLabel.image = UIImage(systemName: "eye.fill")
-        cell.friendActiveness.image = UIImage(systemName: "circle.fill")?.withTintColor(.systemGreen)
-        cell.friendMessageStatus.layer.backgroundColor = UIColor.systemBlue.cgColor
-        cell.friendMessageCount.text = "123"
-        cell.friendMessageCount.isHidden = false
-        cell.friendReadLabel.isHidden = true
-        // Configure the cell...
-
+        cell.configure(message: messagesArray[indexPath.row])
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return CGFloat(82)
     }
     
     override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? MessengerTableViewCell {
-            cell.contentView.animationOfTouchDown()
+            cell.animationOfTouchDown()
         }
     }
     
     override func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? MessengerTableViewCell {
-            cell.contentView.animationOfTouchUp()
+            cell.animationOfTouchUp()
         }
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            friendsArray.remove(at: indexPath.row)
+        switch editingStyle {
+        case .delete:
+            messagesArray.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+        case .none:
+            print("\nINFO: Table was edited with .none :)")
+        case .insert:
+            messagesArray.append(messagesArray[indexPath.row])
+            tableView.insertRows(at: [indexPath], with: .fade)
         }
     }
     

@@ -9,16 +9,29 @@ import UIKit
 
 class MessageStatusView: UIView {
 
-    
+    private var messageCount = UILabel()
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
     override func draw(_ rect: CGRect) {
-        
+        self.messageCount.frame = self.bounds
+        self.messageCount.font = .systemFont(ofSize: 12)
+        self.messageCount.tintColor = .white
         self.clipsToBounds = true
         self.layer.cornerRadius = self.bounds.width / 2
         self.layer.backgroundColor = UIColor.systemBlue.cgColor
-        
     }
     
+    func setCount(number: Int?, isHidden: Bool) {
+        self.messageCount.text = String(number ?? 0)
+        self.messageCount.isHidden = isHidden
+    }
 
 }

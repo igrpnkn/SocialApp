@@ -42,6 +42,7 @@
 		3A63AEB7252BA89B000C2046 /* FriendsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEB6252BA89B000C2046 /* FriendsTableViewCell.swift */; };
 		3A63AEBC252BBB8B000C2046 /* GroupsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */; };
 		3A6C24D02537497800B97B0E /* AccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6C24CF2537497800B97B0E /* AccountTableViewController.swift */; };
+		3A7B0D1D25CEF59700E135D3 /* MessagesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7B0D1C25CEF59700E135D3 /* MessagesService.swift */; };
 		3A84CC0A257CF2FF005ED340 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A84CC09257CF2FF005ED340 /* Photo.swift */; };
 		3A8ED682253DC7C1006F38E0 /* NewsMediaCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8ED681253DC7C1006F38E0 /* NewsMediaCollectionViewCell.swift */; };
 		3A9775482539ED26000DA9BF /* FriendProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9775472539ED26000DA9BF /* FriendProfileViewController.swift */; };
@@ -111,6 +112,7 @@
 		3A63AEB6252BA89B000C2046 /* FriendsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsTableViewCell.swift; sourceTree = "<group>"; };
 		3A63AEBB252BBB8B000C2046 /* GroupsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsTableViewCell.swift; sourceTree = "<group>"; };
 		3A6C24CF2537497800B97B0E /* AccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTableViewController.swift; sourceTree = "<group>"; };
+		3A7B0D1C25CEF59700E135D3 /* MessagesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesService.swift; sourceTree = "<group>"; };
 		3A84CC09257CF2FF005ED340 /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		3A8ED681253DC7C1006F38E0 /* NewsMediaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsMediaCollectionViewCell.swift; sourceTree = "<group>"; };
 		3A9775472539ED26000DA9BF /* FriendProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendProfileViewController.swift; sourceTree = "<group>"; };
@@ -378,13 +380,6 @@
 			path = Controller;
 			sourceTree = "<group>";
 		};
-		3A2F58142597C129000B39A3 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		3A2F58152597C135000B39A3 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -430,6 +425,14 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
+		3A7B0D1B25CEF58300E135D3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3A7B0D1C25CEF59700E135D3 /* MessagesService.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		3A9CADB7253C7A6100B187FB /* News */ = {
 			isa = PBXGroup;
 			children = (
@@ -451,7 +454,7 @@
 		3AFB250C2535E31900908839 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
-				3A2F58142597C129000B39A3 /* Model */,
+				3A7B0D1B25CEF58300E135D3 /* Model */,
 				3A2F58162597C144000B39A3 /* View */,
 				3A2F58152597C135000B39A3 /* Controller */,
 			);
@@ -612,6 +615,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AA5E2E42540DBF200BB7B5E /* UIViewExtension.swift in Sources */,
+				3A7B0D1D25CEF59700E135D3 /* MessagesService.swift in Sources */,
 				3A8ED682253DC7C1006F38E0 /* NewsMediaCollectionViewCell.swift in Sources */,
 				3A9775482539ED26000DA9BF /* FriendProfileViewController.swift in Sources */,
 				3A9CADC4253CCD0D00B187FB /* NewsHeaderTableViewCell.swift in Sources */,
