@@ -16,7 +16,6 @@ class MessengerTableViewCell: UITableViewCell {
     private var readLabel = UIImageView()
     private var activeness = UIImageView()
     private var messageStatus = MessageStatusView()
-    //@IBOutlet weak private var messageCount: UILabel!
     
     private struct Dimensions {
         static let leading: CGFloat = 6
@@ -53,14 +52,15 @@ class MessengerTableViewCell: UITableViewCell {
         addSubview(name)
         
         self.message.font = .systemFont(ofSize: 16)
-        self.message.tintColor = .systemGray3
-        self.message.textColor = .systemGray3
+        self.message.tintColor = .systemGray2
+        self.message.textColor = .lightGray
         self.message.numberOfLines = 2
         addSubview(message)
         
-        self.lastSeen.font = .systemFont(ofSize: 12)
-        self.lastSeen.tintColor = .systemGray3
-        self.lastSeen.textColor = .systemGray3
+        self.lastSeen.font = .systemFont(ofSize: 14)
+        self.lastSeen.textAlignment = .right
+        self.lastSeen.tintColor = .systemGray2
+        self.lastSeen.textColor = .lightGray
         self.lastSeen.numberOfLines = 1
         addSubview(lastSeen)
         
@@ -71,8 +71,9 @@ class MessengerTableViewCell: UITableViewCell {
         addSubview(activeness)
         
         self.messageStatus.clipsToBounds = true
-        self.messageStatus.layer.cornerRadius = 5
-        self.messageStatus.backgroundColor = .systemBlue
+        self.messageStatus.layer.cornerRadius = 4
+        //self.messageStatus.backgroundColor = .systemBlue
+        //self.messageStatus.setCount(number: 123, isHidden: false)
         addSubview(messageStatus)
     }
     
@@ -86,10 +87,9 @@ class MessengerTableViewCell: UITableViewCell {
         self.name.text = message.friendName
         self.message.text = message.friendMessege
         self.lastSeen.text = message.friendLastSeen
-        self.readLabel.image = UIImage(systemName: "eye.fill")
+        self.readLabel.image = UIImage(systemName: "eye.fill")?.withTintColor(.systemBlue)
         self.readLabel.isHidden = true
         self.activeness.image = message.friendActiveness
-        //self.messageCount.text = message.friendMessageCount
         self.messageStatus.setCount(number: message.friendMessageCount, isHidden: false)
     }
     
@@ -102,7 +102,6 @@ class MessengerTableViewCell: UITableViewCell {
         layoutReadLabelFrame()
         layoutActivenessFrame()
         layoutMessageStatusFrame()
-        layoutMessageCountFrame()
     }
     
     private func layoutAvatarFrame() {
@@ -110,7 +109,7 @@ class MessengerTableViewCell: UITableViewCell {
     }
     
     private func layoutLastSeenFrame() {
-        self.lastSeen.frame = CGRect(x: bounds.width-Dimensions.lastSeenSize.width,
+        self.lastSeen.frame = CGRect(x: self.bounds.width-Dimensions.lastSeenSize.width,
                                      y: Dimensions.top,
                                      width: Dimensions.lastSeenSize.width,
                                      height: Dimensions.titleHeight)
@@ -125,15 +124,17 @@ class MessengerTableViewCell: UITableViewCell {
     }
     
     private func layoutMessageFrame() {
-        let offset = Dimensions.leading+Dimensions.trailing+Dimensions.avatarSize.width
+        let offset = Dimensions.leading*2+Dimensions.avatarSize.width
         self.message.frame = CGRect(x: offset,
                                     y: name.frame.maxY+Dimensions.leading,
-                                 width: bounds.width-offset-Dimensions.leading-lastSeen.bounds.width,
-                                 height: Dimensions.textHeight)
+                                    width: messageStatus.frame.minX-Dimensions.trailing-offset,
+                                    height: Dimensions.textHeight)
     }
     
     private func layoutReadLabelFrame() {
-        
+        let width: CGFloat = 24
+        let height: CGFloat = 18
+        self.readLabel.frame = CGRect(x: self.bounds.width-width-Dimensions.trailing, y: message.center.y-height/2, width: width, height: height)
     }
     
     private func layoutActivenessFrame() {
@@ -141,11 +142,8 @@ class MessengerTableViewCell: UITableViewCell {
     }
     
     private func layoutMessageStatusFrame() {
-        
-    }
-    
-    private func layoutMessageCountFrame() {
-        
+        let edge: CGFloat = 24
+        self.messageStatus.frame = CGRect(x: self.bounds.width-edge-Dimensions.trailing, y: message.center.y-edge/2, width: edge, height: edge)
     }
     
     private func getLabelWidth(text: String, font: UIFont) -> CGFloat {
