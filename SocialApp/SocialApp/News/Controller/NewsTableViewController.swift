@@ -27,6 +27,7 @@ class NewsTableViewController: UITableViewController {
         //self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
+        setupRefreshControl()
         downloadNews(fromNext: "")
     }
     
@@ -224,5 +225,19 @@ extension NewsTableViewController {
         }
         
     }
-
+    
+    func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Refreshing...")
+        refreshControl?.tintColor = .label
+        refreshControl?.addTarget(self, action: #selector(updateNews), for: .valueChanged)
+    }
+    
+    @objc func updateNews() {
+        self.refreshControl?.beginRefreshing()
+        downloadNews(fromNext: "")
+        print("\nINFO: \(#function) : Data refreshing...")
+        refreshControl?.endRefreshing()
+    }
+    
 }

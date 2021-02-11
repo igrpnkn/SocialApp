@@ -43,6 +43,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         navigationItem.searchController = searchField
         definesPresentationContext = true
         
+        setupRefreshControl()
         startActivityIndicator()
         //downloadUserFriends()
         downloadUserFriendsWithOperations()
@@ -174,6 +175,7 @@ extension FriendsTableViewController {
     }
     
     func downloadUserFriendsWithOperations() {
+        //self.refreshControl?.beginRefreshing()
         let operationQueue = OperationQueue()
         
         let request = NetworkManager.biuldRequest()
@@ -192,6 +194,7 @@ extension FriendsTableViewController {
         operationQueue.addOperation(parsingOperation)
         OperationQueue.main.addOperation(savingOperation)
         OperationQueue.main.addOperation(downladingAvatarsOperation)
+        //self.refreshControl?.endRefreshing()
     }
     
     func downloadAvatars() {
@@ -214,8 +217,17 @@ extension FriendsTableViewController {
         self.activityIndicator.isHidden = true
     }
     
-    func configureRefreshControl() {
+    func setupRefreshControl() {
         refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Refreshing...")
+        refreshControl?.tintColor = .label
+        refreshControl?.addTarget(self, action: #selector(updateFriends), for: .valueChanged)
     }
     
+    @objc func updateFriends() {
+        self.refreshControl?.beginRefreshing()
+        downloadUserFriendsWithOperations()
+        print("\nINFO: \(#function) : Data refreshing...")
+        refreshControl?.endRefreshing()
+    }
 }

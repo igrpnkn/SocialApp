@@ -46,6 +46,7 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         navigationItem.searchController = searchField
         definesPresentationContext = true
         
+        setupRefreshControl()
         startActivityIndicator()
         observeRealmGroupsCollection()
         downloadUserGroups()
@@ -185,12 +186,14 @@ extension GroupsTableViewController {
     }
     
     private func downloadUserGroups() {
-        NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
-            guard let self = self, let groupsArray = groups else { return }
-            RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
-            RealmManager.saveGotGroupsInRealm(groups: groupsArray)
-            self.stopActivityIndicator()
-            self.downloadAvatars(groupsData: Array(self.groups!))
+        DispatchQueue.global().async {
+            NetworkManager.groupsGet(for: UserSession.instance.userId!) { [weak self] groups in
+                guard let self = self, let groupsArray = groups else { return }
+                RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there
+                RealmManager.saveGotGroupsInRealm(groups: groupsArray)
+                self.stopActivityIndicator()
+                self.downloadAvatars(groupsData: Array(self.groups!))
+            }
         }
     }
     
@@ -238,4 +241,17 @@ extension GroupsTableViewController {
         self.activityIndicator.isHidden = true
     }
     
+    func setupRefreshControl() {
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Refreshing...")
+        refreshControl?.tintColor = .label
+        refreshControl?.addTarget(self, action: #selector(updateGroups), for: .valueChanged)
+    }
+    
+    @objc func updateGroups() {
+        self.refreshControl?.beginRefreshing()
+        downloadUserGroups()
+        print("\nINFO: \(#function) : Data refreshing...")
+        refreshControl?.endRefreshing()
+    }
 }
