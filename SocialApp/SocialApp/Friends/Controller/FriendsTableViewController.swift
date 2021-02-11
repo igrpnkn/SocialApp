@@ -214,4 +214,8 @@ extension FriendsTableViewController {
         self.activityIndicator.isHidden = true
     }
     
+    func configureRefreshControl() {
+        refreshControl = UIRefreshControl()
+    }
+    
 }
