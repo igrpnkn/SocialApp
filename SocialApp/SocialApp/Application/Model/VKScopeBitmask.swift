@@ -31,6 +31,6 @@ struct VKScopeBitmask: OptionSet {
     static let market = VKScopeBitmask(rawValue: 1 << 27)
     
     static let all: VKScopeBitmask = [
-        .notify, .friends, .photos, .audio, .video, .stories, .pages, .status, .notes, .wall, .ads, .offline, .docs, .groups, .notifications, .stats, .email, .market
+        .notify, .friends, .photos, .audio, .video, .stories, .pages, .status, .notes, .wall, .ads, .offline, .docs, .groups, .notifications, .stats
     ]
 }

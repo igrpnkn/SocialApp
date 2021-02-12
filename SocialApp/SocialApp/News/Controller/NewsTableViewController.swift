@@ -13,6 +13,7 @@ class NewsTableViewController: UITableViewController {
     let reuseTextIdentifier = "NewsTextTableViewCell"
     let reuseMediaIdentifier = "NewsMediaTableViewCell"
     let reuseFooterIdentifier = "NewsFooterTableViewCell"
+    var newsNextFrom = ""
     
     @IBOutlet weak var newsTableView: UITableView!
     
@@ -28,7 +29,7 @@ class NewsTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
         setupRefreshControl()
-        downloadNews(fromNext: "")
+        downloadNews(fromNext: newsNextFrom)
     }
     
 
@@ -174,6 +175,9 @@ extension NewsTableViewController {
                 print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
                 return
             }
+            if let nextFrom = response.next_from {
+                self.newsNextFrom = nextFrom
+            } else { print("\nINFO: ERROR - While getting NEXT_FROM property in \(#function), next_from = \(response.next_from)\n") }
             print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
             self.biuldNewsFeed(newsFeed: response)
         })
@@ -226,16 +230,9 @@ extension NewsTableViewController {
         
     }
     
-    func setupRefreshControl() {
-        refreshControl = UIRefreshControl()
-        refreshControl?.attributedTitle = NSAttributedString(string: "Refreshing...")
-        refreshControl?.tintColor = .label
-        refreshControl?.addTarget(self, action: #selector(updateNews), for: .valueChanged)
-    }
-    
-    @objc func updateNews() {
+    override func refreshData() {
         self.refreshControl?.beginRefreshing()
-        downloadNews(fromNext: "")
+        downloadNews(fromNext: newsNextFrom)
         print("\nINFO: \(#function) : Data refreshing...")
         refreshControl?.endRefreshing()
     }

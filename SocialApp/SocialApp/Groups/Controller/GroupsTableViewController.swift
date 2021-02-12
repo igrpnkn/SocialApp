@@ -241,14 +241,7 @@ extension GroupsTableViewController {
         self.activityIndicator.isHidden = true
     }
     
-    func setupRefreshControl() {
-        refreshControl = UIRefreshControl()
-        refreshControl?.attributedTitle = NSAttributedString(string: "Refreshing...")
-        refreshControl?.tintColor = .label
-        refreshControl?.addTarget(self, action: #selector(updateGroups), for: .valueChanged)
-    }
-    
-    @objc func updateGroups() {
+    override func refreshData() {
         self.refreshControl?.beginRefreshing()
         downloadUserGroups()
         print("\nINFO: \(#function) : Data refreshing...")

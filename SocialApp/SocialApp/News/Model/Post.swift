@@ -17,7 +17,7 @@ class PostResponse: Decodable {
     let items: [PostItem]?
     let profiles: [PostProfile]?
     let groups: [PostGroup]?
-    let next_form: String?
+    let next_from: String?
 }
 
 // MARK: - /response/items

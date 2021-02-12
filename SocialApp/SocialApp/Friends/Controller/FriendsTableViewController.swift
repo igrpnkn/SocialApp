@@ -217,17 +217,11 @@ extension FriendsTableViewController {
         self.activityIndicator.isHidden = true
     }
     
-    func setupRefreshControl() {
-        refreshControl = UIRefreshControl()
-        refreshControl?.attributedTitle = NSAttributedString(string: "Refreshing...")
-        refreshControl?.tintColor = .label
-        refreshControl?.addTarget(self, action: #selector(updateFriends), for: .valueChanged)
-    }
-    
-    @objc func updateFriends() {
+    override func refreshData() {
         self.refreshControl?.beginRefreshing()
         downloadUserFriendsWithOperations()
         print("\nINFO: \(#function) : Data refreshing...")
         refreshControl?.endRefreshing()
     }
+    
 }
