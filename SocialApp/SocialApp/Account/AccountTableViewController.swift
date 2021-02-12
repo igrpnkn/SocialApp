@@ -10,6 +10,8 @@ import UIKit
 class AccountTableViewController: UITableViewController {
     
     @IBOutlet weak var accountTableView: UITableView!
+    let buttonLeft = UIButton()
+    let buttonRight = UIButton()
     
     @IBAction func signOutButton(_ sender: Any) {
         UserDefaults.standard.set(nil, forKey: "userLogin")
@@ -39,15 +41,7 @@ class AccountTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         print("\nINFO: AccountTableViewController is loaded from parent: " + (self.parent?.debugDescription ?? "AccountTableViewController has no parent."))
-        
-        // Just to try work with Operation
-        let operaionQueue = OperationQueue()
-        let request = NetworkManager.biuldRequest()
-        let networkOperation = NetworkOperation(request: request)
-        networkOperation.completionBlock = {
-            print("\nINFO: NetworkOperation has done for \(request.cURLDescription())")
-        }
-        operaionQueue.addOperation(networkOperation)
+        setBondButtons()
     }
 
     // MARK: - Table view data source
@@ -70,6 +64,34 @@ class AccountTableViewController: UITableViewController {
         cell.animateLoading()
         
         return cell
+    }
+    
+    func setBondButtons() {
+        buttonLeft.backgroundColor = .systemBlue
+        buttonLeft.setImage(UIImage(systemName: "person.fill"), for: .normal)
+        buttonLeft.imageView?.frame = buttonLeft.bounds
+        buttonLeft.tintColor = .white
+        buttonLeft.clipsToBounds = true
+        buttonLeft.layer.cornerRadius = 30
+        buttonLeft.layer.borderWidth = 10
+        buttonLeft.layer.borderColor = UIColor.white.cgColor
+        view.addSubview(buttonLeft)
+        
+        buttonRight.backgroundColor = .systemBlue
+        buttonRight.setImage(UIImage(systemName: "gear"), for: .normal)
+        buttonRight.imageView?.frame = buttonLeft.bounds
+        buttonRight.tintColor = .white
+        buttonRight.clipsToBounds = true
+        buttonRight.layer.cornerRadius = 30
+        buttonRight.layer.borderWidth = 10
+        buttonRight.layer.borderColor = UIColor.white.cgColor
+        view.addSubview(buttonRight)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        buttonLeft.frame = CGRect(x: 6, y: self.view.bounds.maxY-120, width: 60, height: 60)
+        buttonRight.frame = CGRect(x: self.view.bounds.maxX-66, y: self.view.bounds.maxY-120, width: 60, height: 60)
     }
     
     /*

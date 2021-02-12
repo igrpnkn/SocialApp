@@ -24,6 +24,7 @@ class NewsTableViewController: UITableViewController {
         super.viewDidLoad()
         newsTableView.delegate = self
         newsTableView.dataSource = self
+        navigationController?.navigationBar.prefersLargeTitles = true
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -205,18 +206,17 @@ extension NewsTableViewController {
                 self.newsTableView.reloadData()
             }
         }
-        
         DispatchQueue.global().async {
             print("\nINFO: \(#function) Starting downloading photos for NewsFeed.")
             for news in self.newsFeed! {
                 print("\nINFO: Trying downloading photos for \(news.author ?? "") with \(news.photosURL?.count ?? 0) URLs.")
-                if let urlStrings = news.photosURL {
+                if (news.photos?.isEmpty ?? false),
+                   let urlStrings = news.photosURL {
                     for urlString in urlStrings {
-                        if let url = URL(string: urlString) {
-                            if let data = try? Data(contentsOf: url) {
-                                print("INFO: Downloaded photo from: \(url.absoluteString)")
-                                news.photos?.append(data)
-                            }
+                        if let url = URL(string: urlString),
+                           let data = try? Data(contentsOf: url) {
+                            print("INFO: Downloaded photo from: \(url.absoluteString)")
+                            news.photos?.append(data)
                         }
                     }
                 }

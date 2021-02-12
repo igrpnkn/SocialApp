@@ -227,13 +227,10 @@ extension GroupsTableViewController {
         print("\nINFO: Loading \(self.description) has begun.")
         activityIndicator.center.x = self.view.center.x
         activityIndicator.center.y = self.view.frame.width / 5
-//        activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
-//        activityIndicator.center.y = (self.navigationController?.navigationBar.center.y)!*0.75
-        activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.style = .large
         self.view.addSubview(activityIndicator)
-//        self.navigationController?.view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
     }
     
     func stopActivityIndicator() {
