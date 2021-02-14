@@ -13,12 +13,12 @@ class NewsTableViewController: UITableViewController {
     let reuseTextIdentifier = "NewsTextTableViewCell"
     let reuseMediaIdentifier = "NewsMediaTableViewCell"
     let reuseFooterIdentifier = "NewsFooterTableViewCell"
-    var newsNextFrom = ""
     
     @IBOutlet weak var newsTableView: UITableView!
     
     var newsFeed: [News]? = []
     var newsFeedBiulder = NewsFeedBiulder()
+    var newsNextFrom = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +48,7 @@ class NewsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 14))
-        sectionHeaderView.backgroundColor = UIColor.systemGray5
+        sectionHeaderView.backgroundColor = .systemGray5
         return sectionHeaderView
     }
     
@@ -91,9 +91,9 @@ class NewsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 2:
-            if 0 == newsFeed?[indexPath.section].photosURL?.count ?? 0 {
+            if 0 == newsFeed?[indexPath.section].photos?.count ?? 0 {
                 return 0
-            } else if 1 == newsFeed?[indexPath.section].photosURL?.count ?? 0 {
+            } else if 1 == newsFeed?[indexPath.section].photos?.count ?? 0 {
                 return tableView.frame.width
             } else {
                 return tableView.frame.width/2
@@ -169,7 +169,7 @@ class NewsTableViewController: UITableViewController {
 extension NewsTableViewController {
     
     func downloadNews(fromNext: String) {
-        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, nextFrom: fromNext, completion: { response in
+        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970)+1, nextFrom: fromNext, completion: { response in
             guard let response = response,
                   let posts = response.items
             else {
@@ -178,7 +178,7 @@ extension NewsTableViewController {
             }
             if let nextFrom = response.next_from {
                 self.newsNextFrom = nextFrom
-            } else { print("\nINFO: ERROR - While getting NEXT_FROM property in \(#function), next_from = \(response.next_from)\n") }
+            } else { print("\nINFO: ERROR - While getting NEXT_FROM property in \(#function), next_from = \(response.next_from ?? "")\n") }
             print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
             self.biuldNewsFeed(newsFeed: response)
         })
@@ -231,10 +231,19 @@ extension NewsTableViewController {
     }
     
     override func refreshData() {
-        self.refreshControl?.beginRefreshing()
-        downloadNews(fromNext: newsNextFrom)
-        print("\nINFO: \(#function) : Data refreshing...")
-        refreshControl?.endRefreshing()
+        refreshControl?.beginRefreshing()
+        let mostFreshNewsDate: Int = newsFeed?.first?.time ?? Int(Date().timeIntervalSince1970)
+        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: mostFreshNewsDate+1, nextFrom: "") { [weak self] response in
+            self?.refreshControl?.endRefreshing()
+            guard let response = response else {
+                print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
+                return
+            }
+            let freshNews = NewsFeedBiulder().buildNewsFeed(parsedJSON: response)
+            self?.newsFeed = freshNews + (self?.newsFeed ?? [])
+            self?.newsTableView.reloadData()
+            self?.downloadMedia()
+        }
     }
     
 }

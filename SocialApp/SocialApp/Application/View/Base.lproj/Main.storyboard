@@ -1238,7 +1238,7 @@
                             <constraint firstItem="mal-6A-Beb" firstAttribute="top" secondItem="Cz1-wX-qLH" secondAttribute="top" id="t6a-vA-A6C"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Friend profile" largeTitleDisplayMode="always" id="G7w-Ve-UfK"/>
+                    <navigationItem key="navigationItem" title="Friend profile" id="G7w-Ve-UfK"/>
                     <connections>
                         <outlet property="friendProfileTableView" destination="mal-6A-Beb" id="wF2-jJ-irt"/>
                     </connections>
@@ -1476,7 +1476,7 @@
         <scene sceneID="cmU-qc-d6r">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Akq-pD-D3u" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="News" image="rectangle.stack" catalog="system" selectedImage="rectangle.stack.fill" id="gLP-Qk-4Hx">
+                    <tabBarItem key="tabBarItem" title="News" image="newspaper" catalog="system" selectedImage="newspaper.fill" id="gLP-Qk-4Hx">
                         <color key="badgeColor" systemColor="systemRedColor"/>
                     </tabBarItem>
                     <toolbarItems/>
@@ -1615,7 +1615,7 @@
         <scene sceneID="8Eh-8o-G0j">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="pH6-EL-N52" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Account" image="gear" catalog="system" selectedImage="gear" id="QGM-TC-w7E">
+                    <tabBarItem key="tabBarItem" title="Account" image="gearshape" catalog="system" selectedImage="gearshape.fill" id="QGM-TC-w7E">
                         <color key="badgeColor" systemColor="systemRedColor"/>
                     </tabBarItem>
                     <toolbarItems/>
@@ -1658,10 +1658,14 @@
         <image name="envelope.fill" catalog="system" width="128" height="93"/>
         <image name="eye" catalog="system" width="128" height="81"/>
         <image name="gear" catalog="system" width="128" height="119"/>
+        <image name="gearshape" catalog="system" width="128" height="121"/>
+        <image name="gearshape.fill" catalog="system" width="128" height="121"/>
         <image name="heart" catalog="system" width="128" height="109"/>
         <image name="house" catalog="system" width="128" height="106"/>
         <image name="link" catalog="system" width="128" height="122"/>
         <image name="message" catalog="system" width="128" height="113"/>
+        <image name="newspaper" catalog="system" width="128" height="108"/>
+        <image name="newspaper.fill" catalog="system" width="128" height="111"/>
         <image name="person.2.circle" catalog="system" width="128" height="121"/>
         <image name="person.3" catalog="system" width="128" height="62"/>
         <image name="person.3.fill" catalog="system" width="128" height="61"/>
@@ -1670,8 +1674,6 @@
         <image name="person.crop.circle.fill" catalog="system" width="128" height="121"/>
         <image name="photo.on.rectangle" catalog="system" width="128" height="96"/>
         <image name="plus.magnifyingglass" catalog="system" width="128" height="115"/>
-        <image name="rectangle.stack" catalog="system" width="128" height="122"/>
-        <image name="rectangle.stack.fill" catalog="system" width="128" height="122"/>
         <image name="square.and.arrow.down" catalog="system" width="121" height="128"/>
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="square.and.pencil" catalog="system" width="128" height="115"/>

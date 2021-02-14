@@ -181,14 +181,15 @@ extension NetworkManager {
 // MARK: - NEWSFEED METHODS
 extension NetworkManager {
     
-    static func newsfeedGet(for userID: Int, nextFrom: String, completion: @escaping (PostResponse?) -> Void) {
+    static func newsfeedGet(for userID: Int, startTime: Int, nextFrom: String, completion: @escaping (PostResponse?) -> Void) {
         let parameters: Parameters = [
             "user_id": userID,
             "return_banned": 0,
             "filters": "post",
             "max_photos": 5,
             "start_from": nextFrom,
-            "count": 1,
+            "start_time": startTime,
+            "count": 25,
             "fields": "",
             "access_token": UserSession.instance.token!,
             "v": "5.126"
