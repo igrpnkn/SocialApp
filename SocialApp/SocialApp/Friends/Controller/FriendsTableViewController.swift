@@ -125,7 +125,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
                  } else {
                     friend = friendsArray[indexPath.row]
                  }
-                let friendProfileVC = segue.destination as! FriendProfileViewController
+                let friendProfileVC = segue.destination as! FriendsProfileTableViewController
                 friendProfileVC.friendProfile = friend
             }
         default:

@@ -1,13 +1,15 @@
 //
-//  FriendProfileViewController.swift
+//  FriendsProfileTableViewController.swift
 //  SocialApp
 //
-//  Created by Игорь Пенкин on 16.10.2020.
+//  Created by developer on 15.02.2021.
 //
+
+import Foundation
 
 import UIKit
 
-class FriendProfileViewController: UIViewController  {
+class FriendsProfileTableViewController: UITableViewController {
     
     @IBOutlet weak var friendProfileTableView: UITableView!
     let activityIndicator = UIActivityIndicatorView()
@@ -18,9 +20,11 @@ class FriendProfileViewController: UIViewController  {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //self.view.backgroundColor = .clear
         friendProfileTableView.dataSource = self
         friendProfileTableView.delegate = self
-        self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         self.title = "\(friendProfile?.lastName ?? "Profile") \(friendProfile?.firstName ?? "unavailable")"
         
@@ -39,12 +43,12 @@ class FriendProfileViewController: UIViewController  {
     
 }
 
-extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegate {
-    func numberOfSections(in tableView: UITableView) -> Int {
+extension FriendsProfileTableViewController {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section < 2 {
             return 1
         } else {
@@ -52,7 +56,7 @@ extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegat
         }
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0:
             return tableView.bounds.width
@@ -61,7 +65,7 @@ extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegat
         }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
             let cell = friendProfileTableView.dequeueReusableCell(withIdentifier: "FriendProfileAvatarTableViewCell", for: indexPath) as! FriendProfileAvatarTableViewCell
@@ -81,7 +85,7 @@ extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegat
         }
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             let photoflowViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PhotoflowViewController") as! PhotoflowViewController
             photoflowViewController.modalPresentationStyle = .fullScreen
@@ -92,7 +96,7 @@ extension FriendProfileViewController: UITableViewDataSource, UITableViewDelegat
     }
 }
 
-extension FriendProfileViewController {
+extension FriendsProfileTableViewController {
     
     func downloadProfilePhoto() {
         guard let photoURL = friendProfile?.photoMax else {
