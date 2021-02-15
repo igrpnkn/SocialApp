@@ -19,18 +19,20 @@ class NewsTableViewController: UITableViewController {
     var newsFeed: [News]? = []
     var newsFeedBiulder = NewsFeedBiulder()
     var newsNextFrom = ""
+    var isLoading: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         newsTableView.delegate = self
         newsTableView.dataSource = self
+        newsTableView.prefetchDataSource = self
         navigationController?.navigationBar.prefersLargeTitles = true
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
         setupRefreshControl()
-        downloadNews(fromNext: newsNextFrom)
+        downloadNews(startTime: Int(Date().timeIntervalSince1970), fromNext: newsNextFrom)
     }
     
 
@@ -118,7 +120,6 @@ class NewsTableViewController: UITableViewController {
         }
     }
     
-    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -166,10 +167,48 @@ class NewsTableViewController: UITableViewController {
 
 }
 
+extension NewsTableViewController: UITableViewDataSourcePrefetching {
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        
+        guard let maxSection = indexPaths.map({ $0.section }).max() else { return }
+        if maxSection > (newsFeed ?? []).count-2, !isLoading {
+            isLoading = true
+            NetworkManager.newsfeedGet(for: UserSession.instance.userId!, nextFrom: newsNextFrom, completion: { response in
+                guard let response = response,
+                      let posts = response.items,
+                      let nextFrom = response.next_from
+                else {
+                    print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
+                    return
+                }
+                self.newsNextFrom = nextFrom
+                print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
+                let shownNewsCount = (self.newsFeed ?? []).count
+                print("\nINFO: \(#function) has total shown posts: \(shownNewsCount)")
+                self.newsFeed?.append(contentsOf: NewsFeedBiulder().buildNewsFeed(parsedJSON: response))
+                print("\nINFO: \(#function) has total after adding posts: \((self.newsFeed ?? []).count)")
+                let indexSetOfNewPosts = IndexSet(integersIn: shownNewsCount ..< (self.newsFeed ?? []).count)
+                print("\nINFO: \(#function) has added posts sections set: \((self.newsFeed ?? []).count)")
+                self.newsTableView.performBatchUpdates({
+                    self.newsTableView.insertSections(indexSetOfNewPosts, with: .automatic)
+                }, completion: nil)
+                self.isLoading = false
+            })
+        }
+        
+    }
+        
+    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        print("")
+    }
+    
+}
+
 extension NewsTableViewController {
     
-    func downloadNews(fromNext: String) {
-        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970)+1, nextFrom: fromNext, completion: { response in
+    func downloadNews(startTime: Int, fromNext: String) {
+        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970+1), nextFrom: fromNext, completion: { response in
             guard let response = response,
                   let posts = response.items
             else {
