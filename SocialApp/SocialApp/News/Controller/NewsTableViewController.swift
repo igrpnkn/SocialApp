@@ -170,7 +170,6 @@ class NewsTableViewController: UITableViewController {
 extension NewsTableViewController: UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        
         guard let maxSection = indexPaths.map({ $0.section }).max() else { return }
         if maxSection > (newsFeed ?? []).count-2, !isLoading {
             isLoading = true
@@ -194,9 +193,9 @@ extension NewsTableViewController: UITableViewDataSourcePrefetching {
                     self.newsTableView.insertSections(indexSetOfNewPosts, with: .automatic)
                 }, completion: nil)
                 self.isLoading = false
+                self.downloadMedia()
             })
         }
-        
     }
         
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {

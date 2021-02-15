@@ -189,7 +189,7 @@ extension NetworkManager {
             "max_photos": 5,
             "start_from": nextFrom,
             "start_time": startTime,
-            "count": 5,
+            "count": 50,
             "fields": "",
             "access_token": UserSession.instance.token!,
             "v": "5.126"
@@ -226,7 +226,7 @@ extension NetworkManager {
             "filters": "post",
             "max_photos": 5,
             "start_from": nextFrom,
-            "count": 5,
+            "count": 50,
             "fields": "",
             "access_token": UserSession.instance.token!,
             "v": "5.126"
