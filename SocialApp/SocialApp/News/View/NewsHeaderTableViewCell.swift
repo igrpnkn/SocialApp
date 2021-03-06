@@ -16,6 +16,7 @@ class NewsHeaderTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.avatar.image = UIImage(named: "camera")
+        DateFormatter.shared.setCommonFormat()
         // Initialization code
     }
 
@@ -33,13 +34,7 @@ class NewsHeaderTableViewCell: UITableViewCell {
             self.avatar.image = UIImage(data: avatar)
         }
         if let time = time {
-            let date = Date(timeIntervalSince1970: Double(time))
-            let dateFormatter = DateFormatter()
-            dateFormatter.timeStyle = DateFormatter.Style.short //Set time style
-            dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-            dateFormatter.timeZone = .current
-            let localDate = dateFormatter.string(from: date)
-            self.time.text = "Posted " + String(localDate)
+            self.time.text = "Posted " + DateFormatter.shared.string(from: Date(timeIntervalSince1970: Double(time)))
         }
     }
     

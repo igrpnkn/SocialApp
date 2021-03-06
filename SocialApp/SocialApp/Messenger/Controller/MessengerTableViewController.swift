@@ -21,17 +21,10 @@ class MessengerTableViewController: UITableViewController, UISearchResultsUpdati
         self.messengerTableView.dataSource = self
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always
-        
         let searchBar = UISearchController(searchResultsController: nil)
         searchBar.searchResultsUpdater = self
         self.navigationItem.searchController = searchBar
-        
         self.messengerTableView.register(MessengerTableViewCell.self, forCellReuseIdentifier: reusableCell)
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source

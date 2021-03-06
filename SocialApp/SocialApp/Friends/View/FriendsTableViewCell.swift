@@ -17,6 +17,7 @@ class FriendsTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        DateFormatter.shared.setCommonFormat()
         // Initialization code
     }
 
@@ -38,13 +39,7 @@ class FriendsTableViewCell: UITableViewCell {
             self.friendLastSeen.textColor = .systemGreen
         default:
             if let lastSeenTime = lastSeen {
-                let date = Date(timeIntervalSince1970: Double(lastSeenTime))
-                let dateFormatter = DateFormatter()
-                dateFormatter.timeStyle = DateFormatter.Style.short //Set time style
-                dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-                dateFormatter.timeZone = .current
-                let localDate = dateFormatter.string(from: date)
-                self.friendLastSeen.text = "Last seen " + String(localDate)
+                self.friendLastSeen.text = "Last seen " + DateFormatter.shared.string(from: Date(timeIntervalSince1970: Double(lastSeenTime)))
                 self.friendLastSeen.textColor = .systemGray
             } else {
                 self.friendLastSeen.text = "Deleted or banned profile"

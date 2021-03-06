@@ -19,6 +19,8 @@
 		3A0EB3032523382C00BC6F04 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A0EB3012523382C00BC6F04 /* LaunchScreen.storyboard */; };
 		3A0EB30C252343B600BC6F04 /* LoginFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EB30B252343B600BC6F04 /* LoginFormViewController.swift */; };
 		3A0EB3132526717E00BC6F04 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EB3122526717E00BC6F04 /* TabBarController.swift */; };
+		3A0EF3CB25F3E07700F96AB3 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EF3CA25F3E07700F96AB3 /* UIColorExtension.swift */; };
+		3A0EF3CE25F3EA1900F96AB3 /* DateFormatterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EF3CD25F3EA1900F96AB3 /* DateFormatterExtension.swift */; };
 		3A2D55C9252CF37B0085C278 /* GroupsSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D55C8252CF37B0085C278 /* GroupsSearchTableViewController.swift */; };
 		3A2D55CD252CF9720085C278 /* GroupsSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D55CC252CF9720085C278 /* GroupsSearchTableViewCell.swift */; };
 		3A2D5B3B2574223700D029D0 /* Friend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2D5B3A2574223700D029D0 /* Friend.swift */; };
@@ -89,6 +91,8 @@
 		3A0EB3042523382C00BC6F04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3A0EB30B252343B600BC6F04 /* LoginFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFormViewController.swift; sourceTree = "<group>"; };
 		3A0EB3122526717E00BC6F04 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		3A0EF3CA25F3E07700F96AB3 /* UIColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtension.swift; sourceTree = "<group>"; };
+		3A0EF3CD25F3EA1900F96AB3 /* DateFormatterExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterExtension.swift; sourceTree = "<group>"; };
 		3A2D55C8252CF37B0085C278 /* GroupsSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsSearchTableViewController.swift; sourceTree = "<group>"; };
 		3A2D55CC252CF9720085C278 /* GroupsSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsSearchTableViewCell.swift; sourceTree = "<group>"; };
 		3A2D5B3A2574223700D029D0 /* Friend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Friend.swift; sourceTree = "<group>"; };
@@ -406,6 +410,8 @@
 				3A3EA88A25407301002EB846 /* UIButtonExtension.swift */,
 				3AA5E2E32540DBF200BB7B5E /* UIViewExtension.swift */,
 				8B7F4E3825D66D1E00D1DD4A /* UITableViewControllerExtension.swift */,
+				3A0EF3CA25F3E07700F96AB3 /* UIColorExtension.swift */,
+				3A0EF3CD25F3EA1900F96AB3 /* DateFormatterExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -645,6 +651,7 @@
 				3A9CADBD253C996000B187FB /* NewsTableViewCell.swift in Sources */,
 				3A6C24D02537497800B97B0E /* AccountTableViewController.swift in Sources */,
 				3AE82EEC259F6D2E00A39B2B /* Photoflow.swift in Sources */,
+				3A0EF3CE25F3EA1900F96AB3 /* DateFormatterExtension.swift in Sources */,
 				3A0EB2F92523382900BC6F04 /* SceneDelegate.swift in Sources */,
 				3A35C03F25C0A0B800450FF5 /* AvatarDownloader.swift in Sources */,
 				3A3553A12544993E00E88C58 /* FriendProfileTableViewCell.swift in Sources */,
@@ -668,6 +675,7 @@
 				3A35C04225C0B32900450FF5 /* DownloadingAvatarsOperation.swift in Sources */,
 				3ABC48B82548282D00905805 /* FullScreenScrollView.swift in Sources */,
 				3A3553AC2544D4BD00E88C58 /* PhotoflowCollectionViewCell.swift in Sources */,
+				3A0EF3CB25F3E07700F96AB3 /* UIColorExtension.swift in Sources */,
 				3A2D5B3B2574223700D029D0 /* Friend.swift in Sources */,
 				3A84CC0A257CF2FF005ED340 /* Photo.swift in Sources */,
 				3A07C8AF256DB559004D8B22 /* VKScopeBitmask.swift in Sources */,
