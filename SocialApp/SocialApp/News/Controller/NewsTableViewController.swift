@@ -18,16 +18,21 @@ class NewsTableViewController: UITableViewController {
     
     var newsFeed: [News]? = []
     var newsFeedBiulder = NewsFeedBiulder()
+    var newsNextFrom = ""
+    var isLoading: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         newsTableView.delegate = self
         newsTableView.dataSource = self
+        newsTableView.prefetchDataSource = self
+        navigationController?.navigationBar.prefersLargeTitles = true
         // Uncomment the following line to preserve selection between presentations
         //self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         //self.navigationItem.rightBarButtonItem = self.editButtonItem
-        downloadNews(fromNext: "")
+        setupRefreshControl()
+        downloadNews(startTime: Int(Date().timeIntervalSince1970), fromNext: newsNextFrom)
     }
     
 
@@ -45,7 +50,7 @@ class NewsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let sectionHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 14))
-        sectionHeaderView.backgroundColor = UIColor.systemGray5
+        sectionHeaderView.backgroundColor = .systemGray5
         return sectionHeaderView
     }
     
@@ -88,9 +93,9 @@ class NewsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 2:
-            if 0 == newsFeed?[indexPath.section].photosURL?.count ?? 0 {
+            if 0 == newsFeed?[indexPath.section].photos?.count ?? 0 {
                 return 0
-            } else if 1 == newsFeed?[indexPath.section].photosURL?.count ?? 0 {
+            } else if 1 == newsFeed?[indexPath.section].photos?.count ?? 0 {
                 return tableView.frame.width
             } else {
                 return tableView.frame.width/2
@@ -114,7 +119,6 @@ class NewsTableViewController: UITableViewController {
             self.newsTableView.reloadData()
         }
     }
-    
     
     /*
     // Override to support conditional editing of the table view.
@@ -163,16 +167,56 @@ class NewsTableViewController: UITableViewController {
 
 }
 
+extension NewsTableViewController: UITableViewDataSourcePrefetching {
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        guard let maxSection = indexPaths.map({ $0.section }).max() else { return }
+        if maxSection > (newsFeed ?? []).count-2, !isLoading {
+            isLoading = true
+            NetworkManager.newsfeedGet(for: UserSession.instance.userId!, nextFrom: newsNextFrom, completion: { response in
+                guard let response = response,
+                      let posts = response.items,
+                      let nextFrom = response.next_from
+                else {
+                    print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
+                    return
+                }
+                self.newsNextFrom = nextFrom
+                print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
+                let shownNewsCount = (self.newsFeed ?? []).count
+                print("\nINFO: \(#function) has total shown posts: \(shownNewsCount)")
+                self.newsFeed?.append(contentsOf: NewsFeedBiulder().buildNewsFeed(parsedJSON: response))
+                print("\nINFO: \(#function) has total after adding posts: \((self.newsFeed ?? []).count)")
+                let indexSetOfNewPosts = IndexSet(integersIn: shownNewsCount ..< (self.newsFeed ?? []).count)
+                print("\nINFO: \(#function) has added posts sections set: \((self.newsFeed ?? []).count)")
+                self.newsTableView.performBatchUpdates({
+                    self.newsTableView.insertSections(indexSetOfNewPosts, with: .automatic)
+                }, completion: nil)
+                self.isLoading = false
+                self.downloadMedia()
+            })
+        }
+    }
+        
+    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        print("")
+    }
+    
+}
+
 extension NewsTableViewController {
     
-    func downloadNews(fromNext: String) {
-        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, nextFrom: fromNext, completion: { response in
+    func downloadNews(startTime: Int, fromNext: String) {
+        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970+1), nextFrom: fromNext, completion: { response in
             guard let response = response,
                   let posts = response.items
             else {
                 print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
                 return
             }
+            if let nextFrom = response.next_from {
+                self.newsNextFrom = nextFrom
+            } else { print("\nINFO: ERROR - While getting NEXT_FROM property in \(#function), next_from = \(response.next_from ?? "")\n") }
             print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
             self.biuldNewsFeed(newsFeed: response)
         })
@@ -200,18 +244,17 @@ extension NewsTableViewController {
                 self.newsTableView.reloadData()
             }
         }
-        
         DispatchQueue.global().async {
             print("\nINFO: \(#function) Starting downloading photos for NewsFeed.")
             for news in self.newsFeed! {
                 print("\nINFO: Trying downloading photos for \(news.author ?? "") with \(news.photosURL?.count ?? 0) URLs.")
-                if let urlStrings = news.photosURL {
+                if (news.photos?.isEmpty ?? false),
+                   let urlStrings = news.photosURL {
                     for urlString in urlStrings {
-                        if let url = URL(string: urlString) {
-                            if let data = try? Data(contentsOf: url) {
-                                print("INFO: Downloaded photo from: \(url.absoluteString)")
-                                news.photos?.append(data)
-                            }
+                        if let url = URL(string: urlString),
+                           let data = try? Data(contentsOf: url) {
+                            print("INFO: Downloaded photo from: \(url.absoluteString)")
+                            news.photos?.append(data)
                         }
                     }
                 }
@@ -224,5 +267,21 @@ extension NewsTableViewController {
         }
         
     }
-
+    
+    override func refreshData() {
+        refreshControl?.beginRefreshing()
+        let mostFreshNewsDate: Int = newsFeed?.first?.time ?? Int(Date().timeIntervalSince1970)
+        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: mostFreshNewsDate+1, nextFrom: "") { [weak self] response in
+            self?.refreshControl?.endRefreshing()
+            guard let response = response else {
+                print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
+                return
+            }
+            let freshNews = NewsFeedBiulder().buildNewsFeed(parsedJSON: response)
+            self?.newsFeed = freshNews + (self?.newsFeed ?? [])
+            self?.newsTableView.reloadData()
+            self?.downloadMedia()
+        }
+    }
+    
 }

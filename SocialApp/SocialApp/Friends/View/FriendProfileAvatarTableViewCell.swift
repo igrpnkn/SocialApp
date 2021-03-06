@@ -24,11 +24,7 @@ class FriendProfileAvatarTableViewCell: UITableViewCell {
     }
     
     func congigureCell(avatar: UIImage?) {
-        //self.photoImage.contentMode = .scaleAspectFill
-        self.photoImage.image = avatar ?? UIImage(named: "camera")
-//        self.frame.size.height = self.bounds.width
-//        self.photoImage.frame.size.height = self.bounds.width
-//        self.photoImage.frame.size.width = self.bounds.width
+        photoImage.image = avatar ?? UIImage(named: "camera")
     }
     
 }

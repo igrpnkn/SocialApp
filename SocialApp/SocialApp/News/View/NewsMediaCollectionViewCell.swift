@@ -14,5 +14,6 @@ class NewsMediaCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        newsMediaPhoto.contentMode = .scaleAspectFill
     }
 }

@@ -28,7 +28,7 @@ class FriendProfileDetailsTableViewCell: UITableViewCell {
     }
 
     func configureCell(status: String?, id: Int?, birthday: String?, city: String?, country: String?, occupation: String?, relation: Int?) {
-        self.idProfile.text = "id" + String(id!)
+        self.idProfile.text = "id" + String(id ?? 0)
         self.status.text = status ?? ""
         self.birthday.text = birthday ?? "no info"
         if city != nil && city != "" && country != nil && country != "" {

@@ -43,7 +43,7 @@ class PhotoflowViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        //super.viewWillDisappear(animated)
+        super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationItem.largeTitleDisplayMode = .always

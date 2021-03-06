@@ -67,9 +67,11 @@ class NewsFeedBiulder {
             return news
         }
         for attachment in attachments {
-            news.photosURL?.append((attachment.photo?.sizes.first?.url) ?? "")
-            print("\nINFO: News posted by \(news.author ?? "Unknown") has been added Photo's url: \(attachment.photo?.sizes.first?.url ?? "NO URL")")
-            print("INFO: News posted by \(news.author!) has \(news.photosURL?.count ?? 0) URLs")
+            if let attachedURL = attachment.photo?.sizes.filter { $0.type == "p" }.first {
+                news.photosURL?.append(attachedURL.url!)
+            } else {
+                news.photosURL?.append(attachment.photo?.sizes.first?.url ?? "")
+            }
         }
         return news
     }
