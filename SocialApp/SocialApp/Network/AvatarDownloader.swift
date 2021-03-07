@@ -14,7 +14,7 @@ class AvatarDownloader {
         case friend, group
     }
     
-    static func downloadForType(objects: [Object]?, objectType: objectType) {
+    func downloadForType<T>(objects: [T], objectType: objectType) {
         switch objectType {
         case .friend:
             guard let objects = objects as? [Friend] else { return }

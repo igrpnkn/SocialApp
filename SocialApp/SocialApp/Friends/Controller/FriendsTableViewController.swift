@@ -12,13 +12,16 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     
     @IBOutlet weak var friendsTableView: UITableView!
     let activityIndicator = UIActivityIndicatorView()
-    var realmToken: NotificationToken?
     
     // Downloaded objects
-    var friends: Results<Friend>? = RealmManager.friendsGetFromRealm()
+    //var friends: Results<Friend>? = RealmManager.friendsGetFromRealm()
+    //var realmToken: NotificationToken?
+    
+    var friendsAdapter = FriendViewModelAdapter()
+    var friends: [FriendViewModel] = []
     
     // Search...
-    var searchedFriend: [Friend] = []
+    var searchedFriend: [FriendViewModel] = []
     let searchField = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
         guard let text = searchField.searchBar.text else {
@@ -45,9 +48,23 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         
         setupRefreshControl()
         startActivityIndicator()
+        
+        // adapter way
+        friendsAdapter.getFriendCollection { [weak self] (friends) in
+            guard let self = self else { return }
+            self.friends = friends
+            self.friendsTableView.reloadData()
+            self.stopActivityIndicator()
+        }
+        
+        // classic way
         //downloadUserFriends()
-        downloadUserFriendsWithOperations()
-        observeRealmFriendsCollection()
+        
+        // operation way
+        //downloadUserFriendsWithOperations()
+        
+        // realm token onservation
+        //observeRealmFriendsCollection()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -69,20 +86,19 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         if isFiltering {
             return searchedFriend.count
         } else {
-            return friends!.count
+            return friends.count
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsTableViewCell", for: indexPath) as! FriendsTableViewCell
-        let friends = Array(self.friends!)
-        var dataFromArray: Friend
+        var dataFromArray: FriendViewModel
         if isFiltering {
             dataFromArray = searchedFriend[indexPath.row]
         } else {
             dataFromArray = friends[indexPath.row]
         }
-        cell.configureCell(fullName: "\(dataFromArray.lastName) \(dataFromArray.firstName)", lastSeen: dataFromArray.lastSeen, occupation: dataFromArray.occupationName, avatar: dataFromArray.avatar, online: dataFromArray.online)
+        cell.configureCell(for: dataFromArray)
         return cell
     }
         
@@ -103,7 +119,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
     }
     
     func filterContentForSearchText(_ searchText: String) {
-        searchedFriend = friends!.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
+        searchedFriend = friends.filter({ (i) -> Bool in return (i.lastName.lowercased().contains(searchText.lowercased()) || i.firstName.lowercased().contains(searchText.lowercased())) })
         friendsTableView.reloadData()
     }
     
@@ -118,15 +134,15 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
         case "segueToFriendProfile":
             print("\nINFO: Segue to FriendProfileViewController has been choosen.\n")
             if let indexPath = friendsTableView.indexPathForSelectedRow {
-                let friend: Friend
-                let friendsArray = Array(self.friends!)
+                let friend: FriendViewModel
+                let friendsArray = self.friends
                 if isFiltering {
                     friend = searchedFriend[indexPath.row]
                  } else {
                     friend = friendsArray[indexPath.row]
                  }
                 let friendProfileVC = segue.destination as! FriendsProfileTableViewController
-                friendProfileVC.friendProfile = friend
+                //friendProfileVC.friendProfile = friend
             }
         default:
             print("ERROR - NAVIGATION: Unknown segue from FriendsTableViewController.")
@@ -137,7 +153,7 @@ class FriendsTableViewController: UITableViewController, UISearchResultsUpdating
 }
 
 extension FriendsTableViewController {
-    
+    /*
     func observeRealmFriendsCollection() {
         self.realmToken = friends?.observe(on: DispatchQueue.main, { (changes: RealmCollectionChange) in
             switch changes {
@@ -147,7 +163,6 @@ extension FriendsTableViewController {
                 self.friendsTableView.reloadData()
                 self.stopActivityIndicator()
             case .update(let results, let deletions, let insertions, let modifications):
-                //print("\nINFO: Realm Friends data has been updated:\nResults: \(results.count),\nDeletions: \(deletions.count),\nInsertion: \(insertions.count),\nModifications: \(modifications.count)")
                 self.friendsTableView.beginUpdates()
                 self.friendsTableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0)
                 }), with: .automatic)
@@ -164,7 +179,7 @@ extension FriendsTableViewController {
             }
         })
     }
-    
+    */
     func downloadUserFriends() {
         NetworkManager.friendsGet(for: UserSession.instance.userId!) { [weak self] friends in
             guard let self = self, let friendsArray = friends  else { return }
@@ -198,8 +213,8 @@ extension FriendsTableViewController {
     }
     
     func downloadAvatars() {
-//        AvatarDownloader.downloadForType(objects: Array(self.friends!), objectType: .friend)
-//        self.stopActivityIndicator()
+        AvatarDownloader().downloadForType(objects: friends, objectType: .friend)
+        self.stopActivityIndicator()
     }
     
     func startActivityIndicator() {
