@@ -1,29 +1,15 @@
 //
-//  NewsFeed.swift
+//  NewsFactory.swift
 //  SocialApp
 //
-//  Created by Игорь Пенкин on 18.10.2020.
+//  Created by Игорь Пенкин on 08.03.2021.
 //
 
 import Foundation
-import UIKit
 
-class News {
-    var avatar: Data?
-    var avatarURL: String?
-    var author: String?
-    var time: Int?
-    var text: String?
-    var photos: [Data]? = []
-    var photosURL: [String]? = []
-    var likeCount: Int?
-    var commentCount: Int?
-    var reviewCount: Int?
-    var liked: Int?
-}
-
-class NewsFeedBiulder {
-    var newsFeed: [News]
+class NewsFactory {
+    
+    private var newsFeed: [News]
     //private var news: News?
     
     init() {
@@ -77,4 +63,3 @@ class NewsFeedBiulder {
     }
     
 }
-

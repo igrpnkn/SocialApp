@@ -15,9 +15,10 @@ class NewsTableViewController: UITableViewController {
     let reuseFooterIdentifier = "NewsFooterTableViewCell"
     
     @IBOutlet weak var newsTableView: UITableView!
+    let activityIndicator = UIActivityIndicatorView()
     
     var newsFeed: [News]? = []
-    var newsFeedBiulder = NewsFeedBiulder()
+    var newsFeedBiulder = NewsFactory()
     var newsNextFrom = ""
     var isLoading: Bool = false
     
@@ -31,6 +32,11 @@ class NewsTableViewController: UITableViewController {
         downloadNews(startTime: Int(Date().timeIntervalSince1970), fromNext: newsNextFrom)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        startActivityIndicator()
+    }
+
 
     // MARK: - Table view data source
 
@@ -128,7 +134,7 @@ extension NewsTableViewController: UITableViewDataSourcePrefetching {
                 print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
                 let shownNewsCount = (self.newsFeed ?? []).count
                 print("\nINFO: \(#function) has total shown posts: \(shownNewsCount)")
-                self.newsFeed?.append(contentsOf: NewsFeedBiulder().buildNewsFeed(parsedJSON: response))
+                self.newsFeed?.append(contentsOf: NewsFactory().buildNewsFeed(parsedJSON: response))
                 print("\nINFO: \(#function) has total after adding posts: \((self.newsFeed ?? []).count)")
                 let indexSetOfNewPosts = IndexSet(integersIn: shownNewsCount ..< (self.newsFeed ?? []).count)
                 print("\nINFO: \(#function) has added posts sections set: \((self.newsFeed ?? []).count)")
@@ -142,33 +148,51 @@ extension NewsTableViewController: UITableViewDataSourcePrefetching {
     }
         
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        print("")
+        print("\nINFO: User SCROLLING was canceled...")
     }
     
 }
 
 extension NewsTableViewController {
     
+    
+    func startActivityIndicator() {
+        print("\nINFO: Loading \(self.description) has begun.")
+        activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
+        activityIndicator.center.y = (self.navigationController?.navigationBar.center.y)!*0.75
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .large
+        self.navigationController?.view.addSubview(activityIndicator)
+    }
+    
+    func stopActivityIndicator() {
+        self.activityIndicator.stopAnimating()
+        self.activityIndicator.isHidden = true
+    }
+    
     func downloadNews(startTime: Int, fromNext: String) {
-        NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970+1), nextFrom: fromNext, completion: { response in
-            guard let response = response,
-                  let posts = response.items
-            else {
-                print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
-                return
-            }
-            if let nextFrom = response.next_from {
-                self.newsNextFrom = nextFrom
-            } else { print("\nINFO: ERROR - While getting NEXT_FROM property in \(#function), next_from = \(response.next_from ?? "")\n") }
-            print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
-            self.biuldNewsFeed(newsFeed: response)
-        })
+        DispatchQueue.global().sync {
+            NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970+1), nextFrom: fromNext, completion: { response in
+                guard let response = response,
+                      let posts = response.items
+                else {
+                    print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
+                    return
+                }
+                if let nextFrom = response.next_from {
+                    self.newsNextFrom = nextFrom
+                } else { print("\nINFO: ERROR - While getting NEXT_FROM property in \(#function), next_from = \(response.next_from ?? "")\n") }
+                print("\nINFO: \(#function) has total parsed posts: \(posts.count)")
+                self.biuldNewsFeed(newsFeed: response)
+            })
+        }
     }
     
     func biuldNewsFeed(newsFeed response: PostResponse) {
         self.newsFeed = self.newsFeedBiulder.buildNewsFeed(parsedJSON: response)
         print("\nINFO: \(#function) has total built news: \(newsFeed?.count ?? 0)")
-        self.newsTableView.reloadData()
+        //self.newsTableView.reloadData()
         downloadMedia()
     }
     
@@ -190,22 +214,23 @@ extension NewsTableViewController {
         DispatchQueue.global().async {
             print("\nINFO: \(#function) Starting downloading photos for NewsFeed.")
             for news in self.newsFeed! {
-                print("\nINFO: Trying downloading photos for \(news.author ?? "") with \(news.photosURL?.count ?? 0) URLs.")
+//                print("\nINFO: Trying downloading photos for \(news.author ?? "") with \(news.photosURL?.count ?? 0) URLs.")
                 if (news.photos?.isEmpty ?? false),
                    let urlStrings = news.photosURL {
                     for urlString in urlStrings {
                         if let url = URL(string: urlString),
                            let data = try? Data(contentsOf: url) {
-                            print("INFO: Downloaded photo from: \(url.absoluteString)")
+//                            print("INFO: Downloaded photo from: \(url.absoluteString)")
                             news.photos?.append(data)
                         }
                     }
                 }
-                print("\n\n\nINFO: Downloaded photos for \(news.author!) with \(news.photos?.count ?? 0) photos.")
+//                print("\n\n\nINFO: Downloaded photos for \(news.author!) with \(news.photos?.count ?? 0) photos.")
             }
             DispatchQueue.main.async {
                 print("\nINFO: \(#function) Reloading data after downloading photos.")
                 self.newsTableView.reloadData()
+                self.stopActivityIndicator()
             }
         }
         
@@ -220,7 +245,7 @@ extension NewsTableViewController {
                 print("\nINFO: ERROR - While getting respone objects in \(#function)\n")
                 return
             }
-            let freshNews = NewsFeedBiulder().buildNewsFeed(parsedJSON: response)
+            let freshNews = NewsFactory().buildNewsFeed(parsedJSON: response)
             self?.newsFeed = freshNews + (self?.newsFeed ?? [])
             self?.newsTableView.reloadData()
             self?.downloadMedia()
