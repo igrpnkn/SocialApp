@@ -9,18 +9,14 @@ import UIKit
 
 class NewsTableViewController: UITableViewController {
     
-    let reuseHeaderIdentifier = "NewsHeaderTableViewCell"
-    let reuseTextIdentifier = "NewsTextTableViewCell"
-    let reuseMediaIdentifier = "NewsMediaTableViewCell"
-    let reuseFooterIdentifier = "NewsFooterTableViewCell"
-    
     @IBOutlet weak var newsTableView: UITableView!
-    let activityIndicator = UIActivityIndicatorView()
+    private let activityIndicator = UIActivityIndicatorView()
     
-    var newsFeed: [News]? = []
-    var newsFeedBiulder = NewsFactory()
-    var newsNextFrom = ""
-    var isLoading: Bool = false
+    private var newsFeed: [News]? = []
+    private var newsFactory = NewsFactory()
+    private let newsCellFactory = NewsCellFactory()
+    private var newsNextFrom = ""
+    private var isLoading: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +30,9 @@ class NewsTableViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        startActivityIndicator()
+        if isLoading {
+            startActivityIndicator()
+        }
     }
 
 
@@ -57,29 +55,20 @@ class NewsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let news = newsFeed?[indexPath.section]
         switch indexPath.row {
         case 0: // Header
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseHeaderIdentifier, for: indexPath) as! NewsHeaderTableViewCell
-            cell.configureCell(avatar: newsFeed?[indexPath.section].avatar, author: newsFeed?[indexPath.section].author, time: newsFeed?[indexPath.section].time)
-            return cell
+            return newsCellFactory.buildCell(for: .header, news, tableView, indexPath)
         case 1: // Text
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseTextIdentifier, for: indexPath) as! NewsTextTableViewCell
-            cell.configureCell(text: newsFeed?[indexPath.section].text)
-            return cell
+            return newsCellFactory.buildCell(for: .text, news, tableView, indexPath)
         case 2: // Photos
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseMediaIdentifier, for: indexPath) as! NewsMediaTableViewCell
-            cell.imagesArray = newsFeed?[indexPath.section].photos
-            cell.mediaCollectionView.reloadData()
-            return cell
+            return newsCellFactory.buildCell(for: .media, news, tableView, indexPath)
         case 3: // Footer
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseFooterIdentifier, for: indexPath) as! NewsFooterTableViewCell
-            cell.configureCell(likes: newsFeed?[indexPath.section].likeCount, comments: newsFeed?[indexPath.section].commentCount, reviews: newsFeed?[indexPath.section].reviewCount, userLiked: newsFeed?[indexPath.section].liked)
-            cell.likeButton.tag = indexPath.section
-            return cell
+            return newsCellFactory.buildCell(for: .footer, news, tableView, indexPath)
         default:
-            print("\nINFO: What the hell was here!? o_O\n")
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseHeaderIdentifier, for: indexPath) as! NewsHeaderTableViewCell
-            return cell
+            // Probably will never happens
+            print("\nINFO: Admin was drunk o_O\n")
+            return newsCellFactory.buildCell(for: .stock, news, tableView, indexPath)
         }
     }
     
@@ -155,7 +144,6 @@ extension NewsTableViewController: UITableViewDataSourcePrefetching {
 
 extension NewsTableViewController {
     
-    
     func startActivityIndicator() {
         print("\nINFO: Loading \(self.description) has begun.")
         activityIndicator.center.x = (self.navigationController?.navigationBar.center.x)!
@@ -169,9 +157,11 @@ extension NewsTableViewController {
     func stopActivityIndicator() {
         self.activityIndicator.stopAnimating()
         self.activityIndicator.isHidden = true
+        isLoading = false
     }
     
     func downloadNews(startTime: Int, fromNext: String) {
+        isLoading = true
         DispatchQueue.global().sync {
             NetworkManager.newsfeedGet(for: UserSession.instance.userId!, startTime: Int(Date().timeIntervalSince1970+1), nextFrom: fromNext, completion: { response in
                 guard let response = response,
@@ -190,9 +180,8 @@ extension NewsTableViewController {
     }
     
     func biuldNewsFeed(newsFeed response: PostResponse) {
-        self.newsFeed = self.newsFeedBiulder.buildNewsFeed(parsedJSON: response)
+        self.newsFeed = self.newsFactory.buildNewsFeed(parsedJSON: response)
         print("\nINFO: \(#function) has total built news: \(newsFeed?.count ?? 0)")
-        //self.newsTableView.reloadData()
         downloadMedia()
     }
     
