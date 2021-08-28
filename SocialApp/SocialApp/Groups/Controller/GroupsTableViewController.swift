@@ -47,7 +47,6 @@ class GroupsTableViewController: UITableViewController, UISearchResultsUpdating 
         definesPresentationContext = true
         
         setupRefreshControl()
-        startActivityIndicator()
         observeRealmGroupsCollection()
         downloadUserGroups()
     }
@@ -210,6 +209,10 @@ extension GroupsTableViewController {
     
     private func promisingUserGroups() {
         firstly {
+            Guarantee { [weak self] _ in
+                self?.startActivityIndicator()
+            }
+        }.then(on: .global(), flags: nil) {
             NetworkManager.groupsGet(for: UserSession.instance.userId!)
         }.get(on: .main, flags: nil) { (parsedGroups) in
             RealmManager.deleteObjects(delete: Group.self) // is used to resolve logical conflict when we have deleted Group in vk.com but in RealmDB it still is there

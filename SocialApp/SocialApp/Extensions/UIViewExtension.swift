@@ -14,7 +14,7 @@ extension UIView {
         let touchDown = CASpringAnimation(keyPath: "transform.scale")
         touchDown.duration = 0.4
         touchDown.fromValue = 1
-        touchDown.toValue = 0.9
+        touchDown.toValue = 0.97
         touchDown.autoreverses = false
         touchDown.initialVelocity = 20
         touchDown.damping = 10
